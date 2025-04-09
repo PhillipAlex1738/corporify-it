@@ -38,18 +38,6 @@ const CorporifyForm = () => {
     });
   };
 
-  const checkUsageLimit = () => {
-    if (user && !user.isPremium && user.usageCount >= user.usageLimit) {
-      toast({
-        title: "Usage limit reached",
-        description: "Upgrade to premium for unlimited corporification.",
-        variant: "destructive",
-      });
-      return false;
-    }
-    return true;
-  };
-
   return (
     <div>
       <div className="mb-4">
