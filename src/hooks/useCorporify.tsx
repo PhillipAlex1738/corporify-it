@@ -16,7 +16,6 @@ export const useCorporify = () => {
   const { toast } = useToast();
   const { user } = useAuth();
 
-  // Mock API call to transform text
   const corporifyText = async (originalText: string): Promise<string> => {
     setIsLoading(true);
 
@@ -41,13 +40,32 @@ export const useCorporify = () => {
       return "";
     }
 
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
     try {
-      // Here we'd normally call OpenAI API or similar
-      // For demo purposes, we'll use a simple transformation
-      const corporateText = simulateCorporateTransformation(originalText);
+      // Get API key from local storage
+      const apiKey = localStorage.getItem('openai_api_key');
+      
+      let corporateText: string;
+      
+      // If API key exists, use OpenAI API
+      if (apiKey) {
+        try {
+          corporateText = await callOpenAI(originalText, apiKey);
+        } catch (error) {
+          console.error('OpenAI API call failed:', error);
+          toast({
+            title: "OpenAI API Error",
+            description: "There was an issue with your API key or the OpenAI service. Falling back to simulated response.",
+            variant: "destructive",
+          });
+          // Fallback to simulated response
+          corporateText = simulateCorporateTransformation(originalText);
+        }
+      } else {
+        // If no API key, use simulated transformation
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        corporateText = simulateCorporateTransformation(originalText);
+      }
 
       // Update usage count in localStorage
       const updatedUser = {
@@ -82,6 +100,40 @@ export const useCorporify = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Function to call OpenAI API
+  const callOpenAI = async (text: string, apiKey: string): Promise<string> => {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'system',
+            content: 'Rewrite the user\'s message in a professional, polite corporate tone. Maintain the original intent, but improve tone, clarity, and professionalism.'
+          },
+          {
+            role: 'user',
+            content: text
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 1000
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error?.message || 'API request failed');
+    }
+
+    const data = await response.json();
+    return data.choices[0].message.content;
   };
 
   const simulateCorporateTransformation = (text: string): string => {
