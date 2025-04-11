@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Loader2, Copy, SquareTerminal, MessageCircle, ThumbsUp, ThumbsDown, Sparkles, RefreshCw } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { Loader2, Copy, MessageCircle, ThumbsUp, ThumbsDown, Sparkles, RefreshCw } from 'lucide-react';
+import { useToast } from '@/components/ui/toast';
 import { useCorporify } from '@/hooks/useCorporify';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -26,10 +26,17 @@ const CorporifyForm = () => {
       return;
     }
 
+    console.log("Sending data to Supabase via corporifyText function...");
+    
     const result = await corporifyText(inputText);
     if (result) {
       setOutputText(result);
       setFeedbackGiven(null);
+      
+      toast({
+        title: "Data sent to Supabase",
+        description: "Your request was logged in the database",
+      });
     }
   };
 
@@ -145,6 +152,17 @@ const CorporifyForm = () => {
         <div className="mt-6 p-4 bg-muted rounded-md text-center">
           <p className="text-sm text-muted-foreground">
             Sign in to start corporifying your messages!
+          </p>
+        </div>
+      )}
+
+      {user && (
+        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
+          <p className="text-sm text-blue-800">
+            <strong>Connection Status:</strong> Connected to Supabase as {user.email}
+          </p>
+          <p className="text-xs text-blue-600 mt-1">
+            Usage data is being logged to the usage_logs table. You've used {user.usageCount} of {user.usageLimit} daily transformations.
           </p>
         </div>
       )}

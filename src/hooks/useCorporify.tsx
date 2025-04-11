@@ -42,6 +42,11 @@ export const useCorporify = () => {
     }
 
     try {
+      console.log("Calling Supabase Edge Function with:", { 
+        text: originalText, 
+        userId: user.id 
+      });
+
       // Call our Supabase Edge Function
       const { data, error } = await supabase.functions.invoke('corporify', {
         body: { 
@@ -51,9 +56,11 @@ export const useCorporify = () => {
       });
 
       if (error) {
+        console.error("Supabase Edge Function error:", error);
         throw new Error(error.message || 'Failed to corporify text');
       }
 
+      console.log("Supabase Edge Function response:", data);
       const corporateText = data.corporateText;
 
       // Update usage count in localStorage
@@ -62,6 +69,7 @@ export const useCorporify = () => {
         usageCount: user.usageCount + 1,
       };
       localStorage.setItem('corporify_user', JSON.stringify(updatedUser));
+      console.log("Updated user in localStorage:", updatedUser);
 
       // Add to history
       const newEntry = {

@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from '@/integrations/supabase/client';
 
 type User = {
   id: string;
@@ -34,6 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (savedUser) {
         try {
           setUser(JSON.parse(savedUser));
+          console.log("User authenticated from localStorage:", JSON.parse(savedUser));
         } catch (error) {
           console.error('Failed to parse user data');
           localStorage.removeItem('corporify_user');
@@ -49,6 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
+      console.log("Attempting login with:", email);
       // Mock authentication for demo purposes
       // In production, this would be a call to your authentication service
       const mockUser: User = {
@@ -62,9 +65,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Save user to localStorage as a simple session mechanism
       localStorage.setItem('corporify_user', JSON.stringify(mockUser));
       setUser(mockUser);
+      console.log("Login successful, user data:", mockUser);
       toast({
         title: "Logged in successfully",
-        description: "Welcome back!",
+        description: "Welcome back! Your data will be stored in Supabase when you use the app.",
       });
     } catch (error) {
       console.error('Login failed', error);
