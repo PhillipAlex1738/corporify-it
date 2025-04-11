@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/integrations/supabase/client';
+import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 
 type User = {
   id: string;
@@ -26,55 +27,94 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [session, setSession] = useState<Session | null>(null);
   const { toast } = useToast();
 
+  // Transform Supabase user to our app's User type
+  const transformUser = (supabaseUser: SupabaseUser | null): User | null => {
+    if (!supabaseUser) return null;
+    
+    // Get existing user data from localStorage if available
+    const existingUserData = localStorage.getItem('corporify_user');
+    let usageCount = 0;
+    let isPremium = false;
+    
+    if (existingUserData) {
+      try {
+        const parsedData = JSON.parse(existingUserData);
+        usageCount = parsedData.usageCount || 0;
+        isPremium = parsedData.isPremium || false;
+      } catch (e) {
+        console.error('Failed to parse existing user data', e);
+      }
+    }
+    
+    return {
+      id: supabaseUser.id,
+      email: supabaseUser.email || '',
+      isPremium,
+      usageCount,
+      usageLimit: 3, // Default limit for free users
+    };
+  };
+
+  // Save user data to localStorage
+  const saveUserToLocalStorage = (userData: User) => {
+    localStorage.setItem('corporify_user', JSON.stringify(userData));
+  };
+
   useEffect(() => {
-    // Check for existing session
-    const checkSession = () => {
-      const savedUser = localStorage.getItem('corporify_user');
-      if (savedUser) {
-        try {
-          setUser(JSON.parse(savedUser));
-          console.log("User authenticated from localStorage:", JSON.parse(savedUser));
-        } catch (error) {
-          console.error('Failed to parse user data');
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, newSession) => {
+        console.log('Auth state changed:', event, newSession);
+        setSession(newSession);
+        const newUser = transformUser(newSession?.user || null);
+        setUser(newUser);
+        
+        if (newUser) {
+          saveUserToLocalStorage(newUser);
+        } else if (event === 'SIGNED_OUT') {
           localStorage.removeItem('corporify_user');
         }
       }
-      setIsLoading(false);
-    };
+    );
 
-    checkSession();
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
+      console.log('Initial session:', initialSession);
+      setSession(initialSession);
+      setUser(transformUser(initialSession?.user || null));
+      setIsLoading(false);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
-  // In a real app, this would connect to Supabase or another auth provider
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
       console.log("Attempting login with:", email);
-      // Mock authentication for demo purposes
-      // In production, this would be a call to your authentication service
-      const mockUser: User = {
-        id: `user_${Date.now()}`,
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
-        isPremium: false,
-        usageCount: 0,
-        usageLimit: 3,
-      };
+        password
+      });
 
-      // Save user to localStorage as a simple session mechanism
-      localStorage.setItem('corporify_user', JSON.stringify(mockUser));
-      setUser(mockUser);
-      console.log("Login successful, user data:", mockUser);
+      if (error) {
+        throw error;
+      }
+
       toast({
         title: "Logged in successfully",
-        description: "Welcome back! Your data will be stored in Supabase when you use the app.",
+        description: "Welcome back! Your data will be stored in Supabase.",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login failed', error);
       toast({
         title: "Login failed",
-        description: "Please check your credentials and try again.",
+        description: error.message || "Please check your credentials and try again.",
         variant: "destructive",
       });
     } finally {
@@ -85,26 +125,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signUp = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // Mock sign-up for demo purposes
-      const mockUser: User = {
-        id: `user_${Date.now()}`,
+      const { data, error } = await supabase.auth.signUp({
         email,
-        isPremium: false,
-        usageCount: 0,
-        usageLimit: 3,
-      };
+        password
+      });
 
-      localStorage.setItem('corporify_user', JSON.stringify(mockUser));
-      setUser(mockUser);
+      if (error) {
+        throw error;
+      }
+
       toast({
         title: "Account created",
-        description: "Welcome to Corporify!",
+        description: "Welcome to Corporify! Check your email for verification.",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Sign-up failed', error);
       toast({
         title: "Sign-up failed",
-        description: "Please try again with a different email.",
+        description: error.message || "Please try again with a different email.",
         variant: "destructive",
       });
     } finally {
@@ -115,26 +153,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const googleSignIn = async () => {
     setIsLoading(true);
     try {
-      // Mock Google sign-in
-      const mockUser: User = {
-        id: `google_user_${Date.now()}`,
-        email: 'google_user@example.com',
-        isPremium: false,
-        usageCount: 0,
-        usageLimit: 3,
-      };
-
-      localStorage.setItem('corporify_user', JSON.stringify(mockUser));
-      setUser(mockUser);
-      toast({
-        title: "Logged in with Google",
-        description: "Welcome to Corporify!",
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google'
       });
-    } catch (error) {
+
+      if (error) {
+        throw error;
+      }
+
+      // The redirect happens automatically - this toast may not be seen
+      toast({
+        title: "Redirecting to Google",
+        description: "Please complete sign in with Google.",
+      });
+    } catch (error: any) {
       console.error('Google sign-in failed', error);
       toast({
         title: "Google sign-in failed",
-        description: "Please try again later.",
+        description: error.message || "Please try again later.",
         variant: "destructive",
       });
     } finally {
@@ -142,36 +178,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('corporify_user');
-    setUser(null);
-    toast({
-      title: "Logged out",
-      description: "You've been logged out successfully.",
-    });
+  const logout = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast({
+        title: "Logged out",
+        description: "You've been logged out successfully.",
+      });
+    } catch (error: any) {
+      console.error('Logout failed', error);
+      toast({
+        title: "Logout failed",
+        description: error.message || "Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const upgradeAccount = async () => {
     try {
-      // In a real app, this would handle Stripe payment and update user status
       if (user) {
         const upgradedUser = {
           ...user,
           isPremium: true,
           usageLimit: Infinity,
         };
-        localStorage.setItem('corporify_user', JSON.stringify(upgradedUser));
+        saveUserToLocalStorage(upgradedUser);
         setUser(upgradedUser);
         toast({
           title: "Account upgraded",
           description: "You now have unlimited access to Corporify!",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Upgrade failed', error);
       toast({
         title: "Upgrade failed",
-        description: "Please try again later.",
+        description: error.message || "Please try again later.",
         variant: "destructive",
       });
     }
