@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Loader2, Copy, MessageCircle, ThumbsUp, ThumbsDown, Sparkles, RefreshCw } from 'lucide-react';
-import { useToast } from '@/components/ui/toast';
+import { useToast } from "@/components/ui/use-toast";
 import { useCorporify } from '@/hooks/useCorporify';
 import { useAuth } from '@/hooks/useAuth';
 
