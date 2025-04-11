@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import AuthModal from '@/components/AuthModal';
 import PricingModal from '@/components/PricingModal';
-import { UserRound, LogOut } from 'lucide-react';
+import { UserRound, LogOut, Clock } from 'lucide-react';
 
 const Header = () => {
   const { user, logout } = useAuth();
@@ -31,16 +31,14 @@ const Header = () => {
                 <span className="text-sm font-medium">{user.email}</span>
               </div>
               
-              {!user.isPremium && (
-                <Button 
-                  onClick={() => setIsPricingModalOpen(true)}
-                  variant="outline" 
-                  size="sm"
-                  className="hidden md:flex border-corporate-500 text-corporate-800 hover:bg-corporate-50"
-                >
-                  Upgrade to Premium
-                </Button>
-              )}
+              <Button 
+                onClick={() => setIsPricingModalOpen(true)}
+                variant="outline" 
+                size="sm"
+                className="hidden md:flex border-corporate-500 text-corporate-800 hover:bg-corporate-50"
+              >
+                <Clock className="h-4 w-4 mr-1" /> Premium (Coming Soon)
+              </Button>
               
               <Button 
                 onClick={logout}

@@ -7,8 +7,7 @@ import {
   DialogDescription
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Check, Zap } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
+import { Check, Zap, Clock } from 'lucide-react';
 
 type PricingModalProps = {
   isOpen: boolean;
@@ -16,13 +15,6 @@ type PricingModalProps = {
 };
 
 const PricingModal = ({ isOpen, onClose }: PricingModalProps) => {
-  const { upgradeAccount, isLoading } = useAuth();
-
-  const handleUpgrade = async () => {
-    await upgradeAccount();
-    onClose();
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden">
@@ -30,10 +22,10 @@ const PricingModal = ({ isOpen, onClose }: PricingModalProps) => {
           <DialogHeader className="mb-4">
             <DialogTitle className="text-white flex items-center gap-2 text-2xl">
               <Zap className="h-5 w-5" />
-              Upgrade to Premium
+              Premium Features
             </DialogTitle>
             <DialogDescription className="text-white/80 text-base">
-              Get unlimited access to all Corporify features.
+              Coming Soon! Join our waitlist to be notified when premium is available.
             </DialogDescription>
           </DialogHeader>
         </div>
@@ -89,15 +81,14 @@ const PricingModal = ({ isOpen, onClose }: PricingModalProps) => {
               </div>
               
               <Button 
-                onClick={handleUpgrade} 
-                disabled={isLoading}
                 className="w-full bg-corporate-800 hover:bg-corporate-900 font-medium"
+                disabled
               >
-                {isLoading ? "Processing..." : "Upgrade Now"}
+                <Clock className="mr-2 h-4 w-4" /> Coming Soon
               </Button>
               
               <p className="text-xs text-center text-muted-foreground mt-4">
-                No credit card required for this demo. In a real app, this would connect to Stripe.
+                Join our waitlist to be notified when premium features become available.
               </p>
             </div>
           </div>
