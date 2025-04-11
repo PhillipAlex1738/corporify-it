@@ -101,12 +101,16 @@ export const useCorporify = () => {
 
   const saveFeedback = async (originalText: string, corporateText: string, isHelpful: boolean): Promise<boolean> => {
     try {
-      const { error } = await supabase.from('feedback').insert({
-        user_id: user ? user.id : null,
-        original_text: originalText,
-        corporate_text: corporateText,
-        is_helpful: isHelpful
-      });
+      // Use type assertion to work around TypeScript limitations
+      // since we can't modify the types.ts file
+      const { error } = await (supabase
+        .from('feedback' as any)
+        .insert({
+          user_id: user ? user.id : null,
+          original_text: originalText,
+          corporate_text: corporateText,
+          is_helpful: isHelpful
+        } as any));
 
       if (error) {
         console.error('Error saving feedback:', error);
