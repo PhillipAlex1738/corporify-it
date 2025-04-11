@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -99,8 +99,31 @@ export const useCorporify = () => {
     }
   };
 
+  const saveFeedback = async (originalText: string, corporateText: string, isHelpful: boolean): Promise<boolean> => {
+    try {
+      const { error } = await supabase.from('feedback').insert({
+        user_id: user ? user.id : null,
+        original_text: originalText,
+        corporate_text: corporateText,
+        is_helpful: isHelpful
+      });
+
+      if (error) {
+        console.error('Error saving feedback:', error);
+        return false;
+      }
+
+      console.log('Feedback saved successfully');
+      return true;
+    } catch (error) {
+      console.error('Error saving feedback:', error);
+      return false;
+    }
+  };
+
   return {
     corporifyText,
+    saveFeedback,
     isLoading,
     history,
   };

@@ -4,14 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Loader2, Copy, MessageCircle, ThumbsUp, ThumbsDown, Sparkles, RefreshCw } from 'lucide-react';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useCorporify } from '@/hooks/useCorporify';
 import { useAuth } from '@/hooks/useAuth';
 
 const CorporifyForm = () => {
   const [inputText, setInputText] = useState('Hey team, I think we need to talk about the new feature. It seems like there\'s a problem with it and we should fix it soon.');
   const [outputText, setOutputText] = useState('');
-  const { corporifyText, isLoading } = useCorporify();
+  const { corporifyText, saveFeedback, isLoading } = useCorporify();
   const { user } = useAuth();
   const { toast } = useToast();
   const [feedbackGiven, setFeedbackGiven] = useState<'like' | 'dislike' | null>(null);
@@ -47,12 +47,18 @@ const CorporifyForm = () => {
     });
   };
   
-  const giveFeedback = (type: 'like' | 'dislike') => {
+  const giveFeedback = async (type: 'like' | 'dislike') => {
     setFeedbackGiven(type);
+    
+    // Save the feedback to the database
+    const success = await saveFeedback(inputText, outputText, type === 'like');
+    
     toast({
-      description: type === 'like' ? "Thanks for your positive feedback!" : "Thanks for your feedback, we'll improve!",
+      description: success 
+        ? (type === 'like' ? "Thanks for your positive feedback!" : "Thanks for your feedback, we'll improve!") 
+        : "Could not save your feedback. Please try again later.",
+      variant: success ? "default" : "destructive"
     });
-    // In a real app, send this feedback to your backend
   };
   
   const handleRegenerate = async () => {
