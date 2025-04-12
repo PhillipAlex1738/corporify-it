@@ -25,7 +25,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, newSession) => {
         console.log('Auth state changed:', event, newSession);
-        // Never call other Supabase functions inside this callback directly
         setSession(newSession);
         const newUser = transformUser(newSession?.user || null);
         setUser(newUser);

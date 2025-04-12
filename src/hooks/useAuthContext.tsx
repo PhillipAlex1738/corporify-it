@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext } from 'react';
+import React, { createContext } from 'react';
 import { User } from '@/utils/userTransform';
 
 export type AuthContextType = {
@@ -12,14 +12,4 @@ export type AuthContextType = {
   upgradeAccount: () => Promise<void>;
 };
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const useAuthContext = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuthContext must be used within an AuthProvider');
-  }
-  return context;
-};
-
-export { AuthContext };
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
