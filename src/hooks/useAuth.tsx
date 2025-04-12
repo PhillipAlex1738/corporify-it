@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/integrations/supabase/client';
@@ -145,7 +144,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
         
         // For email_not_confirmed errors, we'll manually create a session
-        // Fix: Remove the data property from options and use custom metadata instead
         const { data } = await supabase.auth.signInWithPassword({
           email,
           password,
@@ -177,7 +175,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // This is a workaround as we don't have direct access to get user by email
       // In a real implementation, you might need a custom API or edge function for this
       const { data } = await supabase.auth.signInWithOtp({ email });
-      return data.user?.id || '';
+      return data?.user?.id || '';
     } catch {
       return '';
     }
@@ -200,7 +198,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       // Auto-login after signup without requiring email confirmation
       // Fixed: Properly check for null and undefined
-      if (data && data.user && data.user !== null) {
+      if (data?.user) {
         await login(email, password);
       }
 
