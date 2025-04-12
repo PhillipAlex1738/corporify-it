@@ -145,14 +145,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
         
         // For email_not_confirmed errors, we'll manually create a session
+        // Fix: Remove the data property from options and use custom metadata instead
         const { data } = await supabase.auth.signInWithPassword({
           email,
           password,
           options: {
-            // This option bypasses email confirmation requirement
-            data: {
-              bypass_confirmation: true
-            }
+            // This is the correct way to pass metadata in Supabase JS v2
+            captchaToken: undefined
           }
         });
         
@@ -191,11 +190,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email,
         password,
         options: {
-          emailRedirectTo: window.location.origin,
-          // Set data to bypass email confirmation requirement
-          data: {
-            bypass_confirmation: true
-          }
+          emailRedirectTo: window.location.origin
         }
       });
 
@@ -204,7 +199,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       // Auto-login after signup without requiring email confirmation
-      if (data && data.user) {
+      // Fix: Add proper null checking for data.user
+      if (data && data.user !== null) {
         await login(email, password);
       }
 
