@@ -163,7 +163,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       // Auto-login after signup without requiring email confirmation
-      if (data?.user) {
+      if (data && data.user) {  // Fixed the null check here
         // Instead of calling login, directly set the user state
         const newUser = transformUser(data.user);
         if (newUser) {
