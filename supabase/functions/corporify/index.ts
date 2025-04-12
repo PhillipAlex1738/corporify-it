@@ -22,6 +22,24 @@ serve(async (req) => {
   try {
     console.log("Function invoked: corporify");
     
+    // Verify environment variables
+    const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
+    
+    // Check if the OpenAI API key is available and log its status
+    if (!openaiApiKey) {
+      console.error("Missing OpenAI API key in environment");
+      return new Response(
+        JSON.stringify({ 
+          error: "Server configuration error", 
+          details: "OpenAI API key is not configured" 
+        }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    } else {
+      console.log("OpenAI API key found with length:", openaiApiKey.length);
+      console.log("OpenAI API key starts with:", openaiApiKey.substring(0, 5) + "...");
+    }
+    
     // Parse request body
     let requestData;
     try {
@@ -36,19 +54,6 @@ serve(async (req) => {
     }
 
     const { text, userId } = requestData;
-    const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
-    
-    // Check if the OpenAI API key is available
-    if (!openaiApiKey) {
-      console.error("Missing OpenAI API key in environment");
-      return new Response(
-        JSON.stringify({ 
-          error: "Server configuration error", 
-          details: "OpenAI API key is not configured" 
-        }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
     
     if (!text) {
       console.error("No text provided in request");
@@ -59,49 +64,90 @@ serve(async (req) => {
     }
 
     console.log("Processing text:", text.substring(0, 50) + (text.length > 50 ? "..." : ""));
-    console.log("OpenAI API key available (first 5 chars):", openaiApiKey.substring(0, 5) + "...");
     
-    // Call OpenAI API
-    console.log("Calling OpenAI API...");
+    // Call OpenAI API with enhanced error handling
+    console.log("Preparing to call OpenAI API...");
     let responseData;
     try {
+      // Log more details about the request
+      const requestBody = {
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'system',
+            content: 'Rewrite the user\'s message in a professional, polite corporate tone. Maintain the original intent, but improve tone, clarity, and professionalism.'
+          },
+          {
+            role: 'user',
+            content: text
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 1000
+      };
+      
+      console.log("Request body prepared:", JSON.stringify({
+        model: requestBody.model,
+        messages: [
+          { role: "system", content: requestBody.messages[0].content.substring(0, 50) + "..." },
+          { role: "user", content: "..." }
+        ]
+      }));
+      
+      console.log("Calling OpenAI API at: https://api.openai.com/v1/chat/completions");
+      
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${openaiApiKey}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          messages: [
-            {
-              role: 'system',
-              content: 'Rewrite the user\'s message in a professional, polite corporate tone. Maintain the original intent, but improve tone, clarity, and professionalism.'
-            },
-            {
-              role: 'user',
-              content: text
-            }
-          ],
-          temperature: 0.7,
-          max_tokens: 1000
-        }),
+        body: JSON.stringify(requestBody),
       });
 
+      // Log the raw response status and headers
+      console.log(`OpenAI API response status: ${response.status}`);
+      console.log(`OpenAI API response statusText: ${response.statusText}`);
+      
+      // Check for non-OK response
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error('OpenAI API error response:', errorData);
-        throw new Error(errorData.error?.message || `OpenAI API request failed with status: ${response.status}`);
+        const errorText = await response.text();
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+          console.error('OpenAI API error response:', errorData);
+        } catch (e) {
+          console.error('OpenAI API returned non-JSON error:', errorText);
+          errorData = { error: { message: `API returned status ${response.status} with non-JSON response` } };
+        }
+        
+        throw new Error(
+          errorData.error?.message || 
+          `OpenAI API request failed with status: ${response.status} - ${response.statusText}`
+        );
       }
 
       responseData = await response.json();
-      console.log("OpenAI API responded successfully");
+      console.log("OpenAI API responded successfully with data structure:", Object.keys(responseData).join(', '));
+      
+      if (responseData.choices && responseData.choices.length > 0) {
+        console.log("Got choices array with length:", responseData.choices.length);
+        if (responseData.choices[0].message) {
+          console.log("Message content excerpt:", responseData.choices[0].message.content.substring(0, 50) + "...");
+        } else {
+          console.error("Message property missing in first choice");
+        }
+      } else {
+        console.error("Choices array is empty or missing");
+      }
+      
     } catch (error) {
       console.error('Error calling OpenAI API:', error);
       return new Response(
         JSON.stringify({ 
           error: "Failed to call OpenAI API", 
-          details: error.message || "Unknown OpenAI API error" 
+          details: error.message || "Unknown OpenAI API error",
+          stack: error.stack || "No stack trace available"
         }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
@@ -112,7 +158,8 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           error: "Invalid response format from OpenAI API", 
-          details: "Response did not contain expected data structure" 
+          details: "Response did not contain expected data structure",
+          rawResponse: JSON.stringify(responseData).substring(0, 500) // Only include first 500 chars for security
         }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
@@ -146,7 +193,7 @@ serve(async (req) => {
       JSON.stringify({ 
         error: "Server error", 
         details: error.message || "Unknown error occurred",
-        stack: error.stack
+        stack: error.stack || "No stack trace available"
       }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

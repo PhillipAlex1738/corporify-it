@@ -15,12 +15,14 @@ export const useCorporify = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [history, setHistory] = useState<CorporifyHistory[]>([]);
   const [lastError, setLastError] = useState<string | null>(null);
+  const [apiDiagnostics, setApiDiagnostics] = useState<any>(null);
   const { toast } = useToast();
   const { user } = useAuth();
 
   const corporifyText = async (originalText: string): Promise<string> => {
     setIsLoading(true);
     setLastError(null);
+    setApiDiagnostics(null);
 
     // Check user limits
     if (!user) {
@@ -62,17 +64,30 @@ export const useCorporify = () => {
       if (error) {
         console.error("Supabase Edge Function error:", error);
         setLastError(error.message || 'Failed to corporify text');
+        setApiDiagnostics({
+          type: 'edge_function_error',
+          error: error
+        });
         throw new Error(error.message || 'Failed to corporify text');
       }
 
       if (!data) {
         console.error("Edge function returned empty data");
         setLastError('Empty response from API');
+        setApiDiagnostics({
+          type: 'empty_response'
+        });
         throw new Error('Empty response from API');
       }
       
       if (!data.corporateText) {
         console.error("Edge function response missing corporateText:", data);
+        
+        // Store raw response for diagnostics
+        setApiDiagnostics({
+          type: 'invalid_response_format',
+          rawResponse: data
+        });
         
         // If we got an error response, use that
         if (data.error) {
@@ -112,6 +127,15 @@ export const useCorporify = () => {
     } catch (error: any) {
       console.error('Corporification failed', error);
       setLastError(error.message || "Unknown error occurred");
+      
+      // If we haven't set diagnostics yet, set generic error
+      if (!apiDiagnostics) {
+        setApiDiagnostics({
+          type: 'unknown_error',
+          error: error
+        });
+      }
+      
       toast({
         title: "Corporification failed",
         description: error.message || "Please try again later.",
@@ -143,6 +167,7 @@ export const useCorporify = () => {
     saveFeedback,
     isLoading,
     history,
-    lastError
+    lastError,
+    apiDiagnostics
   };
 };

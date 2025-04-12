@@ -3,19 +3,21 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Loader2, Copy, MessageCircle, ThumbsUp, ThumbsDown, Sparkles, RefreshCw, AlertCircle } from 'lucide-react';
+import { Loader2, Copy, MessageCircle, ThumbsUp, ThumbsDown, Sparkles, RefreshCw, AlertCircle, Terminal } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { useCorporify } from '@/hooks/useCorporify';
 import { useAuth } from '@/hooks/useAuth';
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const CorporifyForm = () => {
   const [inputText, setInputText] = useState('Hey team, I think we need to talk about the new feature. It seems like there\'s a problem with it and we should fix it soon.');
   const [outputText, setOutputText] = useState('');
   const [apiErrorDetails, setApiErrorDetails] = useState<string | null>(null);
-  const { corporifyText, saveFeedback, isLoading, lastError } = useCorporify();
+  const { corporifyText, saveFeedback, isLoading, lastError, apiDiagnostics } = useCorporify();
   const { user } = useAuth();
   const { toast } = useToast();
   const [feedbackGiven, setFeedbackGiven] = useState<'like' | 'dislike' | null>(null);
+  const [showDiagnostics, setShowDiagnostics] = useState(false);
   
   const handleCorporify = async () => {
     if (!inputText.trim()) {
@@ -28,6 +30,7 @@ const CorporifyForm = () => {
     }
     
     setApiErrorDetails(null);
+    setShowDiagnostics(false);
     try {
       const result = await corporifyText(inputText);
       if (result) {
@@ -73,6 +76,10 @@ const CorporifyForm = () => {
     }
   };
 
+  const toggleDiagnostics = () => {
+    setShowDiagnostics(!showDiagnostics);
+  };
+
   const isButtonDisabled = isLoading || !user || (user && !user.isPremium && user.usageCount >= user.usageLimit);
 
   return (
@@ -111,18 +118,42 @@ const CorporifyForm = () => {
       </Button>
       
       {apiErrorDetails && (
-        <div className="mt-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md">
-          <div className="flex items-start">
-            <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="font-medium">API Error Detected</p>
-              <p className="text-sm mt-1">{apiErrorDetails}</p>
-              <p className="text-sm mt-2 text-red-600">
-                Please check that the OpenAI API key is correctly configured in Supabase Edge Function Secrets.
-              </p>
+        <Alert className="mt-4" variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle className="flex items-center justify-between">
+            <span>API Error Detected</span>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={toggleDiagnostics}
+              className="ml-auto h-6 px-2 text-xs"
+            >
+              <Terminal className="h-3 w-3 mr-1" />
+              {showDiagnostics ? "Hide" : "Show"} Diagnostics
+            </Button>
+          </AlertTitle>
+          <AlertDescription>
+            <p className="mt-1">{apiErrorDetails}</p>
+            
+            <div className="mt-2 text-sm">
+              <p className="font-medium">Possible Solutions:</p>
+              <ol className="list-decimal pl-5 mt-1 space-y-1">
+                <li>Verify the OpenAI API key is correctly formatted and active</li>
+                <li>Check that all required Supabase secrets are properly configured</li>
+                <li>Try refreshing the page and attempting again</li>
+                <li>Contact support if the issue persists</li>
+              </ol>
             </div>
-          </div>
-        </div>
+            
+            {showDiagnostics && apiDiagnostics && (
+              <div className="mt-3 p-3 bg-black/10 rounded text-xs font-mono overflow-auto max-h-48">
+                <pre className="whitespace-pre-wrap break-all">
+                  {JSON.stringify(apiDiagnostics, null, 2)}
+                </pre>
+              </div>
+            )}
+          </AlertDescription>
+        </Alert>
       )}
       
       {outputText && (
