@@ -199,8 +199,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       // Auto-login after signup without requiring email confirmation
-      // Fix: Add proper null checking for data.user
-      if (data && data.user !== null) {
+      // Fixed: Properly check for null and undefined
+      if (data && data.user && data.user !== null) {
         await login(email, password);
       }
 
