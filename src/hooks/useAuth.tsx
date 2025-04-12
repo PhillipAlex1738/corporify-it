@@ -1,66 +1,23 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/integrations/supabase/client';
-import { User as SupabaseUser, Session } from '@supabase/supabase-js';
-
-type User = {
-  id: string;
-  email: string;
-  isPremium: boolean;
-  usageCount: number;
-  usageLimit: number;
-};
-
-type AuthContextType = {
-  user: User | null;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
-  logout: () => void;
-  googleSignIn: () => Promise<void>;
-  upgradeAccount: () => Promise<void>;
-};
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+import { Session } from '@supabase/supabase-js';
+import { AuthContext } from './useAuthContext';
+import { transformUser, saveUserToLocalStorage, User } from '@/utils/userTransform';
+import { 
+  loginWithEmailAndPassword, 
+  signUpWithEmailAndPassword, 
+  signInWithGoogle, 
+  signOut,
+  upgradeUserAccount
+} from '@/services/authService';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [session, setSession] = useState<Session | null>(null);
   const { toast } = useToast();
-
-  // Transform Supabase user to our app's User type
-  const transformUser = (supabaseUser: SupabaseUser | null): User | null => {
-    if (!supabaseUser) return null;
-    
-    // Get existing user data from localStorage if available
-    const existingUserData = localStorage.getItem('corporify_user');
-    let usageCount = 0;
-    let isPremium = false;
-    
-    if (existingUserData) {
-      try {
-        const parsedData = JSON.parse(existingUserData);
-        usageCount = parsedData.usageCount || 0;
-        isPremium = parsedData.isPremium || false;
-      } catch (e) {
-        console.error('Failed to parse existing user data', e);
-      }
-    }
-    
-    return {
-      id: supabaseUser.id,
-      email: supabaseUser.email || '',
-      isPremium,
-      usageCount,
-      usageLimit: 3, // Default limit for free users
-    };
-  };
-
-  // Save user data to localStorage
-  const saveUserToLocalStorage = (userData: User) => {
-    localStorage.setItem('corporify_user', JSON.stringify(userData));
-  };
 
   useEffect(() => {
     // Set up auth state listener
@@ -99,33 +56,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      console.log("Attempting login with:", email);
+      const { success, error, isEmailNotConfirmed } = await loginWithEmailAndPassword(email, password);
       
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-
-      if (error) {
-        console.error("Login error:", error.message);
-        
-        // If the error is "Email not confirmed", we'll show a success message anyway
-        if (error.message.includes("Email not confirmed")) {
-          toast({
-            title: "Login successful",
-            description: "Welcome to Corporify!",
-          });
-          return; // Return early without throwing the error
-        }
-        
+      if (!success && error) {
         throw error;
       }
 
-      console.log("Login successful, data:", data);
-
       toast({
-        title: "Logged in successfully",
-        description: "Welcome back! Your data will be stored in Supabase.",
+        title: isEmailNotConfirmed ? "Login successful" : "Logged in successfully",
+        description: isEmailNotConfirmed ? "Welcome to Corporify!" : "Welcome back! Your data will be stored in Supabase.",
       });
     } catch (error: any) {
       console.error('Login failed', error);
@@ -142,34 +81,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signUp = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: window.location.origin
-        }
-      });
+      const { success, error, user: newUser } = await signUpWithEmailAndPassword(email, password);
 
-      if (error) {
+      if (!success && error) {
         throw error;
       }
 
-      // Auto-login after signup without requiring email confirmation
-      // Only proceed if both data and data.user are non-null
-      if (data && data.user) {
-        console.log("Signup successful, data:", data);
-        // Instead of calling login, directly set the user state
-        const newUser = transformUser(data.user);
-        if (newUser) {
-          setUser(newUser);
-          saveUserToLocalStorage(newUser);
-          
-          toast({
-            title: "Account created and logged in",
-            description: "Welcome to Corporify! You can start using the app immediately.",
-          });
-          return;
-        }
+      if (newUser) {
+        setUser(newUser);
+        saveUserToLocalStorage(newUser);
+        
+        toast({
+          title: "Account created and logged in",
+          description: "Welcome to Corporify! You can start using the app immediately.",
+        });
+        return;
       }
 
       toast({
@@ -191,15 +117,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const googleSignIn = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google'
-      });
+      const { error } = await signInWithGoogle();
 
       if (error) {
         throw error;
       }
 
-      // The redirect happens automatically - this toast may not be seen
       toast({
         title: "Redirecting to Google",
         description: "Please complete sign in with Google.",
@@ -218,7 +141,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     try {
-      await supabase.auth.signOut();
+      await signOut();
       toast({
         title: "Logged out",
         description: "You've been logged out successfully.",
@@ -236,13 +159,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const upgradeAccount = async () => {
     try {
       if (user) {
-        const upgradedUser = {
-          ...user,
-          isPremium: true,
-          usageLimit: Infinity,
-        };
-        saveUserToLocalStorage(upgradedUser);
+        const upgradedUser = upgradeUserAccount(user);
         setUser(upgradedUser);
+        
         toast({
           title: "Account upgraded",
           description: "You now have unlimited access to Corporify!",
@@ -278,3 +197,5 @@ export const useAuth = () => {
   }
   return context;
 };
+
+export { AuthContext };
