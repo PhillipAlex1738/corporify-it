@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/integrations/supabase/client';
@@ -68,12 +67,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, newSession) => {
         console.log('Auth state changed:', event, newSession);
+        // Never call other Supabase functions inside this callback directly
         setSession(newSession);
         const newUser = transformUser(newSession?.user || null);
         setUser(newUser);
         
         if (newUser) {
-          saveUserToLocalStorage(newUser);
+          setTimeout(() => {
+            // Move operations to a new execution context to prevent deadlock
+            saveUserToLocalStorage(newUser);
+          }, 0);
         } else if (event === 'SIGNED_OUT') {
           localStorage.removeItem('corporify_user');
         }
@@ -98,7 +101,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log("Attempting login with:", email);
       
-      // Simple login without special handling for email not confirmed
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
@@ -119,6 +121,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw error;
       }
 
+      console.log("Login successful, data:", data);
+
       toast({
         title: "Logged in successfully",
         description: "Welcome back! Your data will be stored in Supabase.",
@@ -132,18 +136,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  // Helper function to get user ID by email
-  const getUserIdByEmail = async (email: string): Promise<string> => {
-    try {
-      // This is a workaround as we don't have direct access to get user by email
-      // In a real implementation, you might need a custom API or edge function for this
-      const { data } = await supabase.auth.signInWithOtp({ email });
-      return data?.user?.id || '';
-    } catch {
-      return '';
     }
   };
 
@@ -163,7 +155,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       // Auto-login after signup without requiring email confirmation
-      if (data && data.user) {  // Fixed the null check here
+      // Only proceed if both data and data.user are non-null
+      if (data && data.user) {
+        console.log("Signup successful, data:", data);
         // Instead of calling login, directly set the user state
         const newUser = transformUser(data.user);
         if (newUser) {
