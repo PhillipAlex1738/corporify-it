@@ -169,10 +169,14 @@ export const useCorporify = () => {
           toast({
             title: "Need more help?",
             description: "Visit our support page to tell us how we can improve.",
-            action: {
-              label: "Support",
-              onClick: () => window.location.href = "/support",
-            },
+            action: (
+              <button
+                onClick={() => window.location.href = "/support"}
+                className="bg-primary text-primary-foreground h-8 rounded-md px-3 text-xs"
+              >
+                Support
+              </button>
+            ),
           });
         }, 3000);
       }
