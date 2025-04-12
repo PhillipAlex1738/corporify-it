@@ -1,10 +1,10 @@
 
 import { useState } from 'react';
-import { AuthProvider } from '@/hooks/useAuth';
+import { AuthProvider } from '@/hooks/auth';
 import Header from '@/components/Header';
 import CorporifyForm from '@/components/CorporifyForm';
 import UsageDisplay from '@/components/UsageDisplay';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/auth';
 
 const AppContent = () => {
   const { user } = useAuth();
