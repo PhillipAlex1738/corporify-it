@@ -43,7 +43,7 @@ export const useCorporify = () => {
 
     try {
       console.log("Calling Supabase Edge Function with:", { 
-        text: originalText, 
+        text: originalText.substring(0, 50) + (originalText.length > 50 ? "..." : ""), 
         userId: user.id 
       });
 
@@ -51,7 +51,7 @@ export const useCorporify = () => {
       const { data, error } = await supabase.functions.invoke('corporify', {
         body: { 
           text: originalText,
-          userId: user ? user.id : null
+          userId: user.id
         }
       });
 
@@ -61,6 +61,11 @@ export const useCorporify = () => {
       }
 
       console.log("Supabase Edge Function response:", data);
+      
+      if (!data || !data.corporateText) {
+        throw new Error('Invalid response format from API');
+      }
+      
       const corporateText = data.corporateText;
 
       // Update usage count in localStorage
@@ -86,11 +91,11 @@ export const useCorporify = () => {
       });
 
       return corporateText;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Corporification failed', error);
       toast({
         title: "Corporification failed",
-        description: "Please try again later.",
+        description: error.message || "Please try again later.",
         variant: "destructive",
       });
       return "";
@@ -101,7 +106,11 @@ export const useCorporify = () => {
 
   const saveFeedback = async (originalText: string, corporateText: string, isHelpful: boolean): Promise<boolean> => {
     try {
-      console.log('Feedback received:', { originalText, corporateText, isHelpful });
+      console.log('Feedback received:', { 
+        originalText: originalText.substring(0, 50) + (originalText.length > 50 ? "..." : ""), 
+        corporateText: corporateText.substring(0, 50) + (corporateText.length > 50 ? "..." : ""), 
+        isHelpful
+      });
       // In this version, we don't save feedback to the database
       return true;
     } catch (error) {

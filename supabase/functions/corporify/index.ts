@@ -20,8 +20,28 @@ serve(async (req) => {
   }
 
   try {
-    const { text, userId } = await req.json();
+    // Parse request body
+    let requestData;
+    try {
+      requestData = await req.json();
+    } catch (e) {
+      console.error("Failed to parse request body:", e);
+      return new Response(
+        JSON.stringify({ error: "Invalid request format" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const { text, userId } = requestData;
     const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
+    
+    if (!openaiApiKey) {
+      console.error("Missing OpenAI API key");
+      return new Response(
+        JSON.stringify({ error: "Server configuration error" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
     
     if (!text) {
       return new Response(
@@ -30,6 +50,8 @@ serve(async (req) => {
       );
     }
 
+    console.log("Processing text:", text.substring(0, 50) + (text.length > 50 ? "..." : ""));
+    
     // Call OpenAI API
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -55,21 +77,27 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      console.error('OpenAI API error:', error);
-      throw new Error(error.error?.message || 'OpenAI API request failed');
+      const errorData = await response.json();
+      console.error('OpenAI API error:', errorData);
+      throw new Error(errorData.error?.message || 'OpenAI API request failed');
     }
 
     const data = await response.json();
     const corporateText = data.choices[0].message.content;
+    console.log("Generated response:", corporateText.substring(0, 50) + (corporateText.length > 50 ? "..." : ""));
 
     // Log usage in the database (optional)
     if (userId) {
-      await supabase.from('usage_logs').insert({
-        user_id: userId,
-        prompt: text,
-        tokens_used: data.usage?.total_tokens || 0
-      });
+      try {
+        await supabase.from('usage_logs').insert({
+          user_id: userId,
+          prompt: text,
+          tokens_used: data.usage?.total_tokens || 0
+        });
+      } catch (logError) {
+        console.error("Failed to log usage:", logError);
+        // Continue processing even if logging fails
+      }
     }
 
     return new Response(
@@ -79,7 +107,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error.message || "Unknown error occurred" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

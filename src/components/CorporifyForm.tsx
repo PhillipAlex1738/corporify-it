@@ -15,6 +15,7 @@ const CorporifyForm = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [feedbackGiven, setFeedbackGiven] = useState<'like' | 'dislike' | null>(null);
+  const [error, setError] = useState<string | null>(null);
   
   const handleCorporify = async () => {
     if (!inputText.trim()) {
@@ -26,10 +27,20 @@ const CorporifyForm = () => {
       return;
     }
     
-    const result = await corporifyText(inputText);
-    if (result) {
-      setOutputText(result);
-      setFeedbackGiven(null);
+    setError(null);
+    try {
+      const result = await corporifyText(inputText);
+      if (result) {
+        setOutputText(result);
+        setFeedbackGiven(null);
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to process your request");
+      toast({
+        title: "Error",
+        description: err.message || "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -60,6 +71,8 @@ const CorporifyForm = () => {
     }
   };
 
+  const isButtonDisabled = isLoading || !user || (user && !user.isPremium && user.usageCount >= user.usageLimit);
+
   return (
     <div>
       <div className="mb-4">
@@ -78,7 +91,7 @@ const CorporifyForm = () => {
       
       <Button 
         onClick={handleCorporify}
-        disabled={isLoading || !user || (user && !user.isPremium && user.usageCount >= user.usageLimit)}
+        disabled={isButtonDisabled}
         className="w-full bg-corporate-800 hover:bg-corporate-900 shine-effect group"
         size="lg"
       >
@@ -94,6 +107,12 @@ const CorporifyForm = () => {
           </>
         )}
       </Button>
+      
+      {error && (
+        <div className="mt-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm">
+          {error}
+        </div>
+      )}
       
       {outputText && (
         <Card className="mt-6 border shadow-sm">
