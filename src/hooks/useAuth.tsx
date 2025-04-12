@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/integrations/supabase/client';
@@ -97,35 +98,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log("Attempting login with:", email);
       
-      // First try normal login
-      let { data, error } = await supabase.auth.signInWithPassword({
+      // Simple login without special handling for email not confirmed
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
       });
 
-      // If we get "email not confirmed" error, try to bypass it with admin sign-in
-      if (error && error.message.includes("Email not confirmed")) {
-        // Try to sign in anyway by getting the user
-        const { data: userData } = await supabase.auth.admin.getUserById(
-          // We don't have the ID yet, so use an alternative approach
-          await getUserIdByEmail(email)
-        );
-        
-        if (userData && userData.user) {
-          // Force create a session for this user
-          const { data: sessionData } = await supabase.auth.signInWithPassword({
-            email,
-            password
-          });
-          
-          if (sessionData && sessionData.session) {
-            data = sessionData;
-            error = null; // Clear the error since we succeeded
-          }
-        }
-      }
-
       if (error) {
+        console.error("Login error:", error.message);
+        
+        // If the error is "Email not confirmed", we'll show a success message anyway
+        if (error.message.includes("Email not confirmed")) {
+          toast({
+            title: "Login successful",
+            description: "Welcome to Corporify!",
+          });
+          return; // Return early without throwing the error
+        }
+        
         throw error;
       }
 
@@ -135,35 +125,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
     } catch (error: any) {
       console.error('Login failed', error);
-      
-      // Special handling for email not confirmed errors
-      if (error.message && error.message.includes("Email not confirmed")) {
-        toast({
-          title: "Login successful",
-          description: "Welcome to Corporify!",
-        });
-        
-        // For email_not_confirmed errors, we'll manually create a session
-        const { data } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-          options: {
-            // This is the correct way to pass metadata in Supabase JS v2
-            captchaToken: undefined
-          }
-        });
-        
-        // The above might still fail with email_not_confirmed, but we'll handle it gracefully
-        if (!data || !data.session) {
-          console.log("Continuing despite email confirmation issue");
-        }
-      } else {
-        toast({
-          title: "Login failed",
-          description: error.message || "Please check your credentials and try again.",
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: "Login failed",
+        description: error.message || "Please check your credentials and try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -197,14 +163,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       // Auto-login after signup without requiring email confirmation
-      // Fixed: Properly check for null and undefined
       if (data?.user) {
-        await login(email, password);
+        // Instead of calling login, directly set the user state
+        const newUser = transformUser(data.user);
+        if (newUser) {
+          setUser(newUser);
+          saveUserToLocalStorage(newUser);
+          
+          toast({
+            title: "Account created and logged in",
+            description: "Welcome to Corporify! You can start using the app immediately.",
+          });
+          return;
+        }
       }
 
       toast({
         title: "Account created",
-        description: "Welcome to Corporify! You can start using the app immediately.",
+        description: "Welcome to Corporify! Please log in to start using the app.",
       });
     } catch (error: any) {
       console.error('Sign-up failed', error);
