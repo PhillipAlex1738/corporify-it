@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { AuthProvider } from '@/hooks/auth';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import CorporifyForm from '@/components/CorporifyForm';
 import UsageDisplay from '@/components/UsageDisplay';
 import { useAuth } from '@/hooks/auth';
@@ -43,6 +44,7 @@ const Index = () => {
         <main className="flex-1">
           <AppContent />
         </main>
+        <Footer />
       </div>
     </AuthProvider>
   );

@@ -154,7 +154,29 @@ export const useCorporify = () => {
         corporateText: corporateText.substring(0, 50) + (corporateText.length > 50 ? "..." : ""), 
         isHelpful
       });
-      // In this version, we don't save feedback to the database
+      
+      // Show toast based on feedback
+      toast({
+        title: isHelpful ? "Thanks for your feedback!" : "We'll do better",
+        description: isHelpful 
+          ? "We're glad the transformation was helpful." 
+          : "Your feedback helps us improve. Consider contacting support with details.",
+      });
+      
+      // If feedback was negative, suggest support
+      if (!isHelpful && user) {
+        setTimeout(() => {
+          toast({
+            title: "Need more help?",
+            description: "Visit our support page to tell us how we can improve.",
+            action: {
+              label: "Support",
+              onClick: () => window.location.href = "/support",
+            },
+          });
+        }, 3000);
+      }
+      
       return true;
     } catch (error) {
       console.error('Error saving feedback:', error);
