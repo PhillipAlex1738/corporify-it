@@ -14,11 +14,13 @@ export type CorporifyHistory = {
 export const useCorporify = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [history, setHistory] = useState<CorporifyHistory[]>([]);
+  const [lastError, setLastError] = useState<string | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
 
   const corporifyText = async (originalText: string): Promise<string> => {
     setIsLoading(true);
+    setLastError(null);
 
     // Check user limits
     if (!user) {
@@ -55,15 +57,31 @@ export const useCorporify = () => {
         }
       });
 
+      console.log("Edge function response received:", data);
+
       if (error) {
         console.error("Supabase Edge Function error:", error);
+        setLastError(error.message || 'Failed to corporify text');
         throw new Error(error.message || 'Failed to corporify text');
       }
 
-      console.log("Supabase Edge Function response:", data);
+      if (!data) {
+        console.error("Edge function returned empty data");
+        setLastError('Empty response from API');
+        throw new Error('Empty response from API');
+      }
       
-      if (!data || !data.corporateText) {
-        throw new Error('Invalid response format from API');
+      if (!data.corporateText) {
+        console.error("Edge function response missing corporateText:", data);
+        
+        // If we got an error response, use that
+        if (data.error) {
+          setLastError(`API error: ${data.error}${data.details ? ` - ${data.details}` : ''}`);
+          throw new Error(`API error: ${data.error}`);
+        } else {
+          setLastError('Invalid response format from API');
+          throw new Error('Invalid response format from API');
+        }
       }
       
       const corporateText = data.corporateText;
@@ -93,6 +111,7 @@ export const useCorporify = () => {
       return corporateText;
     } catch (error: any) {
       console.error('Corporification failed', error);
+      setLastError(error.message || "Unknown error occurred");
       toast({
         title: "Corporification failed",
         description: error.message || "Please try again later.",
@@ -124,5 +143,6 @@ export const useCorporify = () => {
     saveFeedback,
     isLoading,
     history,
+    lastError
   };
 };

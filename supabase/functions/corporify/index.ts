@@ -20,10 +20,13 @@ serve(async (req) => {
   }
 
   try {
+    console.log("Function invoked: corporify");
+    
     // Parse request body
     let requestData;
     try {
       requestData = await req.json();
+      console.log("Request data parsed successfully");
     } catch (e) {
       console.error("Failed to parse request body:", e);
       return new Response(
@@ -35,15 +38,20 @@ serve(async (req) => {
     const { text, userId } = requestData;
     const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
     
+    // Check if the OpenAI API key is available
     if (!openaiApiKey) {
-      console.error("Missing OpenAI API key");
+      console.error("Missing OpenAI API key in environment");
       return new Response(
-        JSON.stringify({ error: "Server configuration error" }),
+        JSON.stringify({ 
+          error: "Server configuration error", 
+          details: "OpenAI API key is not configured" 
+        }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
     
     if (!text) {
+      console.error("No text provided in request");
       return new Response(
         JSON.stringify({ error: "No text provided" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -51,39 +59,66 @@ serve(async (req) => {
     }
 
     console.log("Processing text:", text.substring(0, 50) + (text.length > 50 ? "..." : ""));
+    console.log("OpenAI API key available (first 5 chars):", openaiApiKey.substring(0, 5) + "...");
     
     // Call OpenAI API
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openaiApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content: 'Rewrite the user\'s message in a professional, polite corporate tone. Maintain the original intent, but improve tone, clarity, and professionalism.'
-          },
-          {
-            role: 'user',
-            content: text
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 1000
-      }),
-    });
+    console.log("Calling OpenAI API...");
+    let responseData;
+    try {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${openaiApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [
+            {
+              role: 'system',
+              content: 'Rewrite the user\'s message in a professional, polite corporate tone. Maintain the original intent, but improve tone, clarity, and professionalism.'
+            },
+            {
+              role: 'user',
+              content: text
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 1000
+        }),
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('OpenAI API error:', errorData);
-      throw new Error(errorData.error?.message || 'OpenAI API request failed');
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('OpenAI API error response:', errorData);
+        throw new Error(errorData.error?.message || `OpenAI API request failed with status: ${response.status}`);
+      }
+
+      responseData = await response.json();
+      console.log("OpenAI API responded successfully");
+    } catch (error) {
+      console.error('Error calling OpenAI API:', error);
+      return new Response(
+        JSON.stringify({ 
+          error: "Failed to call OpenAI API", 
+          details: error.message || "Unknown OpenAI API error" 
+        }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
-    const data = await response.json();
-    const corporateText = data.choices[0].message.content;
+    if (!responseData || !responseData.choices || !responseData.choices[0] || !responseData.choices[0].message) {
+      console.error('Unexpected response format from OpenAI:', responseData);
+      return new Response(
+        JSON.stringify({ 
+          error: "Invalid response format from OpenAI API", 
+          details: "Response did not contain expected data structure" 
+        }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const corporateText = responseData.choices[0].message.content;
     console.log("Generated response:", corporateText.substring(0, 50) + (corporateText.length > 50 ? "..." : ""));
 
     // Log usage in the database (optional)
@@ -92,8 +127,9 @@ serve(async (req) => {
         await supabase.from('usage_logs').insert({
           user_id: userId,
           prompt: text,
-          tokens_used: data.usage?.total_tokens || 0
+          tokens_used: responseData.usage?.total_tokens || 0
         });
+        console.log("Usage logged successfully for user:", userId);
       } catch (logError) {
         console.error("Failed to log usage:", logError);
         // Continue processing even if logging fails
@@ -105,9 +141,13 @@ serve(async (req) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Unhandled error in corporify function:', error);
     return new Response(
-      JSON.stringify({ error: error.message || "Unknown error occurred" }),
+      JSON.stringify({ 
+        error: "Server error", 
+        details: error.message || "Unknown error occurred",
+        stack: error.stack
+      }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
