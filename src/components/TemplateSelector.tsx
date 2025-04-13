@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { 
@@ -11,7 +10,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { FileTemplate } from 'lucide-react';
+import { FileText } from 'lucide-react';
 
 type Template = {
   id: string;
@@ -90,7 +89,7 @@ const TemplateSelector = ({ onSelect }: TemplateSelectorProps) => {
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" className="w-full justify-start" size="sm">
-            <FileTemplate className="mr-2 h-4 w-4" />
+            <FileText className="mr-2 h-4 w-4" />
             Select Template
           </Button>
         </PopoverTrigger>
