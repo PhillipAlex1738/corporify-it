@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { FileText } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 type Template = {
   id: string;
@@ -78,16 +79,20 @@ type TemplateSelectorProps = {
 };
 
 const TemplateSelector = ({ onSelect }: TemplateSelectorProps) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [isOpen, setIsOpen] = useState(false);
+  const { toast } = useToast();
 
-  const filteredTemplates = selectedCategory 
-    ? businessTemplates.filter(t => t.category === selectedCategory)
-    : businessTemplates;
+  const filteredTemplates = selectedCategory === "all" 
+    ? businessTemplates
+    : businessTemplates.filter(t => t.category === selectedCategory);
 
   const handleTemplateSelect = (text: string) => {
     onSelect(text);
     setIsOpen(false);
+    toast({
+      description: "Template selected. You can now edit it before corporifying.",
+    });
   };
 
   return (
@@ -110,7 +115,7 @@ const TemplateSelector = ({ onSelect }: TemplateSelectorProps) => {
                 <SelectValue placeholder="All categories" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All categories</SelectItem>
+                <SelectItem value="all">All categories</SelectItem>
                 {categories.map(category => (
                   <SelectItem key={category} value={category}>{category}</SelectItem>
                 ))}
