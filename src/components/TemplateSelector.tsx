@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { 
@@ -84,6 +85,11 @@ const TemplateSelector = ({ onSelect }: TemplateSelectorProps) => {
     ? businessTemplates.filter(t => t.category === selectedCategory)
     : businessTemplates;
 
+  const handleTemplateSelect = (text: string) => {
+    onSelect(text);
+    setIsOpen(false);
+  };
+
   return (
     <div>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -119,10 +125,7 @@ const TemplateSelector = ({ onSelect }: TemplateSelectorProps) => {
                   key={template.id}
                   variant="ghost"
                   className="w-full justify-start text-left font-normal p-2 h-auto"
-                  onClick={() => {
-                    onSelect(template.text);
-                    setIsOpen(false);
-                  }}
+                  onClick={() => handleTemplateSelect(template.text)}
                 >
                   <div>
                     <div className="font-medium">{template.name}</div>

@@ -98,6 +98,10 @@ const CorporifyForm = () => {
   
   const handleSelectTemplate = (templateText: string) => {
     setInputText(templateText);
+    // Add a toast notification for better UX
+    toast({
+      description: "Template selected. You can now edit it before corporifying.",
+    });
   };
   
   const handleSelectFromHistory = (text: string) => {
