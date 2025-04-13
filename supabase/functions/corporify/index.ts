@@ -13,6 +13,15 @@ const supabaseUrl = "https://omxtrdmtdrdovculcywf.supabase.co";
 const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+// Tone specific system prompts
+const tonePrompts = {
+  professional: "Rewrite the user's message in a professional, polite corporate tone. Maintain the original intent, but improve tone, clarity, and professionalism.",
+  formal: "Rewrite the user's message in a highly formal, proper business tone. Use sophisticated language, complete sentences, and traditional business etiquette.",
+  friendly: "Rewrite the user's message in a warm, personable yet professional tone. Keep it polite and business-appropriate while adding a touch of friendliness and approachability.",
+  concise: "Rewrite the user's message in a brief, direct, and efficient manner. Remove unnecessary words and get straight to the point while maintaining professionalism.",
+  diplomatic: "Rewrite the user's message using tactful, diplomatic language. Focus on constructive framing, avoiding negative implications, and promoting harmony while preserving the core message."
+};
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -53,7 +62,7 @@ serve(async (req) => {
       );
     }
 
-    const { text, userId } = requestData;
+    const { text, userId, tone = 'professional' } = requestData;
     
     if (!text) {
       console.error("No text provided in request");
@@ -63,7 +72,10 @@ serve(async (req) => {
       );
     }
 
-    console.log("Processing text:", text.substring(0, 50) + (text.length > 50 ? "..." : ""));
+    console.log("Processing text with tone:", tone);
+    
+    // Get the appropriate system prompt based on tone
+    const systemPrompt = tonePrompts[tone] || tonePrompts.professional;
     
     // Call OpenAI API with enhanced error handling
     console.log("Preparing to call OpenAI API...");
@@ -75,7 +87,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'Rewrite the user\'s message in a professional, polite corporate tone. Maintain the original intent, but improve tone, clarity, and professionalism.'
+            content: systemPrompt
           },
           {
             role: 'user',
@@ -86,13 +98,7 @@ serve(async (req) => {
         max_tokens: 1000
       };
       
-      console.log("Request body prepared:", JSON.stringify({
-        model: requestBody.model,
-        messages: [
-          { role: "system", content: requestBody.messages[0].content.substring(0, 50) + "..." },
-          { role: "user", content: "..." }
-        ]
-      }));
+      console.log("Request body prepared with tone:", tone);
       
       console.log("Calling OpenAI API at: https://api.openai.com/v1/chat/completions");
       

@@ -1,8 +1,10 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+
+export type ToneOption = 'professional' | 'formal' | 'friendly' | 'concise' | 'diplomatic';
 
 export type CorporifyHistory = {
   id: string;
@@ -14,12 +16,36 @@ export type CorporifyHistory = {
 export const useCorporify = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [history, setHistory] = useState<CorporifyHistory[]>([]);
+  const [savedMessages, setSavedMessages] = useState<CorporifyHistory[]>([]);
   const [lastError, setLastError] = useState<string | null>(null);
   const [apiDiagnostics, setApiDiagnostics] = useState<any>(null);
   const { toast } = useToast();
   const { user } = useAuth();
 
-  const corporifyText = async (originalText: string): Promise<string> => {
+  // Load saved messages from localStorage on mount
+  useEffect(() => {
+    const savedMessagesJSON = localStorage.getItem('corporify_saved_messages');
+    if (savedMessagesJSON) {
+      try {
+        const parsedMessages = JSON.parse(savedMessagesJSON);
+        // Ensure timestamps are converted back to Date objects
+        const messagesWithDates = parsedMessages.map((msg: any) => ({
+          ...msg,
+          timestamp: new Date(msg.timestamp)
+        }));
+        setSavedMessages(messagesWithDates);
+      } catch (e) {
+        console.error('Failed to parse saved messages from localStorage', e);
+      }
+    }
+  }, []);
+
+  // Save messages to localStorage when they change
+  useEffect(() => {
+    localStorage.setItem('corporify_saved_messages', JSON.stringify(savedMessages));
+  }, [savedMessages]);
+
+  const corporifyText = async (originalText: string, tone: ToneOption = 'professional'): Promise<string> => {
     setIsLoading(true);
     setLastError(null);
     setApiDiagnostics(null);
@@ -48,14 +74,16 @@ export const useCorporify = () => {
     try {
       console.log("Calling Supabase Edge Function with:", { 
         text: originalText.substring(0, 50) + (originalText.length > 50 ? "..." : ""), 
-        userId: user.id 
+        userId: user.id,
+        tone: tone
       });
 
       // Call our Supabase Edge Function
       const { data, error } = await supabase.functions.invoke('corporify', {
         body: { 
           text: originalText,
-          userId: user.id
+          userId: user.id,
+          tone: tone
         }
       });
 
@@ -188,12 +216,34 @@ export const useCorporify = () => {
     }
   };
 
+  const toggleSaveMessage = (item: CorporifyHistory) => {
+    const isAlreadySaved = savedMessages.some(msg => msg.id === item.id);
+    
+    if (isAlreadySaved) {
+      // Remove from saved messages
+      setSavedMessages(saved => saved.filter(msg => msg.id !== item.id));
+      toast({ description: "Removed from saved messages" });
+    } else {
+      // Add to saved messages
+      setSavedMessages(saved => [item, ...saved]);
+      toast({ description: "Added to saved messages" });
+    }
+  };
+
+  const removeFromSaved = (id: string) => {
+    setSavedMessages(saved => saved.filter(msg => msg.id !== id));
+    toast({ description: "Removed from saved messages" });
+  };
+
   return {
     corporifyText,
     saveFeedback,
     isLoading,
     history,
     lastError,
-    apiDiagnostics
+    apiDiagnostics,
+    savedMessages,
+    toggleSaveMessage,
+    removeFromSaved
   };
 };
