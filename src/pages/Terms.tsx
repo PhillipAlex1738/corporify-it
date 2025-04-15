@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
@@ -21,7 +20,7 @@ const Terms = () => {
           <div className="prose prose-slate max-w-none">
             <h2>1. Acceptance of Terms</h2>
             <p>
-              By accessing or using Corporify, you agree to be bound by these Terms of Service. If you don't agree to these terms, you should not use our service.
+              By accessing or using Corporify It, you agree to be bound by these Terms of Service. If you don't agree to these terms, you should not use our service.
             </p>
             <h2>2. Use of Service</h2>
             <p>

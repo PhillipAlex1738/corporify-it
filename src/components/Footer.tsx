@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="container flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Corporify. All rights reserved.
+            © {new Date().getFullYear()} Corporify It. All rights reserved.
           </p>
         </div>
         <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm">

@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
@@ -21,7 +20,7 @@ const Privacy = () => {
           <div className="prose prose-slate max-w-none">
             <h2>1. Introduction</h2>
             <p>
-              At Corporify, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our text transformation service.
+              At Corporify It, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our text transformation service.
             </p>
             <h2>2. Information We Collect</h2>
             <p>

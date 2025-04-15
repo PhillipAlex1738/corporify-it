@@ -16,7 +16,7 @@ const Header = () => {
       <div className="container flex justify-between items-center">
         <div className="flex items-center gap-2">
           <div className="corporify-gradient p-2 rounded-lg">
-            <h1 className="text-white font-bold text-xl">Corporify</h1>
+            <h1 className="text-white font-bold text-xl">Corporify It</h1>
           </div>
           <p className="text-sm text-muted-foreground hidden md:block">
             Transform casual text into polished corporate language
