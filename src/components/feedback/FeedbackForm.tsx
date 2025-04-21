@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -19,7 +18,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-// Create a schema for form validation
 const feedbackSchema = z.object({
   user_email: z.string().email("Please enter a valid email address"),
   functionality_rating: z.number().int().min(1).max(5),
@@ -49,7 +47,6 @@ const FeedbackForm = () => {
   const onSubmit = async (data: FeedbackFormData) => {
     setIsSubmitting(true);
     try {
-      // Explicitly type the insert data to match Supabase's expectations
       const { error } = await supabase.from("feedback").insert([{
         user_email: data.user_email,
         functionality_rating: data.functionality_rating,
@@ -69,12 +66,12 @@ const FeedbackForm = () => {
       });
       
       navigate("/");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Feedback submission error:", error);
       toast({
         variant: "destructive",
         title: "Error submitting feedback",
-        description: "Please try again later.",
+        description: error.message || "Please try again later.",
       });
     } finally {
       setIsSubmitting(false);
