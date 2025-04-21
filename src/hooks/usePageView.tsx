@@ -12,6 +12,7 @@ export const usePageView = () => {
   useEffect(() => {
     const trackPageView = async () => {
       try {
+        console.log('Tracking page view for:', location.pathname);
         const sessionId = getOrCreateSessionId();
         
         // Updated to match the expected parameter structure
@@ -21,6 +22,8 @@ export const usePageView = () => {
 
         if (error) {
           console.error('Error tracking page view:', error);
+        } else {
+          console.log('Successfully tracked page view for:', location.pathname);
         }
       } catch (err) {
         console.error('Failed to track page view:', err);
