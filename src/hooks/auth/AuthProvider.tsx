@@ -21,54 +21,57 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   } = useAuthState();
 
   useEffect(() => {
-    // Initial load - check current session first
-    const getInitialSession = async () => {
+    // First set up the auth listener before checking for session
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
+      console.log('Auth state changed:', event, newSession);
+      
+      if (event === 'SIGNED_OUT') {
+        setUser(null);
+        setSession(null);
+        localStorage.removeItem('corporify_user');
+        return;
+      }
+      
+      // Update session state immediately
+      setSession(newSession);
+      
+      // Process user data if available
+      if (newSession?.user) {
+        const newUser = transformUser(newSession.user);
+        setUser(newUser);
+        
+        // Use setTimeout to avoid potential deadlocks with Supabase
+        if (newUser) {
+          setTimeout(() => {
+            saveUserToLocalStorage(newUser);
+          }, 0);
+        }
+      }
+    });
+
+    // Then check for existing session
+    const initializeAuth = async () => {
       try {
         setIsLoading(true);
-        const { data: { session: initialSession } } = await supabase.auth.getSession();
-        console.log('Initial session check:', initialSession);
+        const { data } = await supabase.auth.getSession();
+        console.log('Initial session check:', data.session);
         
-        if (initialSession) {
-          setSession(initialSession);
-          const initialUser = transformUser(initialSession.user);
-          setUser(initialUser);
-          
+        if (data.session) {
+          setSession(data.session);
+          const initialUser = transformUser(data.session.user);
           if (initialUser) {
+            setUser(initialUser);
             saveUserToLocalStorage(initialUser);
           }
         }
       } catch (error) {
-        console.error('Error getting initial session:', error);
+        console.error('Error initializing auth:', error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    getInitialSession();
-
-    // Set up auth state change listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
-      console.log('Auth state changed:', event, newSession);
-      
-      // Simple state updates first (synchronous operations)
-      setSession(newSession);
-      
-      // Process user transformation safely
-      if (newSession?.user) {
-        const newUser = transformUser(newSession.user);
-        setUser(newUser);
-        
-        // Defer localStorage operation to prevent potential deadlock
-        setTimeout(() => {
-          if (newUser) {
-            saveUserToLocalStorage(newUser);
-          }
-        }, 0);
-      } else if (event === 'SIGNED_OUT') {
-        setUser(null);
-        localStorage.removeItem('corporify_user');
-      }
-    });
+    initializeAuth();
 
     return () => {
       subscription.unsubscribe();

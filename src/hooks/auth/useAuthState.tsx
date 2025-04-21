@@ -28,7 +28,7 @@ export const useAuthState = () => {
 
       toast({
         title: isEmailNotConfirmed ? "Login successful" : "Logged in successfully",
-        description: isEmailNotConfirmed ? "Welcome to Corporify!" : "Welcome back!",
+        description: isEmailNotConfirmed ? "Welcome to Corporify It!" : "Welcome back!",
       });
     } catch (error: any) {
       console.error('Login failed', error);
