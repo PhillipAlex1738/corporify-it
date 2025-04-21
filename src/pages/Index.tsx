@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { useAuth } from '@/hooks/auth';
+import { useAuth } from '@/hooks/useAuth';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CorporifyForm from '@/components/CorporifyForm';
@@ -24,16 +24,6 @@ const Index = () => {
           
           <UsageDisplay />
           <CorporifyForm />
-          
-          <div className="text-center mt-12 text-sm text-muted-foreground">
-            {user && (
-              <p className="mt-1">
-                <span className="font-medium">
-                  {user.usageLimit - user.usageCount} transformations
-                </span> left today on the free plan.
-              </p>
-            )}
-          </div>
         </div>
       </main>
       <Footer />

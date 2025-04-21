@@ -26,7 +26,7 @@ const Header = () => {
         <div className="flex items-center gap-3">
           {user ? (
             <>
-              <div className="hidden md:flex items-center gap-2">
+              <div className="flex items-center gap-2">
                 <UserRound className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm font-medium">{user.email}</span>
               </div>
