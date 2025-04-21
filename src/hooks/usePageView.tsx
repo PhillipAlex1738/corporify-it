@@ -12,7 +12,7 @@ export const usePageView = () => {
         const { error } = await supabase
           .rpc('increment_page_view', {
             page_path: location.pathname
-          });
+          } as { page_path: string });
 
         if (error) {
           console.error('Error tracking page view:', error);
