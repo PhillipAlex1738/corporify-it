@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from 'react';
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -47,6 +48,43 @@ export const useCorporify = () => {
     setApiDiagnostics(null);
 
     const isAnonymous = !user;
+
+    if (isAnonymous) {
+      // Update usage count for anonymous users
+      const today = new Date().toISOString().slice(0, 10);
+      let currentUsage = 0;
+      
+      try {
+        const usageJSON = localStorage.getItem('corporify_anon_usage');
+        if (usageJSON) {
+          const data = JSON.parse(usageJSON);
+          if (data.date === today) {
+            currentUsage = data.count || 0;
+          }
+        }
+        
+        // Check if user has reached the daily limit
+        const FREE_DEMO_DAILY_LIMIT = 5;
+        if (currentUsage >= FREE_DEMO_DAILY_LIMIT) {
+          setLastError('Daily limit reached. Sign in for unlimited transformations.');
+          toast({
+            title: "Daily limit reached",
+            description: "Sign in to get unlimited transformations.",
+            variant: "destructive",
+          });
+          setIsLoading(false);
+          return "";
+        }
+        
+        // Update the usage count
+        localStorage.setItem('corporify_anon_usage', JSON.stringify({
+          date: today,
+          count: currentUsage + 1
+        }));
+      } catch (e) {
+        console.error('Error updating anonymous usage count', e);
+      }
+    }
 
     try {
       console.log("Calling Supabase Edge Function with:", { 
@@ -213,3 +251,4 @@ export const useCorporify = () => {
     removeFromSaved
   };
 };
+
