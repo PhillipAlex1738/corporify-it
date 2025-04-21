@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -8,6 +8,10 @@ import UsageDisplay from '@/components/UsageDisplay';
 
 const Index = () => {
   const { user } = useAuth();
+  
+  useEffect(() => {
+    console.log("Index page: User auth state:", user ? `Authenticated as ${user.email}` : "Not authenticated");
+  }, [user]);
 
   return (
     <div className="min-h-screen flex flex-col">

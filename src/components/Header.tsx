@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import AuthModal from '@/components/AuthModal';
@@ -10,6 +10,10 @@ const Header = () => {
   const { user, logout } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+  
+  useEffect(() => {
+    console.log("Header: User auth state:", user ? `Authenticated as ${user.email}` : "Not authenticated");
+  }, [user]);
 
   return (
     <header className="w-full py-4 px-6 border-b shadow-sm">
@@ -27,7 +31,7 @@ const Header = () => {
           {user ? (
             <>
               <div className="flex items-center gap-2">
-                <UserRound className="h-4 w-4 text-muted-foreground" />
+                <UserRound className="h-4 w-4 text-corporate-600" />
                 <span className="text-sm font-medium">{user.email}</span>
               </div>
               

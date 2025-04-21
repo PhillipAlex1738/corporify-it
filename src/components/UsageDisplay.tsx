@@ -1,9 +1,12 @@
 
 import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/hooks/useAuth';
+import { useEffect, useState } from 'react';
 
 const UsageDisplay = () => {
   const { user } = useAuth();
+  const [anonUsage, setAnonUsage] = useState(0);
+  const FREE_DEMO_DAILY_LIMIT = 5;
   
   // Get anonymous usage count from localStorage
   const getAnonUsage = () => {
@@ -20,8 +23,12 @@ const UsageDisplay = () => {
     }
   };
 
-  const anonUsage = getAnonUsage();
-  const FREE_DEMO_DAILY_LIMIT = 5;
+  // Update the usage count whenever the component renders
+  useEffect(() => {
+    setAnonUsage(getAnonUsage());
+    console.log("UsageDisplay: User auth state:", user ? `Authenticated as ${user.email}` : "Not authenticated");
+    console.log("UsageDisplay: Anonymous usage:", getAnonUsage());
+  }, [user]);
   
   // For anonymous users, show limited usage
   if (!user) {
@@ -55,7 +62,10 @@ const UsageDisplay = () => {
           Unlimited
         </span>
       </div>
-      <Progress value={100} className="h-2" />
+      <Progress value={100} className="h-2 bg-corporate-100" />
+      <p className="text-xs text-corporate-600 mt-1">
+        You have unlimited transformations as a signed-in user
+      </p>
     </div>
   );
 };

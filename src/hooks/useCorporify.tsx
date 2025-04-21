@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from '@/hooks/useAuth';
@@ -21,6 +20,10 @@ export const useCorporify = () => {
   const [apiDiagnostics, setApiDiagnostics] = useState<any>(null);
   const { toast } = useToast();
   const { user } = useAuth();
+
+  useEffect(() => {
+    console.log("useCorporify: User auth state:", user ? `Authenticated as ${user.email}` : "Not authenticated");
+  }, [user]);
 
   useEffect(() => {
     const savedMessagesJSON = localStorage.getItem('corporify_saved_messages');
@@ -47,6 +50,7 @@ export const useCorporify = () => {
     setLastError(null);
     setApiDiagnostics(null);
 
+    console.log("corporifyText called with user:", user ? `Authenticated as ${user.email}` : "Not authenticated");
     const isAnonymous = !user;
 
     if (isAnonymous) {
@@ -251,4 +255,3 @@ export const useCorporify = () => {
     removeFromSaved
   };
 };
-
