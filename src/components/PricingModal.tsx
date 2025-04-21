@@ -36,9 +36,9 @@ const PricingModal = ({ isOpen, onClose }: PricingModalProps) => {
               <div className="flex items-center gap-3">
                 <Check className="h-5 w-5 text-corporate-500" />
                 <div>
-                  <h3 className="font-medium">Unlimited Corporifications</h3>
+                  <h3 className="font-medium">Advanced Tone Control</h3>
                   <p className="text-sm text-muted-foreground">
-                    No daily limits. Transform as many messages as you need.
+                    Access to additional tones and customization options for more precise communications.
                   </p>
                 </div>
               </div>
@@ -46,9 +46,9 @@ const PricingModal = ({ isOpen, onClose }: PricingModalProps) => {
               <div className="flex items-center gap-3">
                 <Check className="h-5 w-5 text-corporate-500" />
                 <div>
-                  <h3 className="font-medium">Message History</h3>
+                  <h3 className="font-medium">Custom Templates</h3>
                   <p className="text-sm text-muted-foreground">
-                    Save and access all your previously corporified messages.
+                    Create and save your own templates for frequently used message types.
                   </p>
                 </div>
               </div>
@@ -56,9 +56,9 @@ const PricingModal = ({ isOpen, onClose }: PricingModalProps) => {
               <div className="flex items-center gap-3">
                 <Check className="h-5 w-5 text-corporate-500" />
                 <div>
-                  <h3 className="font-medium">Advanced Formatting</h3>
+                  <h3 className="font-medium">Enhanced Analytics</h3>
                   <p className="text-sm text-muted-foreground">
-                    Additional formatting options for more polished results.
+                    Detailed insights on your communication patterns and improvements.
                   </p>
                 </div>
               </div>
@@ -69,6 +69,16 @@ const PricingModal = ({ isOpen, onClose }: PricingModalProps) => {
                   <h3 className="font-medium">Priority Support</h3>
                   <p className="text-sm text-muted-foreground">
                     Get help when you need it with priority customer support.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Check className="h-5 w-5 text-corporate-500" />
+                <div>
+                  <h3 className="font-medium">Bulk Processing</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Transform multiple messages at once for efficient communication overhauls.
                   </p>
                 </div>
               </div>
