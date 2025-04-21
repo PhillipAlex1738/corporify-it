@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -36,7 +35,26 @@ function incrementAnonUsage() {
   localStorage.setItem('corporify_anon_usage', JSON.stringify({ date: today, count }));
 }
 
+function resetAnonUsageIfNeeded() {
+  const today = new Date().toISOString().slice(0, 10);
+  try {
+    const usageJSON = localStorage.getItem('corporify_anon_usage');
+    if (usageJSON) {
+      const data = JSON.parse(usageJSON);
+      if (data.date !== today) {
+        localStorage.setItem('corporify_anon_usage', JSON.stringify({ date: today, count: 0 }));
+      }
+    }
+  } catch {
+    // ignore
+  }
+}
+
 const CorporifyForm = () => {
+  useEffect(() => {
+    resetAnonUsageIfNeeded();
+  }, []);
+
   const [inputText, setInputText] = useState('Hey team, I think we need to talk about the new feature. It seems like there\'s a problem with it and we should fix it soon.');
   const [outputText, setOutputText] = useState('');
   const [selectedTone, setSelectedTone] = useState<ToneOption>('professional');

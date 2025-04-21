@@ -1,7 +1,21 @@
-
 import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect, useState } from 'react';
+
+function resetAnonUsageIfNeeded() {
+  const today = new Date().toISOString().slice(0, 10);
+  try {
+    const usageJSON = localStorage.getItem('corporify_anon_usage');
+    if (usageJSON) {
+      const data = JSON.parse(usageJSON);
+      if (data.date !== today) {
+        localStorage.setItem('corporify_anon_usage', JSON.stringify({ date: today, count: 0 }));
+      }
+    }
+  } catch {
+    // ignore
+  }
+}
 
 const UsageDisplay = () => {
   const { user } = useAuth();
@@ -25,6 +39,7 @@ const UsageDisplay = () => {
 
   // Update the usage count whenever the component renders
   useEffect(() => {
+    resetAnonUsageIfNeeded();
     setAnonUsage(getAnonUsage());
     console.log("UsageDisplay: User auth state:", user ? `Authenticated as ${user.email}` : "Not authenticated");
     console.log("UsageDisplay: Anonymous usage:", getAnonUsage());
