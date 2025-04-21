@@ -25,6 +25,17 @@ interface FeedbackFormData {
   additional_comments?: string;
 }
 
+// Define the feedback table structure to properly type our Supabase operations
+interface FeedbackTable {
+  id: string;
+  user_email: string;
+  functionality_rating: number;
+  ui_rating: number;
+  recommendation_rating: number;
+  additional_comments?: string;
+  created_at: string;
+}
+
 const FeedbackForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -42,10 +53,20 @@ const FeedbackForm = () => {
   const onSubmit = async (data: FeedbackFormData) => {
     setIsSubmitting(true);
     try {
-      // Use a type assertion to tell TypeScript to accept our table name
-      const { error } = await (supabase.from("feedback") as any).insert([data]);
-      
-      if (error) throw error;
+      // Use the REST API directly since TypeScript doesn't know about our new table yet
+      const response = await fetch(`https://omxtrdmtdrdovculcywf.supabase.co/rest/v1/feedback`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9teHRyZG10ZHJkb3ZjdWxjeXdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQxNjc0OTYsImV4cCI6MjA1OTc0MzQ5Nn0.X3d2EfZyqAbJofb98ypnJt7tH7jKx1PdG58DRgZ9qQo',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify([data])
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit feedback');
+      }
 
       toast({
         title: "Thank you for your feedback!",
@@ -59,6 +80,7 @@ const FeedbackForm = () => {
         title: "Error submitting feedback",
         description: "Please try again later.",
       });
+      console.error("Feedback submission error:", error);
     } finally {
       setIsSubmitting(false);
     }
