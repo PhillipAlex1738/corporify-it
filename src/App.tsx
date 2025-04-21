@@ -11,6 +11,7 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import DataHandling from "./pages/DataHandling";
 import Support from "./pages/Support";
+import Feedback from "./pages/Feedback";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/terms" element={<Terms />} />
             <Route path="/data-handling" element={<DataHandling />} />
             <Route path="/support" element={<Support />} />
+            <Route path="/feedback" element={<Feedback />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

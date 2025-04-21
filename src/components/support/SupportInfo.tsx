@@ -12,8 +12,8 @@ const SupportInfo = () => {
         <p className="text-sm text-muted-foreground mb-2">
           For direct support, email us at:
         </p>
-        <a href="mailto:support@corporify.com" className="text-corporate-600 font-medium">
-          support@corporify.com
+        <a href="mailto:Corporifyit@gmail.com" className="text-corporate-600 font-medium">
+          Corporifyit@gmail.com
         </a>
       </div>
       
