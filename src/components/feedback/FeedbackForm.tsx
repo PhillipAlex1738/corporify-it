@@ -42,7 +42,8 @@ const FeedbackForm = () => {
   const onSubmit = async (data: FeedbackFormData) => {
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from("feedback").insert([data]);
+      // Use a type assertion to tell TypeScript to accept our table name
+      const { error } = await (supabase.from("feedback") as any).insert([data]);
       
       if (error) throw error;
 
