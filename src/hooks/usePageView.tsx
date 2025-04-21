@@ -2,6 +2,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { getOrCreateSessionId } from '@/utils/session';
 
 export const usePageView = () => {
   const location = useLocation();
@@ -9,8 +10,13 @@ export const usePageView = () => {
   useEffect(() => {
     const trackPageView = async () => {
       try {
+        const sessionId = getOrCreateSessionId();
+        
         const { error } = await supabase
-          .rpc('increment_page_view', { page_path: location.pathname });
+          .rpc('increment_page_view', { 
+            page_path: location.pathname,
+            session_id: sessionId
+          });
 
         if (error) {
           console.error('Error tracking page view:', error);
