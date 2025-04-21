@@ -16,25 +16,19 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-interface FeedbackFormData {
-  user_email: string;
-  functionality_rating: number;
-  ui_rating: number;
-  recommendation_rating: number;
-  additional_comments?: string;
-}
+// Create a schema for form validation
+const feedbackSchema = z.object({
+  user_email: z.string().email("Please enter a valid email address"),
+  functionality_rating: z.number().int().min(1).max(5),
+  ui_rating: z.number().int().min(1).max(5),
+  recommendation_rating: z.number().int().min(1).max(5),
+  additional_comments: z.string().optional(),
+});
 
-// Define the feedback table structure to properly type our Supabase operations
-interface FeedbackTable {
-  id: string;
-  user_email: string;
-  functionality_rating: number;
-  ui_rating: number;
-  recommendation_rating: number;
-  additional_comments?: string;
-  created_at: string;
-}
+type FeedbackFormData = z.infer<typeof feedbackSchema>;
 
 const FeedbackForm = () => {
   const { toast } = useToast();
@@ -42,30 +36,25 @@ const FeedbackForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<FeedbackFormData>({
+    resolver: zodResolver(feedbackSchema),
     defaultValues: {
       user_email: "",
       functionality_rating: 5,
       ui_rating: 5,
       recommendation_rating: 5,
+      additional_comments: "",
     },
   });
 
   const onSubmit = async (data: FeedbackFormData) => {
     setIsSubmitting(true);
     try {
-      // Use the REST API directly since TypeScript doesn't know about our new table yet
-      const response = await fetch(`https://omxtrdmtdrdovculcywf.supabase.co/rest/v1/feedback`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9teHRyZG10ZHJkb3ZjdWxjeXdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQxNjc0OTYsImV4cCI6MjA1OTc0MzQ5Nn0.X3d2EfZyqAbJofb98ypnJt7tH7jKx1PdG58DRgZ9qQo',
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify([data])
-      });
+      // Use the Supabase client instead of direct fetch
+      const { error } = await supabase.from("feedback").insert([data]);
 
-      if (!response.ok) {
-        throw new Error('Failed to submit feedback');
+      if (error) {
+        console.error("Feedback submission error:", error);
+        throw error;
       }
 
       toast({
@@ -75,12 +64,12 @@ const FeedbackForm = () => {
       
       navigate("/");
     } catch (error) {
+      console.error("Feedback submission error:", error);
       toast({
         variant: "destructive",
         title: "Error submitting feedback",
         description: "Please try again later.",
       });
-      console.error("Feedback submission error:", error);
     } finally {
       setIsSubmitting(false);
     }
