@@ -23,6 +23,9 @@ const Footer = () => {
           <Link to="/support" className="text-muted-foreground hover:text-foreground transition-colors">
             Customer Support
           </Link>
+          <Link to="/feedback" className="text-muted-foreground hover:text-foreground transition-colors">
+            Feedback
+          </Link>
         </nav>
       </div>
     </footer>
