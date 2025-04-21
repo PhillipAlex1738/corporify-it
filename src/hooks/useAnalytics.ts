@@ -13,14 +13,18 @@ type ViewStats = {
 export const useAnalytics = (startDate?: Date) => {
   const fetchTotalViews = async () => {
     // Instead of RPC, use direct query to get total page views
-    const query = supabase
+    let query = supabase
       .from('analytics_pages')
       .select(`
         path,
         analytics_page_views (count)
       `)
-      .eq('analytics_page_views.created_at', startDate ? 'created_at >= $1' : 'true', startDate?.toISOString())
       .order('path');
+      
+    // Add date filter if startDate is provided
+    if (startDate) {
+      query = query.gte('analytics_page_views.created_at', startDate.toISOString());
+    }
 
     const { data, error } = await query;
     
@@ -29,13 +33,13 @@ export const useAnalytics = (startDate?: Date) => {
     // Transform the data to match expected format
     return data?.map(item => ({
       page_path: item.path,
-      total_views: parseInt(item.analytics_page_views[0]?.count || '0')
+      total_views: parseInt(item.analytics_page_views[0]?.count || '0', 10)
     })) || [];
   };
 
   const fetchUniqueViews = async () => {
     // For unique views, count distinct page views by page path
-    const query = supabase
+    let query = supabase
       .from('analytics_pages')
       .select(`
         path,
@@ -43,8 +47,12 @@ export const useAnalytics = (startDate?: Date) => {
           id
         )
       `)
-      .eq('analytics_page_views.created_at', startDate ? 'created_at >= $1' : 'true', startDate?.toISOString())
       .order('path');
+      
+    // Add date filter if startDate is provided
+    if (startDate) {
+      query = query.gte('analytics_page_views.created_at', startDate.toISOString());
+    }
 
     const { data, error } = await query;
     
