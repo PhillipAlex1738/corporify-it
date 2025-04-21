@@ -12,24 +12,18 @@ type ViewStats = {
 
 export const useAnalytics = (startDate?: Date) => {
   const fetchTotalViews = async () => {
-    // Using .from().rpc() instead of direct .rpc() call
-    const { data, error } = await supabase
-      .from('analytics_pages')
-      .rpc('get_total_page_views', { 
-        start_date: startDate?.toISOString() 
-      });
+    const { data, error } = await supabase.rpc('get_total_page_views', { 
+      start_date: startDate?.toISOString() 
+    });
     
     if (error) throw error;
     return data;
   };
 
   const fetchUniqueViews = async () => {
-    // Using .from().rpc() instead of direct .rpc() call
-    const { data, error } = await supabase
-      .from('analytics_pages')
-      .rpc('get_unique_page_views', { 
-        start_date: startDate?.toISOString() 
-      });
+    const { data, error } = await supabase.rpc('get_unique_page_views', { 
+      start_date: startDate?.toISOString() 
+    });
     
     if (error) throw error;
     return data;

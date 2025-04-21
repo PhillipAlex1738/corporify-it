@@ -14,13 +14,10 @@ export const usePageView = () => {
       try {
         const sessionId = getOrCreateSessionId();
         
-        // Using .from().rpc() instead of direct .rpc() call
-        const { error } = await supabase
-          .from('analytics_page_views')
-          .rpc('increment_page_view', { 
-            page_path: location.pathname,
-            session_id: sessionId
-          });
+        const { error } = await supabase.rpc('increment_page_view', { 
+          page_path: location.pathname,
+          session_id: sessionId
+        });
 
         if (error) {
           console.error('Error tracking page view:', error);
