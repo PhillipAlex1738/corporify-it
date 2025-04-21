@@ -9,9 +9,9 @@ export const usePageView = () => {
   useEffect(() => {
     const trackPageView = async () => {
       try {
-        // The function expects just the page_path as a parameter, not an object
+        // Pass the page path as a named parameter to the RPC function
         const { error } = await supabase
-          .rpc('increment_page_view', location.pathname);
+          .rpc('increment_page_view', { page_path: location.pathname });
 
         if (error) {
           console.error('Error tracking page view:', error);
