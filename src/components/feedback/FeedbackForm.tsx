@@ -49,14 +49,14 @@ const FeedbackForm = () => {
   const onSubmit = async (data: FeedbackFormData) => {
     setIsSubmitting(true);
     try {
-      // Properly format the data as a single object with all required fields
-      const { error } = await supabase.from("feedback").insert({
+      // Explicitly type the insert data to match Supabase's expectations
+      const { error } = await supabase.from("feedback").insert([{
         user_email: data.user_email,
         functionality_rating: data.functionality_rating,
         ui_rating: data.ui_rating,
         recommendation_rating: data.recommendation_rating,
         additional_comments: data.additional_comments || null,
-      });
+      }]);
 
       if (error) {
         console.error("Feedback submission error:", error);
