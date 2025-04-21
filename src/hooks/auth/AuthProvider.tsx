@@ -21,31 +21,53 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   } = useAuthState();
 
   useEffect(() => {
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, newSession) => {
-        console.log('Auth state changed:', event, newSession);
-        setSession(newSession);
-        const newUser = transformUser(newSession?.user || null);
+    // Initial load - check current session first
+    const getInitialSession = async () => {
+      try {
+        setIsLoading(true);
+        const { data: { session: initialSession } } = await supabase.auth.getSession();
+        console.log('Initial session check:', initialSession);
+        
+        if (initialSession) {
+          setSession(initialSession);
+          const initialUser = transformUser(initialSession.user);
+          setUser(initialUser);
+          
+          if (initialUser) {
+            saveUserToLocalStorage(initialUser);
+          }
+        }
+      } catch (error) {
+        console.error('Error getting initial session:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getInitialSession();
+
+    // Set up auth state change listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
+      console.log('Auth state changed:', event, newSession);
+      
+      // Simple state updates first (synchronous operations)
+      setSession(newSession);
+      
+      // Process user transformation safely
+      if (newSession?.user) {
+        const newUser = transformUser(newSession.user);
         setUser(newUser);
         
-        if (newUser) {
-          setTimeout(() => {
-            // Move operations to a new execution context to prevent deadlock
+        // Defer localStorage operation to prevent potential deadlock
+        setTimeout(() => {
+          if (newUser) {
             saveUserToLocalStorage(newUser);
-          }, 0);
-        } else if (event === 'SIGNED_OUT') {
-          localStorage.removeItem('corporify_user');
-        }
+          }
+        }, 0);
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null);
+        localStorage.removeItem('corporify_user');
       }
-    );
-
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
-      console.log('Initial session:', initialSession);
-      setSession(initialSession);
-      setUser(transformUser(initialSession?.user || null));
-      setIsLoading(false);
     });
 
     return () => {
