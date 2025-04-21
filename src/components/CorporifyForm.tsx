@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
@@ -12,6 +12,29 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import ToneSelector from './ToneSelector';
 import TemplateSelector from './TemplateSelector';
 import HistoryTab from './HistoryTab';
+
+const FREE_DEMO_DAILY_LIMIT = 3;
+
+function getAnonUsage() {
+  // Persisted as { count: number, date: 'yyyy-mm-dd' }
+  const today = new Date().toISOString().slice(0, 10);
+  try {
+    const usageJSON = localStorage.getItem('corporify_anon_usage');
+    if (usageJSON) {
+      const data = JSON.parse(usageJSON);
+      if (data.date === today) return data.count || 0;
+    }
+    return 0;
+  } catch {
+    return 0;
+  }
+}
+
+function incrementAnonUsage() {
+  const today = new Date().toISOString().slice(0, 10);
+  let count = getAnonUsage() + 1;
+  localStorage.setItem('corporify_anon_usage', JSON.stringify({ date: today, count }));
+}
 
 const CorporifyForm = () => {
   const [inputText, setInputText] = useState('Hey team, I think we need to talk about the new feature. It seems like there\'s a problem with it and we should fix it soon.');
@@ -34,7 +57,13 @@ const CorporifyForm = () => {
   const [feedbackGiven, setFeedbackGiven] = useState<'like' | 'dislike' | null>(null);
   const [showDiagnostics, setShowDiagnostics] = useState(false);
   const [activeTab, setActiveTab] = useState<'compose' | 'history'>('compose');
-  
+  const [anonUsage, setAnonUsage] = useState(getAnonUsage());
+
+  useEffect(() => {
+    // Update anon usage in UI after corporification
+    setAnonUsage(getAnonUsage());
+  }, [outputText]);
+
   const handleCorporify = async () => {
     if (!inputText.trim()) {
       toast({
@@ -44,14 +73,35 @@ const CorporifyForm = () => {
       });
       return;
     }
-    
+
     setApiErrorDetails(null);
     setShowDiagnostics(false);
+
+    // Auth + usage logic
+    if (!user) {
+      if (anonUsage >= FREE_DEMO_DAILY_LIMIT) {
+        toast({
+          description: `You've reached the free daily limit (${FREE_DEMO_DAILY_LIMIT}). Sign in for more!`,
+          variant: "destructive",
+        });
+        return;
+      }
+    } else if (!user.isPremium && user.usageCount >= user.usageLimit) {
+      toast({
+        title: "Usage limit reached",
+        description: "Upgrade to premium for unlimited corporification.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const result = await corporifyText(inputText, selectedTone);
       if (result) {
         setOutputText(result);
         setFeedbackGiven(null);
+        if (!user) incrementAnonUsage();
+        setAnonUsage(getAnonUsage());
       } else if (lastError) {
         setApiErrorDetails(lastError);
       }
@@ -71,13 +121,21 @@ const CorporifyForm = () => {
       description: "Copied to clipboard!",
     });
   };
-  
+
   const giveFeedback = async (type: 'like' | 'dislike') => {
+    if (!user) {
+      toast({
+        title: "Sign in required",
+        description: "Sign in to leave feedback!",
+        variant: "destructive",
+      });
+      return;
+    }
     setFeedbackGiven(type);
-    
+
     // Save the feedback locally
     const success = await saveFeedback(inputText, outputText, type === 'like');
-    
+
     toast({
       description: success 
         ? (type === 'like' ? "Thanks for your positive feedback!" : "Thanks for your feedback, we'll improve!") 
@@ -85,7 +143,7 @@ const CorporifyForm = () => {
       variant: success ? "default" : "destructive"
     });
   };
-  
+
   const handleRegenerate = async () => {
     if (inputText.trim()) {
       await handleCorporify();
@@ -95,21 +153,22 @@ const CorporifyForm = () => {
   const toggleDiagnostics = () => {
     setShowDiagnostics(!showDiagnostics);
   };
-  
+
   const handleSelectTemplate = (templateText: string) => {
     setInputText(templateText);
-    // Add a toast notification for better UX
     toast({
       description: "Template selected. You can now edit it before corporifying.",
     });
   };
-  
+
   const handleSelectFromHistory = (text: string) => {
     setInputText(text);
     setActiveTab('compose');
   };
 
-  const isButtonDisabled = isLoading || !user || (user && !user.isPremium && user.usageCount >= user.usageLimit);
+  // User can use the app anonymously for the first three times each day
+  const isAnonLimitReached = !user && anonUsage >= FREE_DEMO_DAILY_LIMIT;
+  const isButtonDisabled = isLoading || isAnonLimitReached || (user && !user.isPremium && user.usageCount >= user.usageLimit);
 
   return (
     <div>
@@ -170,6 +229,23 @@ const CorporifyForm = () => {
             )}
           </Button>
           
+          {isAnonLimitReached && (
+            <div className="mt-5 bg-yellow-50 border border-yellow-200 p-4 rounded flex items-start gap-3 text-sm">
+              <div className="pt-1">
+                <Sparkles className="h-5 w-5 text-yellow-600" />
+              </div>
+              <div>
+                <span className="font-medium text-yellow-800">
+                  You've reached the daily free demo limit.
+                </span>{" "}
+                <br />
+                <span className="text-yellow-800">
+                  Sign in for more daily uses and to save your history, favorite responses, or provide feedback.
+                </span>
+              </div>
+            </div>
+          )}
+
           {apiErrorDetails && (
             <Alert className="mt-4" variant="destructive">
               <AlertCircle className="h-4 w-4" />
@@ -261,23 +337,23 @@ const CorporifyForm = () => {
             </Card>
           )}
           
-          {!user && (
-            <div className="mt-6 p-4 bg-muted rounded-md text-center">
-              <p className="text-sm text-muted-foreground">
-                Sign in to start corporifying your messages!
-              </p>
-            </div>
-          )}
+          {/* "Sign in to use" prompt is now shown only if the day limit is reached */}
         </TabsContent>
         
         <TabsContent value="history">
-          <HistoryTab 
-            history={history}
-            onSelect={handleSelectFromHistory}
-            savedMessages={savedMessages}
-            onToggleSave={toggleSaveMessage}
-            onRemoveFromSaved={removeFromSaved}
-          />
+          {user ? (
+            <HistoryTab 
+              history={history}
+              onSelect={handleSelectFromHistory}
+              savedMessages={savedMessages}
+              onToggleSave={toggleSaveMessage}
+              onRemoveFromSaved={removeFromSaved}
+            />
+          ) : (
+            <div className="mt-6 p-4 bg-muted rounded-md text-center text-muted-foreground text-sm">
+              Sign in to view or save your history and favorites.
+            </div>
+          )}
         </TabsContent>
       </Tabs>
     </div>
@@ -285,3 +361,4 @@ const CorporifyForm = () => {
 };
 
 export default CorporifyForm;
+
