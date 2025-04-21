@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -12,6 +13,7 @@ import ToneSelector from './ToneSelector';
 import TemplateSelector from './TemplateSelector';
 import HistoryTab from './HistoryTab';
 
+// Limit: 5 per day for anonymous users; unlimited for authenticated.
 const FREE_DEMO_DAILY_LIMIT = 5;
 
 function getAnonUsage() {
@@ -74,10 +76,11 @@ const CorporifyForm = () => {
     setApiErrorDetails(null);
     setShowDiagnostics(false);
 
+    // Enforce anon limit only for anon users
     if (!user) {
       if (anonUsage >= FREE_DEMO_DAILY_LIMIT) {
         toast({
-          description: `You've reached the free daily limit (${FREE_DEMO_DAILY_LIMIT}). Sign in for more!`,
+          description: `You've reached the free daily limit (${FREE_DEMO_DAILY_LIMIT}). Sign in for unlimited use!`,
           variant: "destructive",
         });
         return;
@@ -120,7 +123,7 @@ const CorporifyForm = () => {
       setFeedbackGiven(type);
       return;
     }
-    
+
     setFeedbackGiven(type);
 
     const success = await saveFeedback(inputText, outputText, type === 'like');
@@ -155,8 +158,9 @@ const CorporifyForm = () => {
     setActiveTab('compose');
   };
 
+  // Anonymous only: check and limit demo usage
   const isAnonLimitReached = !user && anonUsage >= FREE_DEMO_DAILY_LIMIT;
-  const isButtonDisabled = isLoading || isAnonLimitReached || (user && !user.isPremium && user.usageCount >= user.usageLimit);
+  const isButtonDisabled = isLoading || isAnonLimitReached;
 
   return (
     <div>
@@ -228,7 +232,7 @@ const CorporifyForm = () => {
                 </span>{" "}
                 <br />
                 <span className="text-yellow-800">
-                  Sign in for more daily uses and to save your history, favorite responses, or provide feedback.
+                  Sign in for unlimited daily uses and to save your history, favorite responses, or provide feedback.
                 </span>
               </div>
             </div>

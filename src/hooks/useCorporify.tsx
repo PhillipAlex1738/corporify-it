@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from '@/hooks/useAuth';
@@ -22,13 +21,11 @@ export const useCorporify = () => {
   const { toast } = useToast();
   const { user } = useAuth();
 
-  // Load saved messages from localStorage on mount
   useEffect(() => {
     const savedMessagesJSON = localStorage.getItem('corporify_saved_messages');
     if (savedMessagesJSON) {
       try {
         const parsedMessages = JSON.parse(savedMessagesJSON);
-        // Ensure timestamps are converted back to Date objects
         const messagesWithDates = parsedMessages.map((msg: any) => ({
           ...msg,
           timestamp: new Date(msg.timestamp)
@@ -40,7 +37,6 @@ export const useCorporify = () => {
     }
   }, []);
 
-  // Save messages to localStorage when they change
   useEffect(() => {
     localStorage.setItem('corporify_saved_messages', JSON.stringify(savedMessages));
   }, [savedMessages]);
@@ -50,7 +46,6 @@ export const useCorporify = () => {
     setLastError(null);
     setApiDiagnostics(null);
 
-    // Modified to support anonymous users
     const isAnonymous = !user;
 
     try {
@@ -60,7 +55,6 @@ export const useCorporify = () => {
         tone: tone
       });
 
-      // Call our Supabase Edge Function
       const { data, error } = await supabase.functions.invoke('corporify', {
         body: { 
           text: originalText,
@@ -93,13 +87,10 @@ export const useCorporify = () => {
       if (!data.corporateText) {
         console.error("Edge function response missing corporateText:", data);
         
-        // Store raw response for diagnostics
         setApiDiagnostics({
           type: 'invalid_response_format',
           rawResponse: data
         });
-        
-        // If we got an error response, use that
         if (data.error) {
           setLastError(`API error: ${data.error}${data.details ? ` - ${data.details}` : ''}`);
           throw new Error(`API error: ${data.error}`);
@@ -108,20 +99,9 @@ export const useCorporify = () => {
           throw new Error('Invalid response format from API');
         }
       }
-      
+
       const corporateText = data.corporateText;
 
-      // Update usage count if logged in (but no limit)
-      if (user) {
-        const updatedUser = {
-          ...user,
-          usageCount: user.usageCount + 1,
-        };
-        localStorage.setItem('corporify_user', JSON.stringify(updatedUser));
-        console.log("Updated user in localStorage:", updatedUser);
-      }
-
-      // Add to history (for logged in users)
       if (user) {
         const newEntry = {
           id: `history_${Date.now()}`,
@@ -135,12 +115,12 @@ export const useCorporify = () => {
       if (user) {
         toast({
           title: "Text corporified!",
-          description: `${user.usageCount + 1}/${user.isPremium ? '∞' : user.usageLimit} daily uses.`,
+          description: "Unlimited conversions as a signed in user.",
         });
       } else {
         toast({
           title: "Text corporified!",
-          description: "Sign in to save this transformation and access more features.",
+          description: "Sign in to remove the daily limit and access more features.",
         });
       }
 
@@ -148,15 +128,12 @@ export const useCorporify = () => {
     } catch (error: any) {
       console.error('Corporification failed', error);
       setLastError(error.message || "Unknown error occurred");
-      
-      // If we haven't set diagnostics yet, set generic error
       if (!apiDiagnostics) {
         setApiDiagnostics({
           type: 'unknown_error',
           error: error
         });
       }
-      
       toast({
         title: "Corporification failed",
         description: error.message || "Please try again later.",
@@ -176,7 +153,6 @@ export const useCorporify = () => {
         isHelpful
       });
       
-      // Show toast based on feedback
       toast({
         title: isHelpful ? "Thanks for your feedback!" : "We'll do better",
         description: isHelpful 
@@ -184,7 +160,6 @@ export const useCorporify = () => {
           : "Your feedback helps us improve. Consider contacting support with details.",
       });
       
-      // If feedback was negative, suggest support
       if (!isHelpful && user) {
         setTimeout(() => {
           toast({
@@ -213,11 +188,9 @@ export const useCorporify = () => {
     const isAlreadySaved = savedMessages.some(msg => msg.id === item.id);
     
     if (isAlreadySaved) {
-      // Remove from saved messages
       setSavedMessages(saved => saved.filter(msg => msg.id !== item.id));
       toast({ description: "Removed from saved messages" });
     } else {
-      // Add to saved messages
       setSavedMessages(saved => [item, ...saved]);
       toast({ description: "Added to saved messages" });
     }
