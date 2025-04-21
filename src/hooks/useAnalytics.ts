@@ -33,7 +33,7 @@ export const useAnalytics = (startDate?: Date) => {
     // Transform the data to match expected format
     return data?.map(item => ({
       page_path: item.path,
-      total_views: parseInt(item.analytics_page_views[0]?.count || '0', 10)
+      total_views: parseInt(String(item.analytics_page_views[0]?.count || '0'), 10)
     })) || [];
   };
 
