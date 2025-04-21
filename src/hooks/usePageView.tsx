@@ -9,7 +9,6 @@ export const usePageView = () => {
   useEffect(() => {
     const trackPageView = async () => {
       try {
-        // Pass the page path as a named parameter to the RPC function
         const { error } = await supabase
           .rpc('increment_page_view', { page_path: location.pathname });
 

@@ -9,6 +9,50 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      analytics_page_views: {
+        Row: {
+          created_at: string
+          id: string
+          page_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          page_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          page_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_page_views_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "analytics_pages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      analytics_pages: {
+        Row: {
+          created_at: string
+          id: string
+          path: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          path: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          path?: string
+        }
+        Relationships: []
+      }
       feedback: {
         Row: {
           additional_comments: string | null
@@ -68,7 +112,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      increment_page_view: {
+        Args: { page_path: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
