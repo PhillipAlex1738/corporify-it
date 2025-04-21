@@ -3,16 +3,20 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { getOrCreateSessionId } from '@/utils/session';
+import { useToast } from '@/hooks/use-toast';
 
 export const usePageView = () => {
   const location = useLocation();
+  const { toast } = useToast();
 
   useEffect(() => {
     const trackPageView = async () => {
       try {
         const sessionId = getOrCreateSessionId();
         
+        // Using .from().rpc() instead of direct .rpc() call
         const { error } = await supabase
+          .from('analytics_page_views')
           .rpc('increment_page_view', { 
             page_path: location.pathname,
             session_id: sessionId
