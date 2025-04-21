@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from '@/hooks/useAuth';
@@ -81,10 +82,15 @@ export const useCorporify = () => {
         }
         
         // Update the usage count
+        const newCount = currentUsage + 1;
         localStorage.setItem('corporify_anon_usage', JSON.stringify({
           date: today,
-          count: currentUsage + 1
+          count: newCount
         }));
+        
+        // Dispatch a custom event to notify other components about the usage update
+        window.dispatchEvent(new Event('corporifyUsageUpdated'));
+        console.log("Usage updated:", newCount);
       } catch (e) {
         console.error('Error updating anonymous usage count', e);
       }

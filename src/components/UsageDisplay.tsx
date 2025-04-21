@@ -1,3 +1,4 @@
+
 import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect, useState } from 'react';
@@ -44,6 +45,36 @@ const UsageDisplay = () => {
     console.log("UsageDisplay: User auth state:", user ? `Authenticated as ${user.email}` : "Not authenticated");
     console.log("UsageDisplay: Anonymous usage:", getAnonUsage());
   }, [user]);
+  
+  // Add event listener for storage changes to update counter in real-time
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setAnonUsage(getAnonUsage());
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Custom event for same-window updates
+    const handleCustomStorageChange = () => {
+      setAnonUsage(getAnonUsage());
+    };
+    
+    window.addEventListener('corporifyUsageUpdated', handleCustomStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('corporifyUsageUpdated', handleCustomStorageChange);
+    };
+  }, []);
+
+  // Force refresh every 2 seconds to catch any changes in localStorage
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAnonUsage(getAnonUsage());
+    }, 2000);
+    
+    return () => clearInterval(interval);
+  }, []);
   
   // For anonymous users, show limited usage
   if (!user) {
