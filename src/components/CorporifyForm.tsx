@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,10 +12,9 @@ import ToneSelector from './ToneSelector';
 import TemplateSelector from './TemplateSelector';
 import HistoryTab from './HistoryTab';
 
-const FREE_DEMO_DAILY_LIMIT = 3;
+const FREE_DEMO_DAILY_LIMIT = 5;
 
 function getAnonUsage() {
-  // Persisted as { count: number, date: 'yyyy-mm-dd' }
   const today = new Date().toISOString().slice(0, 10);
   try {
     const usageJSON = localStorage.getItem('corporify_anon_usage');
@@ -60,7 +58,6 @@ const CorporifyForm = () => {
   const [anonUsage, setAnonUsage] = useState(getAnonUsage());
 
   useEffect(() => {
-    // Update anon usage in UI after corporification
     setAnonUsage(getAnonUsage());
   }, [outputText]);
 
@@ -77,7 +74,6 @@ const CorporifyForm = () => {
     setApiErrorDetails(null);
     setShowDiagnostics(false);
 
-    // Auth + usage logic
     if (!user) {
       if (anonUsage >= FREE_DEMO_DAILY_LIMIT) {
         toast({
@@ -86,13 +82,6 @@ const CorporifyForm = () => {
         });
         return;
       }
-    } else if (!user.isPremium && user.usageCount >= user.usageLimit) {
-      toast({
-        title: "Usage limit reached",
-        description: "Upgrade to premium for unlimited corporification.",
-        variant: "destructive",
-      });
-      return;
     }
 
     try {
@@ -124,18 +113,16 @@ const CorporifyForm = () => {
 
   const giveFeedback = async (type: 'like' | 'dislike') => {
     if (!user) {
-      // Instead of requiring sign-in, just show a gentle suggestion
       toast({
         title: "Sign in suggested",
         description: "Sign in to save feedback and get more features!",
       });
-      setFeedbackGiven(type); // Allow feedback without login
+      setFeedbackGiven(type);
       return;
     }
     
     setFeedbackGiven(type);
 
-    // Save the feedback locally
     const success = await saveFeedback(inputText, outputText, type === 'like');
 
     toast({
@@ -168,7 +155,6 @@ const CorporifyForm = () => {
     setActiveTab('compose');
   };
 
-  // User can use the app anonymously for the first three times each day
   const isAnonLimitReached = !user && anonUsage >= FREE_DEMO_DAILY_LIMIT;
   const isButtonDisabled = isLoading || isAnonLimitReached || (user && !user.isPremium && user.usageCount >= user.usageLimit);
 

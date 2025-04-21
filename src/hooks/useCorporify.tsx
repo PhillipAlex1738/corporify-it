@@ -52,7 +52,7 @@ export const useCorporify = () => {
 
     // Modified to support anonymous users
     const isAnonymous = !user;
-    
+
     try {
       console.log("Calling Supabase Edge Function with:", { 
         text: originalText.substring(0, 50) + (originalText.length > 50 ? "..." : ""), 
@@ -111,7 +111,7 @@ export const useCorporify = () => {
       
       const corporateText = data.corporateText;
 
-      // Update usage count if logged in
+      // Update usage count if logged in (but no limit)
       if (user) {
         const updatedUser = {
           ...user,
