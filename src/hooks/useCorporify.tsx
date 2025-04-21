@@ -50,31 +50,13 @@ export const useCorporify = () => {
     setLastError(null);
     setApiDiagnostics(null);
 
-    // Check user limits
-    if (!user) {
-      toast({
-        title: "Authentication required",
-        description: "Please login to use this feature.",
-        variant: "destructive",
-      });
-      setIsLoading(false);
-      return "";
-    }
-
-    if (!user.isPremium && user.usageCount >= user.usageLimit) {
-      toast({
-        title: "Usage limit reached",
-        description: "Upgrade to premium for unlimited corporification.",
-        variant: "destructive",
-      });
-      setIsLoading(false);
-      return "";
-    }
-
+    // Modified to support anonymous users
+    const isAnonymous = !user;
+    
     try {
       console.log("Calling Supabase Edge Function with:", { 
         text: originalText.substring(0, 50) + (originalText.length > 50 ? "..." : ""), 
-        userId: user.id,
+        userId: user?.id || "anonymous",
         tone: tone
       });
 
@@ -82,7 +64,7 @@ export const useCorporify = () => {
       const { data, error } = await supabase.functions.invoke('corporify', {
         body: { 
           text: originalText,
-          userId: user.id,
+          userId: user?.id || "anonymous",
           tone: tone
         }
       });
@@ -129,27 +111,38 @@ export const useCorporify = () => {
       
       const corporateText = data.corporateText;
 
-      // Update usage count in localStorage
-      const updatedUser = {
-        ...user,
-        usageCount: user.usageCount + 1,
-      };
-      localStorage.setItem('corporify_user', JSON.stringify(updatedUser));
-      console.log("Updated user in localStorage:", updatedUser);
+      // Update usage count if logged in
+      if (user) {
+        const updatedUser = {
+          ...user,
+          usageCount: user.usageCount + 1,
+        };
+        localStorage.setItem('corporify_user', JSON.stringify(updatedUser));
+        console.log("Updated user in localStorage:", updatedUser);
+      }
 
-      // Add to history
-      const newEntry = {
-        id: `history_${Date.now()}`,
-        originalText,
-        corporateText,
-        timestamp: new Date(),
-      };
-      setHistory(prevHistory => [newEntry, ...prevHistory]);
+      // Add to history (for logged in users)
+      if (user) {
+        const newEntry = {
+          id: `history_${Date.now()}`,
+          originalText,
+          corporateText,
+          timestamp: new Date(),
+        };
+        setHistory(prevHistory => [newEntry, ...prevHistory]);
+      }
 
-      toast({
-        title: "Text corporified!",
-        description: `${user.usageCount + 1}/${user.isPremium ? '∞' : user.usageLimit} daily uses.`,
-      });
+      if (user) {
+        toast({
+          title: "Text corporified!",
+          description: `${user.usageCount + 1}/${user.isPremium ? '∞' : user.usageLimit} daily uses.`,
+        });
+      } else {
+        toast({
+          title: "Text corporified!",
+          description: "Sign in to save this transformation and access more features.",
+        });
+      }
 
       return corporateText;
     } catch (error: any) {

@@ -124,13 +124,15 @@ const CorporifyForm = () => {
 
   const giveFeedback = async (type: 'like' | 'dislike') => {
     if (!user) {
+      // Instead of requiring sign-in, just show a gentle suggestion
       toast({
-        title: "Sign in required",
-        description: "Sign in to leave feedback!",
-        variant: "destructive",
+        title: "Sign in suggested",
+        description: "Sign in to save feedback and get more features!",
       });
+      setFeedbackGiven(type); // Allow feedback without login
       return;
     }
+    
     setFeedbackGiven(type);
 
     // Save the feedback locally
@@ -336,8 +338,6 @@ const CorporifyForm = () => {
               </CardFooter>
             </Card>
           )}
-          
-          {/* "Sign in to use" prompt is now shown only if the day limit is reached */}
         </TabsContent>
         
         <TabsContent value="history">
@@ -361,4 +361,3 @@ const CorporifyForm = () => {
 };
 
 export default CorporifyForm;
-
