@@ -14,9 +14,9 @@ export const usePageView = () => {
       try {
         const sessionId = getOrCreateSessionId();
         
+        // Updated to match the expected parameter structure
         const { error } = await supabase.rpc('increment_page_view', { 
-          page_path: location.pathname,
-          session_id: sessionId
+          page_path: location.pathname
         });
 
         if (error) {
