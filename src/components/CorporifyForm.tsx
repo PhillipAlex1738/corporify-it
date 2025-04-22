@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, Copy, MessageCircle, ThumbsUp, ThumbsDown, Sparkles, RefreshCw, AlertCircle, Terminal } from 'lucide-react';
+import { Loader2, Copy, MessageCircle, ThumbsUp, ThumbsDown, Sparkles, RefreshCw, AlertCircle, Terminal, FileText } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { useCorporify, type ToneOption } from '@/hooks/useCorporify';
 import { useAuth } from '@/hooks/useAuth';
@@ -11,6 +11,8 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import ToneSelector from './ToneSelector';
 import TemplateSelector from './TemplateSelector';
 import HistoryTab from './HistoryTab';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import PDFGenerator from './PDFGenerator';
 
 // Limit: 5 per day for anonymous users; unlimited for authenticated.
 const FREE_DEMO_DAILY_LIMIT = 5;
@@ -76,6 +78,7 @@ const CorporifyForm = () => {
   const [showDiagnostics, setShowDiagnostics] = useState(false);
   const [activeTab, setActiveTab] = useState<'compose' | 'history'>('compose');
   const [anonUsage, setAnonUsage] = useState(getAnonUsage());
+  const [showPDF, setShowPDF] = useState(false);
 
   useEffect(() => {
     setAnonUsage(getAnonUsage());
@@ -335,17 +338,36 @@ const CorporifyForm = () => {
                     <RefreshCw className={`h-4 w-4 mr-1 ${isLoading ? 'animate-spin' : ''}`} /> Regenerate
                   </Button>
                 </div>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="text-corporate-800"
-                  onClick={copyToClipboard}
-                >
-                  <Copy className="h-4 w-4 mr-1" /> Copy
-                </Button>
+                <div className="flex items-center space-x-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setShowPDF(true)}
+                  >
+                    <FileText className="h-4 w-4 mr-1" /> Export PDF
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="text-corporate-800"
+                    onClick={copyToClipboard}
+                  >
+                    <Copy className="h-4 w-4 mr-1" /> Copy
+                  </Button>
+                </div>
               </CardFooter>
             </Card>
           )}
+
+          {/* PDF Preview Dialog */}
+          <Dialog open={showPDF} onOpenChange={setShowPDF}>
+            <DialogContent className="max-w-4xl h-[80vh]">
+              <DialogHeader>
+                <DialogTitle>PDF Preview</DialogTitle>
+              </DialogHeader>
+              <PDFGenerator content={outputText} />
+            </DialogContent>
+          </Dialog>
         </TabsContent>
         
         <TabsContent value="history">
