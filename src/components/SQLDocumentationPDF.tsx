@@ -94,7 +94,37 @@ GROUP BY analytics_pages.path
 ORDER BY analytics_pages.path;`}
           </Text>
 
-          <Text style={styles.subHeader}>4. Feedback Table Structure</Text>
+          <Text style={styles.subHeader}>4. Date-Filtered Unique Views</Text>
+          <Text style={styles.description}>Query to fetch unique page views with date filtering:</Text>
+          <Text style={styles.code}>
+{`SELECT
+  analytics_pages.path,
+  COUNT(DISTINCT analytics_page_views.id) as unique_views
+FROM analytics_pages
+LEFT JOIN analytics_page_views ON analytics_page_views.page_id = analytics_pages.id
+WHERE analytics_page_views.created_at >= $1  -- Start date
+  AND analytics_page_views.created_at <= $2  -- End date
+GROUP BY analytics_pages.path
+ORDER BY analytics_pages.path;`}
+          </Text>
+          
+          <Text style={styles.subHeader}>5. Common Date Filter Examples</Text>
+          <Text style={styles.description}>Examples of common date filters:</Text>
+          <Text style={styles.code}>
+{`-- Last 7 days
+WHERE analytics_page_views.created_at >= NOW() - INTERVAL '7 days'
+
+-- Current month
+WHERE analytics_page_views.created_at >= DATE_TRUNC('month', NOW())
+
+-- Date range (specific dates)
+WHERE analytics_page_views.created_at BETWEEN '2024-04-01' AND '2024-04-30'
+
+-- Since specific date
+WHERE analytics_page_views.created_at >= '2024-01-01'`}
+          </Text>
+
+          <Text style={styles.subHeader}>6. Feedback Table Structure</Text>
           <Text style={styles.description}>Table structure for storing user feedback:</Text>
           <Text style={styles.code}>
 {`CREATE TABLE public.feedback (
@@ -106,6 +136,21 @@ ORDER BY analytics_pages.path;`}
   additional_comments TEXT,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );`}
+          </Text>
+          
+          <Text style={styles.subHeader}>7. Viewing Feedback Data</Text>
+          <Text style={styles.description}>Query to retrieve feedback entries:</Text>
+          <Text style={styles.code}>
+{`SELECT 
+  id, 
+  user_email, 
+  functionality_rating, 
+  ui_rating, 
+  recommendation_rating, 
+  additional_comments, 
+  created_at
+FROM public.feedback
+ORDER BY created_at DESC;`}
           </Text>
         </View>
       </Page>
