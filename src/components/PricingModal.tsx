@@ -7,7 +7,7 @@ import {
   DialogDescription
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Check, Zap, Clock } from 'lucide-react';
+import { Check, Zap, Clock, Globe } from 'lucide-react';
 
 type PricingModalProps = {
   isOpen: boolean;
@@ -39,6 +39,16 @@ const PricingModal = ({ isOpen, onClose }: PricingModalProps) => {
                   <h3 className="font-medium">Advanced Tone Control</h3>
                   <p className="text-sm text-muted-foreground">
                     Access to additional tones and customization options for more precise communications.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <Globe className="h-5 w-5 text-corporate-500" />
+                <div>
+                  <h3 className="font-medium">Multi-Language Support</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Transform your messages into multiple professional languages beyond English.
                   </p>
                 </div>
               </div>
