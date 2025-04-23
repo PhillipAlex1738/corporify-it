@@ -7,7 +7,7 @@ import {
   DialogDescription
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Check, Zap, Clock, Globe } from 'lucide-react';
+import { Check, Zap, Clock, Globe, Headphones } from 'lucide-react';
 
 type PricingModalProps = {
   isOpen: boolean;
@@ -74,11 +74,11 @@ const PricingModal = ({ isOpen, onClose }: PricingModalProps) => {
               </div>
               
               <div className="flex items-center gap-3">
-                <Check className="h-5 w-5 text-corporate-500" />
+                <Headphones className="h-5 w-5 text-corporate-500" />
                 <div>
-                  <h3 className="font-medium">Priority Support</h3>
+                  <h3 className="font-medium">Speech-to-Text Translations</h3>
                   <p className="text-sm text-muted-foreground">
-                    Get help when you need it with priority customer support.
+                    Convert your spoken words directly into polished corporate language.
                   </p>
                 </div>
               </div>
@@ -119,3 +119,4 @@ const PricingModal = ({ isOpen, onClose }: PricingModalProps) => {
 };
 
 export default PricingModal;
+
