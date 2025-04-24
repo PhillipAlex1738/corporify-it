@@ -11,11 +11,17 @@ import {
   upgradeUserAccount
 } from '@/services/authService';
 
+// The admin email address - you should replace this with your email
+const ADMIN_EMAIL = "YOUR_EMAIL_HERE"; 
+
 export const useAuthState = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [session, setSession] = useState<Session | null>(null);
   const { toast } = useToast();
+
+  // Check if current user is admin
+  const isAdmin = user?.email === ADMIN_EMAIL;
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
@@ -145,6 +151,7 @@ export const useAuthState = () => {
     setUser,
     isLoading,
     setIsLoading,
+    isAdmin, // Added isAdmin flag
     session,
     setSession,
     login,

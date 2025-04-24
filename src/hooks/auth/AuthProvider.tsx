@@ -11,6 +11,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser,
     isLoading,
     setIsLoading,
+    isAdmin,
     session,
     setSession,
     login,
@@ -81,6 +82,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const value = {
     user,
     isLoading,
+    isAdmin,
     login,
     signUp,
     logout,
