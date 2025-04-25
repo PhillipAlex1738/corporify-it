@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { useToast } from "@/components/ui/use-toast";
@@ -12,7 +11,7 @@ import {
 } from '@/services/authService';
 
 // The admin email address - replace this with your own email
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@corporifyit.io"; 
+const ADMIN_EMAIL = "admin@corporifyit.io"; 
 
 export const useAuthState = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -152,7 +151,7 @@ export const useAuthState = () => {
     setUser,
     isLoading,
     setIsLoading,
-    isAdmin, // Added isAdmin flag
+    isAdmin, 
     session,
     setSession,
     login,
@@ -162,4 +161,3 @@ export const useAuthState = () => {
     upgradeAccount,
   };
 };
-

@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
+import { Loader2 } from 'lucide-react';
 
 type AuthModalProps = {
   isOpen: boolean;
@@ -24,20 +25,42 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
   
   const { login, signUp, googleSignIn, isLoading } = useAuth();
+  const [localLoading, setLocalLoading] = useState(false);
+  
+  // Reset loading state when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setLocalLoading(false);
+    }
+  }, [isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (activeTab === 'login') {
-      await login(email, password);
-    } else {
-      await signUp(email, password);
+    setLocalLoading(true);
+    
+    try {
+      if (activeTab === 'login') {
+        await login(email, password);
+      } else {
+        await signUp(email, password);
+      }
+      // Only close if no error was thrown
+      onClose();
+    } catch (error) {
+      console.error('Authentication error:', error);
+      setLocalLoading(false);
     }
-    onClose();
   };
 
   const handleGoogleSignIn = async () => {
-    await googleSignIn();
-    onClose();
+    setLocalLoading(true);
+    try {
+      await googleSignIn();
+      onClose();
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+      setLocalLoading(false);
+    }
   };
 
   return (
@@ -70,6 +93,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  disabled={localLoading || isLoading}
                 />
               </div>
               <div className="space-y-2">
@@ -80,14 +104,20 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  disabled={localLoading || isLoading}
                 />
               </div>
               <Button 
                 type="submit" 
                 className="w-full bg-corporate-800 hover:bg-corporate-900"
-                disabled={isLoading}
+                disabled={localLoading || isLoading}
               >
-                {isLoading ? "Logging in..." : "Login"}
+                {(localLoading || isLoading) ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Logging in...
+                  </>
+                ) : "Login"}
               </Button>
               
               <div className="relative my-4">
@@ -104,7 +134,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 variant="outline"
                 className="w-full"
                 onClick={handleGoogleSignIn}
-                disabled={isLoading}
+                disabled={localLoading || isLoading}
               >
                 <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
                   <path
@@ -140,6 +170,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  disabled={localLoading || isLoading}
                 />
               </div>
               <div className="space-y-2">
@@ -150,14 +181,20 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  disabled={localLoading || isLoading}
                 />
               </div>
               <Button 
                 type="submit" 
                 className="w-full bg-corporate-800 hover:bg-corporate-900"
-                disabled={isLoading}
+                disabled={localLoading || isLoading}
               >
-                {isLoading ? "Creating account..." : "Create Account"}
+                {(localLoading || isLoading) ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating account...
+                  </>
+                ) : "Create Account"}
               </Button>
               
               <div className="relative my-4">
@@ -174,7 +211,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                 variant="outline"
                 className="w-full"
                 onClick={handleGoogleSignIn}
-                disabled={isLoading}
+                disabled={localLoading || isLoading}
               >
                 <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
                   <path
