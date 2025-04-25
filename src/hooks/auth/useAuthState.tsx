@@ -23,7 +23,7 @@ export const useAuthState = () => {
   // Check if current user is admin
   const isAdmin = user?.email === ADMIN_EMAIL;
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<{ success: boolean }> => {
     setIsLoading(true);
     try {
       console.log("Starting login attempt with:", email);
@@ -52,13 +52,14 @@ export const useAuthState = () => {
         description: error.message || "Please check your credentials and try again.",
         variant: "destructive",
       });
+      setIsLoading(false); // Ensure loading is reset on error
       throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string): Promise<{ success: boolean }> => {
     setIsLoading(true);
     try {
       console.log("Starting signup attempt with:", email);
@@ -96,13 +97,14 @@ export const useAuthState = () => {
         description: error.message || "Please try again with a different email.",
         variant: "destructive",
       });
+      setIsLoading(false); // Ensure loading is reset on error
       throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const googleSignIn = async () => {
+  const googleSignIn = async (): Promise<{ success: boolean }> => {
     setIsLoading(true);
     try {
       console.log("Starting Google sign-in attempt");
@@ -131,13 +133,14 @@ export const useAuthState = () => {
         description: error.message || "Please try again later.",
         variant: "destructive",
       });
+      setIsLoading(false); // Ensure loading is reset on error
       throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const logout = async () => {
+  const logout = async (): Promise<void> => {
     setIsLoading(true);
     try {
       console.log("Starting logout attempt");
@@ -158,7 +161,7 @@ export const useAuthState = () => {
     }
   };
 
-  const upgradeAccount = async () => {
+  const upgradeAccount = async (): Promise<void> => {
     setIsLoading(true);
     try {
       console.log("Starting account upgrade");

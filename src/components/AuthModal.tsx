@@ -23,9 +23,9 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
+  const [localLoading, setLocalLoading] = useState(false);
   
   const { login, signUp, googleSignIn, isLoading } = useAuth();
-  const [localLoading, setLocalLoading] = useState(false);
   
   // Reset states when modal closes or opens
   useEffect(() => {
@@ -38,33 +38,43 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (localLoading) return; // Prevent multiple submissions
+    if (localLoading || isLoading) return; // Prevent multiple submissions
     
     setLocalLoading(true);
+    console.log(`Attempting ${activeTab} with email: ${email}`);
     
     try {
       if (activeTab === 'login') {
-        await login(email, password);
+        const { success } = await login(email, password);
+        console.log(`Login attempt result: ${success ? 'success' : 'failure'}`);
+        if (success) {
+          onClose();
+        }
       } else {
-        await signUp(email, password);
+        const { success } = await signUp(email, password);
+        console.log(`Signup attempt result: ${success ? 'success' : 'failure'}`);
+        if (success) {
+          onClose();
+        }
       }
-      // Close modal on success
-      onClose();
     } catch (error) {
-      console.error('Authentication error:', error);
+      console.error(`${activeTab} error:`, error);
     } finally {
-      // Always reset loading state even if there was an error
+      // Always reset local loading state
       setLocalLoading(false);
     }
   };
 
   const handleGoogleSignIn = async () => {
-    if (localLoading) return;
+    if (localLoading || isLoading) return;
     setLocalLoading(true);
     
     try {
-      await googleSignIn();
-      onClose();
+      const { success } = await googleSignIn();
+      console.log(`Google sign-in attempt result: ${success ? 'success' : 'failure'}`);
+      if (success) {
+        onClose();
+      }
     } catch (error) {
       console.error('Google sign-in error:', error);
     } finally {
