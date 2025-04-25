@@ -145,6 +145,8 @@ export const useAuthState = () => {
     try {
       console.log("Starting logout attempt");
       await signOut();
+      console.log("Logout successful - waiting for auth state change to clear user data");
+      // Note: We don't clear user data here because the auth listener will do that
       toast({
         title: "Logged out",
         description: "You've been logged out successfully.",
@@ -156,6 +158,10 @@ export const useAuthState = () => {
         description: error.message || "Please try again.",
         variant: "destructive",
       });
+      // Force clear user data even if there's an error
+      setUser(null);
+      setSession(null);
+      localStorage.removeItem('corporify_user');
     } finally {
       setIsLoading(false);
     }

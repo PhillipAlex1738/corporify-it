@@ -10,10 +10,24 @@ const Header = () => {
   const { user, logout } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   
   useEffect(() => {
     console.log("Header: User auth state:", user ? `Authenticated as ${user.email}` : "Not authenticated");
   }, [user]);
+
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+      console.log("Starting logout process");
+      await logout();
+      console.log("Logout completed successfully");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   return (
     <header className="w-full py-4 px-6 border-b shadow-sm">
@@ -45,13 +59,14 @@ const Header = () => {
               </Button>
               
               <Button 
-                onClick={logout}
+                onClick={handleLogout}
                 variant="ghost" 
                 size="sm"
                 className="text-gray-500"
+                disabled={isLoggingOut}
               >
                 <LogOut className="h-4 w-4 mr-1" />
-                <span className="hidden md:inline">Logout</span>
+                <span className="hidden md:inline">{isLoggingOut ? "Logging out..." : "Logout"}</span>
               </Button>
             </>
           ) : (
