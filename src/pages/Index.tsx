@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import Header from '@/components/Header';
@@ -16,7 +17,7 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <SEO
-        title="Corporify - Professional Message Rewriting Tool"
+        title="Corporify It - Professional Message Rewriting Tool"
         description="Transform your casual messages into polished corporate communications instantly. Enhance your workplace communication with our AI-powered rewriting tool."
         path="/"
       />
