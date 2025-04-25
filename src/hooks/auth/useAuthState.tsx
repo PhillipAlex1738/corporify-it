@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { useToast } from "@/components/ui/use-toast";
@@ -40,7 +39,7 @@ export const useAuthState = () => {
       }
 
       toast({
-        title: isEmailNotConfirmed ? "Login successful" : "Logged in successfully",
+        title: isEmailNotConfirmed ? "Login successful" : "Logged in to Corporify It",
         description: isEmailNotConfirmed ? "Welcome to Corporify It!" : "Welcome back!",
       });
       
@@ -79,14 +78,14 @@ export const useAuthState = () => {
         
         toast({
           title: "Account created and logged in",
-          description: "Welcome to Corporify! You can start using the app immediately.",
+          description: "Welcome to Corporify It! You can start using the app immediately.",
         });
         return { success };
       }
 
       toast({
-        title: "Account created",
-        description: "Welcome to Corporify! Please log in to start using the app.",
+        title: "Account created for Corporify It",
+        description: "Welcome to Corporify It! Please log in to start using the app.",
       });
       
       return { success };
