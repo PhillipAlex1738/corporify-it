@@ -1,11 +1,11 @@
 
 import { useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Clock, Copy, Star, Trash2 } from 'lucide-react';
-import { type CorporifyHistory } from '@/hooks/useCorporify';
+import { type CorporifyHistory } from '@/types/corporify';
 
 type HistoryTabProps = {
   history: CorporifyHistory[];
@@ -105,18 +105,18 @@ const HistoryTab = ({
                           variant="ghost" 
                           size="sm" 
                           className="h-8 w-8 p-0"
-                          onClick={() => copyToClipboard(item.corporateText)}
+                          onClick={() => copyToClipboard(item.output)}
                         >
                           <Copy className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
-                    <p className="text-sm">{item.corporateText}</p>
+                    <p className="text-sm">{item.output}</p>
                     <div className="flex justify-end mt-3">
                       <Button 
                         variant="outline" 
                         size="sm"
-                        onClick={() => onSelect(item.originalText)}
+                        onClick={() => onSelect(item.input)}
                       >
                         Use Again
                       </Button>

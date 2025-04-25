@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { type CorporifyHistory } from '@/hooks/useCorporify';
+import { type CorporifyHistory } from '@/types/corporify';
 import { Clock, ChevronDown, ChevronUp, Copy } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -80,14 +80,14 @@ const HistoryList = ({ history }: HistoryListProps) => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 pt-2">
-                  <p className="text-sm">{item.corporateText}</p>
+                  <p className="text-sm">{item.output}</p>
                 </CardContent>
                 {isExpanded && (
                   <CardFooter className="p-4 pt-0 flex flex-col items-start">
                     <div className="w-full">
                       <div className="text-xs font-medium text-muted-foreground mb-1">Original Text:</div>
                       <div className="text-sm bg-muted p-3 rounded-md">
-                        {item.originalText}
+                        {item.input}
                       </div>
                     </div>
                     <div className="flex justify-end w-full mt-3">
@@ -95,7 +95,7 @@ const HistoryList = ({ history }: HistoryListProps) => {
                         variant="ghost" 
                         size="sm" 
                         className="text-xs"
-                        onClick={() => copyToClipboard(item.corporateText)}
+                        onClick={() => copyToClipboard(item.output)}
                       >
                         <Copy className="h-3 w-3 mr-1" /> Copy
                       </Button>

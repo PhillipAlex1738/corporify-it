@@ -1,19 +1,12 @@
-
 import { useState, useCallback, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/integrations/supabase/client';
+import { CorporifyHistory } from '@/types/corporify';
 
 export type ToneOption = 'professional' | 'formal' | 'friendly' | 'concise' | 'diplomatic';
 
-export type HistoryItem = {
-  id: string;
-  input: string;
-  output: string;
-  timestamp: string;
-  tone: ToneOption;
-  isSaved?: boolean;
-};
+export type HistoryItem = CorporifyHistory;
 
 export const useCorporify = () => {
   const { user } = useAuth();
@@ -24,7 +17,6 @@ export const useCorporify = () => {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [savedMessages, setSavedMessages] = useState<HistoryItem[]>([]);
 
-  // Load history from localStorage on component mount
   useEffect(() => {
     if (user) {
       try {
@@ -88,7 +80,6 @@ export const useCorporify = () => {
       
       const result = data.corporateText;
       
-      // Add to history if user is logged in
       if (user) {
         const newItem: HistoryItem = {
           id: Date.now().toString(),
@@ -98,10 +89,9 @@ export const useCorporify = () => {
           tone
         };
         
-        const updatedHistory = [newItem, ...history].slice(0, 50); // Keep last 50 items
+        const updatedHistory = [newItem, ...history].slice(0, 50);
         setHistory(updatedHistory);
         
-        // Save to localStorage
         try {
           localStorage.setItem(`corporify_history_${user.id}`, JSON.stringify(updatedHistory));
         } catch (error) {
@@ -152,21 +142,17 @@ export const useCorporify = () => {
   const toggleSaveMessage = useCallback((item: HistoryItem) => {
     if (!user) return;
     
-    // Check if the item is already saved
     const isSaved = savedMessages.some(saved => saved.id === item.id);
     
     let updatedSavedMessages;
     if (isSaved) {
-      // Remove from saved
       updatedSavedMessages = savedMessages.filter(saved => saved.id !== item.id);
     } else {
-      // Add to saved
       updatedSavedMessages = [{ ...item, isSaved: true }, ...savedMessages];
     }
     
     setSavedMessages(updatedSavedMessages);
     
-    // Update localStorage
     try {
       localStorage.setItem(`corporify_saved_${user.id}`, JSON.stringify(updatedSavedMessages));
     } catch (error) {
@@ -180,7 +166,6 @@ export const useCorporify = () => {
     const updatedSavedMessages = savedMessages.filter(item => item.id !== itemId);
     setSavedMessages(updatedSavedMessages);
     
-    // Update localStorage
     try {
       localStorage.setItem(`corporify_saved_${user.id}`, JSON.stringify(updatedSavedMessages));
     } catch (error) {
