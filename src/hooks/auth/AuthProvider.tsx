@@ -17,7 +17,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     login,
     signUp,
     logout,
-    googleSignIn,
     upgradeAccount,
   } = useAuthState();
 
@@ -103,7 +102,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     login,
     signUp,
     logout,
-    googleSignIn,
     upgradeAccount,
   };
 
