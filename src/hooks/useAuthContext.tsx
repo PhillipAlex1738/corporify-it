@@ -9,7 +9,6 @@ export type AuthContextType = {
   login: (email: string, password: string) => Promise<{ success: boolean }>;
   signUp: (email: string, password: string) => Promise<{ success: boolean }>;
   logout: () => Promise<void>;
-  googleSignIn: () => Promise<{ success: boolean }>;
   upgradeAccount: () => Promise<void>;
 };
 

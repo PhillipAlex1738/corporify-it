@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { useToast } from "@/components/ui/use-toast";
@@ -5,7 +6,6 @@ import { User } from '@/utils/userTransform';
 import { 
   loginWithEmailAndPassword, 
   signUpWithEmailAndPassword, 
-  signInWithGoogle, 
   signOut,
   upgradeUserAccount
 } from '@/services/authService';
@@ -103,42 +103,6 @@ export const useAuthState = () => {
     }
   };
 
-  const googleSignIn = async (): Promise<{ success: boolean }> => {
-    setIsLoading(true);
-    try {
-      console.log("Starting Google sign-in attempt");
-      const { error } = await signInWithGoogle();
-
-      if (error) {
-        console.error('Google sign-in error:', error);
-        toast({
-          title: "Google sign-in failed",
-          description: error.message || "Please try again later.",
-          variant: "destructive",
-        });
-        throw error;
-      }
-
-      toast({
-        title: "Redirecting to Google",
-        description: "Please complete sign in with Google.",
-      });
-      
-      return { success: true };
-    } catch (error: any) {
-      console.error('Google sign-in failed', error);
-      toast({
-        title: "Google sign-in failed",
-        description: error.message || "Please try again later.",
-        variant: "destructive",
-      });
-      setIsLoading(false); // Ensure loading is reset on error
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const logout = async (): Promise<void> => {
     setIsLoading(true);
     try {
@@ -176,7 +140,7 @@ export const useAuthState = () => {
         
         toast({
           title: "Account upgraded",
-          description: "You now have unlimited access to Corporify!",
+          description: "You now have unlimited access to Corporify It!",
         });
       }
     } catch (error: any) {
@@ -202,7 +166,6 @@ export const useAuthState = () => {
     login,
     signUp,
     logout,
-    googleSignIn,
     upgradeAccount,
   };
 };

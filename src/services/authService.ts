@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { transformUser, saveUserToLocalStorage, User } from '@/utils/userTransform';
 
@@ -58,12 +59,6 @@ export const signUpWithEmailAndPassword = async (email: string, password: string
   }
 
   return { success: true, data, error: null, user: null };
-};
-
-export const signInWithGoogle = async () => {
-  return await supabase.auth.signInWithOAuth({
-    provider: 'google'
-  });
 };
 
 export const signOut = async () => {
