@@ -11,8 +11,8 @@ import {
   upgradeUserAccount
 } from '@/services/authService';
 
-// The admin email address - you should replace this with your email
-const ADMIN_EMAIL = "YOUR_EMAIL_HERE"; 
+// The admin email address - replace this with your own email
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@corporifyit.io"; 
 
 export const useAuthState = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -29,6 +29,7 @@ export const useAuthState = () => {
       const { success, error, isEmailNotConfirmed } = await loginWithEmailAndPassword(email, password);
       
       if (!success && error) {
+        console.error('Login error details:', error);
         throw error;
       }
 
@@ -161,3 +162,4 @@ export const useAuthState = () => {
     upgradeAccount,
   };
 };
+

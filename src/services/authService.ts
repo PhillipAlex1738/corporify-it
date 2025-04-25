@@ -11,7 +11,7 @@ export const loginWithEmailAndPassword = async (email: string, password: string)
     });
 
     if (error) {
-      console.error("Login error:", error.message);
+      console.error("Login error:", error.message, error);
       
       // If the error is "Email not confirmed", we'll show a success message anyway
       if (error.message.includes("Email not confirmed")) {

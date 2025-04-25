@@ -22,11 +22,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   } = useAuthState();
 
   useEffect(() => {
+    console.log("Setting up auth provider and listeners");
+    
     // First set up the auth listener before checking for session
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
-      console.log('Auth state changed:', event, newSession);
+      console.log('Auth state changed:', event, newSession?.user?.email || 'No user');
       
       if (event === 'SIGNED_OUT') {
+        console.log('User signed out, clearing state');
         setUser(null);
         setSession(null);
         localStorage.removeItem('corporify_user');
@@ -39,6 +42,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Process user data if available
       if (newSession?.user) {
         const newUser = transformUser(newSession.user);
+        console.log('Setting user from auth change:', newUser?.email || 'No email available');
         setUser(newUser);
         
         // Use setTimeout to avoid potential deadlocks with Supabase
@@ -54,13 +58,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const initializeAuth = async () => {
       try {
         setIsLoading(true);
-        const { data } = await supabase.auth.getSession();
-        console.log('Initial session check:', data.session);
+        const { data, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Error getting session:', error);
+          setIsLoading(false);
+          return;
+        }
+        
+        console.log('Initial session check:', data.session ? `Found session for ${data.session.user.email}` : 'No session found');
         
         if (data.session) {
           setSession(data.session);
           const initialUser = transformUser(data.session.user);
           if (initialUser) {
+            console.log('Setting initial user:', initialUser.email);
             setUser(initialUser);
             saveUserToLocalStorage(initialUser);
           }
@@ -75,6 +87,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     initializeAuth();
 
     return () => {
+      console.log('Cleaning up auth subscription');
       subscription.unsubscribe();
     };
   }, [setSession, setUser, setIsLoading]);
@@ -92,3 +105,4 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
