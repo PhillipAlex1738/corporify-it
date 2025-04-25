@@ -14,12 +14,28 @@ const Index = () => {
     console.log("Index page: User auth state:", user ? `Authenticated as ${user.email}` : "Not authenticated");
   }, [user]);
 
+  // Structured data for rich search results
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Corporify It",
+    "applicationCategory": "BusinessApplication",
+    "description": "Transform casual messages into polished corporate language instantly. Enhance your workplace communication with our AI-powered rewriting tool.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <SEO
         title="Corporify It - Professional Message Rewriting Tool"
         description="Transform your casual messages into polished corporate communications instantly. Enhance your workplace communication with our AI-powered rewriting tool."
         path="/"
+        keywords="corporate writing, professional emails, business communication, AI writing assistant, workplace communication, email tone, business emails"
+        structuredData={structuredData}
       />
       <Header />
       <main className="flex-1">
