@@ -21,8 +21,8 @@ const SEO = ({ title, description, canonicalUrl, path }: SEOProps) => {
       {/* Canonical URL */}
       <link rel="canonical" href={canonicalUrl || fullUrl} />
       
-      {/* Security Headers */}
-      <meta httpEquiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:;" />
+      {/* Security Headers - Updated to allow Supabase connections */}
+      <meta httpEquiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://*.supabase.co; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:;" />
       <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
       <meta httpEquiv="X-Frame-Options" content="SAMEORIGIN" />
       <meta httpEquiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains" />

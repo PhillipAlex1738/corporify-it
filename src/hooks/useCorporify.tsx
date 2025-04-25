@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+
+import { useState, useCallback, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/integrations/supabase/client';
@@ -24,9 +25,10 @@ export const useCorporify = () => {
   const [savedMessages, setSavedMessages] = useState<HistoryItem[]>([]);
 
   // Load history from localStorage on component mount
-  useState(() => {
+  useEffect(() => {
     if (user) {
       try {
+        console.log("useCorporify: User auth state:", user ? `Authenticated as ${user.email}` : "Not authenticated");
         const savedHistoryJSON = localStorage.getItem(`corporify_history_${user.id}`);
         if (savedHistoryJSON) {
           setHistory(JSON.parse(savedHistoryJSON));
@@ -40,7 +42,7 @@ export const useCorporify = () => {
         console.error('Failed to load history from localStorage', error);
       }
     }
-  });
+  }, [user]);
 
   const corporifyText = useCallback(async (text: string, tone: ToneOption = 'professional'): Promise<string | null> => {
     if (!text.trim()) return null;
@@ -128,10 +130,11 @@ export const useCorporify = () => {
     
     try {
       const { error } = await supabase.from('feedback').insert({
-        user_id: user.id,
-        input_text: input,
-        output_text: output,
-        is_positive: isPositive
+        user_email: user.email,
+        functionality_rating: isPositive ? 5 : 1,
+        ui_rating: isPositive ? 5 : 1,
+        recommendation_rating: isPositive ? 5 : 1,
+        additional_comments: `Feedback on: "${input.substring(0, 50)}..."`
       });
       
       if (error) {
