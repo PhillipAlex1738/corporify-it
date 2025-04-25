@@ -28,7 +28,7 @@ const SEO = ({ title, description, canonicalUrl, path }: SEOProps) => {
       <meta httpEquiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains" />
       <meta httpEquiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
     </Helmet>
-  </div>
-);
+  );
+};
 
 export default SEO;
