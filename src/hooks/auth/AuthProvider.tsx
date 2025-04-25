@@ -23,6 +23,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     console.log("Setting up auth provider and listeners");
+    let isInitialized = false;
     
     // First set up the auth listener before checking for session
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
@@ -56,13 +57,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Then check for existing session
     const initializeAuth = async () => {
+      if (isInitialized) return;
+      
       try {
         setIsLoading(true);
+        console.log('Checking for existing session...');
         const { data, error } = await supabase.auth.getSession();
         
         if (error) {
           console.error('Error getting session:', error);
-          setIsLoading(false);
           return;
         }
         
@@ -81,6 +84,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.error('Error initializing auth:', error);
       } finally {
         setIsLoading(false);
+        isInitialized = true;
       }
     };
 
@@ -105,4 +109,3 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
-

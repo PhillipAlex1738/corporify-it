@@ -27,15 +27,19 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const { login, signUp, googleSignIn, isLoading } = useAuth();
   const [localLoading, setLocalLoading] = useState(false);
   
-  // Reset loading state when modal closes
+  // Reset states when modal closes or opens
   useEffect(() => {
     if (!isOpen) {
       setLocalLoading(false);
+      setEmail('');
+      setPassword('');
     }
   }, [isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (localLoading) return; // Prevent multiple submissions
+    
     setLocalLoading(true);
     
     try {
@@ -44,27 +48,37 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       } else {
         await signUp(email, password);
       }
-      // Only close if no error was thrown
+      // Close modal on success
       onClose();
     } catch (error) {
       console.error('Authentication error:', error);
+    } finally {
+      // Always reset loading state even if there was an error
       setLocalLoading(false);
     }
   };
 
   const handleGoogleSignIn = async () => {
+    if (localLoading) return;
     setLocalLoading(true);
+    
     try {
       await googleSignIn();
       onClose();
     } catch (error) {
       console.error('Google sign-in error:', error);
+    } finally {
       setLocalLoading(false);
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      if (!open) {
+        setLocalLoading(false); // Reset loading when dialog is closed
+        onClose();
+      }
+    }}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="text-corporate-900 flex items-center gap-2">
