@@ -23,8 +23,12 @@ const tonePrompts = {
 };
 
 serve(async (req) => {
+  // Enhanced logging for request debugging
+  console.log(`Received ${req.method} request to ${req.url}`);
+  
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
+    console.log("Handling CORS preflight request");
     return new Response(null, { headers: corsHeaders });
   }
 
@@ -54,6 +58,7 @@ serve(async (req) => {
     try {
       requestData = await req.json();
       console.log("Request data parsed successfully");
+      console.log("Request data:", JSON.stringify(requestData, null, 2));
     } catch (e) {
       console.error("Failed to parse request body:", e);
       return new Response(
@@ -73,6 +78,7 @@ serve(async (req) => {
     }
 
     console.log("Processing text with tone:", tone);
+    console.log("Text to process:", text.substring(0, 50) + (text.length > 50 ? "..." : ""));
     
     // Get the appropriate system prompt based on tone
     const systemPrompt = tonePrompts[tone] || tonePrompts.professional;

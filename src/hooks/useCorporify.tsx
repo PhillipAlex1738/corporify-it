@@ -1,261 +1,197 @@
-
-import { useState, useEffect } from 'react';
-import { useToast } from "@/components/ui/use-toast";
+import { useState, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/integrations/supabase/client';
 
 export type ToneOption = 'professional' | 'formal' | 'friendly' | 'concise' | 'diplomatic';
 
-export type CorporifyHistory = {
+export type HistoryItem = {
   id: string;
-  originalText: string;
-  corporateText: string;
-  timestamp: Date;
+  input: string;
+  output: string;
+  timestamp: string;
+  tone: ToneOption;
+  isSaved?: boolean;
 };
 
 export const useCorporify = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [history, setHistory] = useState<CorporifyHistory[]>([]);
-  const [savedMessages, setSavedMessages] = useState<CorporifyHistory[]>([]);
-  const [lastError, setLastError] = useState<string | null>(null);
-  const [apiDiagnostics, setApiDiagnostics] = useState<any>(null);
-  const { toast } = useToast();
   const { user } = useAuth();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const [lastError, setLastError] = useState<string | null>(null);
+  const [apiDiagnostics, setApiDiagnostics] = useState<any | null>(null);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [savedMessages, setSavedMessages] = useState<HistoryItem[]>([]);
 
-  useEffect(() => {
-    console.log("useCorporify: User auth state:", user ? `Authenticated as ${user.email}` : "Not authenticated");
-  }, [user]);
-
-  useEffect(() => {
-    const savedMessagesJSON = localStorage.getItem('corporify_saved_messages');
-    if (savedMessagesJSON) {
+  // Load history from localStorage on component mount
+  useState(() => {
+    if (user) {
       try {
-        const parsedMessages = JSON.parse(savedMessagesJSON);
-        const messagesWithDates = parsedMessages.map((msg: any) => ({
-          ...msg,
-          timestamp: new Date(msg.timestamp)
-        }));
-        setSavedMessages(messagesWithDates);
-      } catch (e) {
-        console.error('Failed to parse saved messages from localStorage', e);
+        const savedHistoryJSON = localStorage.getItem(`corporify_history_${user.id}`);
+        if (savedHistoryJSON) {
+          setHistory(JSON.parse(savedHistoryJSON));
+        }
+        
+        const savedMessagesJSON = localStorage.getItem(`corporify_saved_${user.id}`);
+        if (savedMessagesJSON) {
+          setSavedMessages(JSON.parse(savedMessagesJSON));
+        }
+      } catch (error) {
+        console.error('Failed to load history from localStorage', error);
       }
     }
-  }, []);
+  });
 
-  useEffect(() => {
-    localStorage.setItem('corporify_saved_messages', JSON.stringify(savedMessages));
-  }, [savedMessages]);
-
-  const corporifyText = async (originalText: string, tone: ToneOption = 'professional'): Promise<string> => {
+  const corporifyText = useCallback(async (text: string, tone: ToneOption = 'professional'): Promise<string | null> => {
+    if (!text.trim()) return null;
+    
     setIsLoading(true);
     setLastError(null);
     setApiDiagnostics(null);
-
-    console.log("corporifyText called with user:", user ? `Authenticated as ${user.email}` : "Not authenticated");
-    const isAnonymous = !user;
-
-    if (isAnonymous) {
-      // Update usage count for anonymous users
-      const today = new Date().toISOString().slice(0, 10);
-      let currentUsage = 0;
-      
-      try {
-        const usageJSON = localStorage.getItem('corporify_anon_usage');
-        if (usageJSON) {
-          const data = JSON.parse(usageJSON);
-          if (data.date === today) {
-            currentUsage = data.count || 0;
-          }
-        }
-        
-        // Check if user has reached the daily limit
-        const FREE_DEMO_DAILY_LIMIT = 5;
-        if (currentUsage >= FREE_DEMO_DAILY_LIMIT) {
-          setLastError('Daily limit reached. Sign in for unlimited transformations.');
-          toast({
-            title: "Daily limit reached",
-            description: "Sign in to get unlimited transformations.",
-            variant: "destructive",
-          });
-          setIsLoading(false);
-          return "";
-        }
-        
-        // Update the usage count
-        const newCount = currentUsage + 1;
-        localStorage.setItem('corporify_anon_usage', JSON.stringify({
-          date: today,
-          count: newCount
-        }));
-        
-        // Dispatch a custom event to notify other components about the usage update
-        window.dispatchEvent(new Event('corporifyUsageUpdated'));
-        console.log("Usage updated:", newCount);
-      } catch (e) {
-        console.error('Error updating anonymous usage count', e);
-      }
-    }
-
+    
     try {
-      console.log("Calling Supabase Edge Function with:", { 
-        text: originalText.substring(0, 50) + (originalText.length > 50 ? "..." : ""), 
-        userId: user?.id || "anonymous",
-        tone: tone
-      });
-
+      console.log(`Sending request to corporify function with tone: ${tone}`);
+      
       const { data, error } = await supabase.functions.invoke('corporify', {
         body: { 
-          text: originalText,
-          userId: user?.id || "anonymous",
-          tone: tone
+          text, 
+          tone,
+          userId: user?.id 
         }
       });
-
-      console.log("Edge function response received:", data);
-
+      
       if (error) {
-        console.error("Supabase Edge Function error:", error);
-        setLastError(error.message || 'Failed to corporify text');
-        setApiDiagnostics({
-          type: 'edge_function_error',
-          error: error
+        console.error('Supabase function error:', error);
+        setLastError(`API Error: ${error.message || 'Unknown error'}`);
+        setApiDiagnostics({ error });
+        toast({
+          title: "Error",
+          description: `Failed to process your text: ${error.message}`,
+          variant: "destructive",
         });
-        throw new Error(error.message || 'Failed to corporify text');
-      }
-
-      if (!data) {
-        console.error("Edge function returned empty data");
-        setLastError('Empty response from API');
-        setApiDiagnostics({
-          type: 'empty_response'
-        });
-        throw new Error('Empty response from API');
+        return null;
       }
       
-      if (!data.corporateText) {
-        console.error("Edge function response missing corporateText:", data);
-        
-        setApiDiagnostics({
-          type: 'invalid_response_format',
-          rawResponse: data
+      if (!data || !data.corporateText) {
+        console.error('Invalid response format:', data);
+        setLastError('Invalid response format from API');
+        setApiDiagnostics({ data });
+        toast({
+          title: "Error",
+          description: "Received an invalid response format from the server.",
+          variant: "destructive",
         });
-        if (data.error) {
-          setLastError(`API error: ${data.error}${data.details ? ` - ${data.details}` : ''}`);
-          throw new Error(`API error: ${data.error}`);
-        } else {
-          setLastError('Invalid response format from API');
-          throw new Error('Invalid response format from API');
+        return null;
+      }
+      
+      const result = data.corporateText;
+      
+      // Add to history if user is logged in
+      if (user) {
+        const newItem: HistoryItem = {
+          id: Date.now().toString(),
+          input: text,
+          output: result,
+          timestamp: new Date().toISOString(),
+          tone
+        };
+        
+        const updatedHistory = [newItem, ...history].slice(0, 50); // Keep last 50 items
+        setHistory(updatedHistory);
+        
+        // Save to localStorage
+        try {
+          localStorage.setItem(`corporify_history_${user.id}`, JSON.stringify(updatedHistory));
+        } catch (error) {
+          console.error('Failed to save history to localStorage', error);
         }
       }
-
-      const corporateText = data.corporateText;
-
-      if (user) {
-        const newEntry = {
-          id: `history_${Date.now()}`,
-          originalText,
-          corporateText,
-          timestamp: new Date(),
-        };
-        setHistory(prevHistory => [newEntry, ...prevHistory]);
-      }
-
-      if (user) {
-        toast({
-          title: "Text corporified!",
-          description: "Unlimited conversions as a signed in user.",
-        });
-      } else {
-        toast({
-          title: "Text corporified!",
-          description: "Sign in to remove the daily limit and access more features.",
-        });
-      }
-
-      return corporateText;
-    } catch (error: any) {
-      console.error('Corporification failed', error);
-      setLastError(error.message || "Unknown error occurred");
-      if (!apiDiagnostics) {
-        setApiDiagnostics({
-          type: 'unknown_error',
-          error: error
-        });
-      }
+      
+      return result;
+    } catch (err: any) {
+      console.error('Error in corporifyText:', err);
+      setLastError(err.message || 'Unknown error occurred');
+      setApiDiagnostics({ error: err });
       toast({
-        title: "Corporification failed",
-        description: error.message || "Please try again later.",
+        title: "Error",
+        description: err.message || "An unexpected error occurred.",
         variant: "destructive",
       });
-      return "";
+      return null;
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user, history, toast]);
 
-  const saveFeedback = async (originalText: string, corporateText: string, isHelpful: boolean): Promise<boolean> => {
+  const saveFeedback = useCallback(async (input: string, output: string, isPositive: boolean): Promise<boolean> => {
+    if (!user) return false;
+    
     try {
-      console.log('Feedback received:', { 
-        originalText: originalText.substring(0, 50) + (originalText.length > 50 ? "..." : ""), 
-        corporateText: corporateText.substring(0, 50) + (corporateText.length > 50 ? "..." : ""), 
-        isHelpful
+      const { error } = await supabase.from('feedback').insert({
+        user_id: user.id,
+        input_text: input,
+        output_text: output,
+        is_positive: isPositive
       });
       
-      toast({
-        title: isHelpful ? "Thanks for your feedback!" : "We'll do better",
-        description: isHelpful 
-          ? "We're glad the transformation was helpful." 
-          : "Your feedback helps us improve. Consider contacting support with details.",
-      });
-      
-      if (!isHelpful && user) {
-        setTimeout(() => {
-          toast({
-            title: "Need more help?",
-            description: "Visit our support page to tell us how we can improve.",
-            action: (
-              <button
-                onClick={() => window.location.href = "/support"}
-                className="bg-primary text-primary-foreground h-8 rounded-md px-3 text-xs"
-              >
-                Support
-              </button>
-            ),
-          });
-        }, 3000);
+      if (error) {
+        console.error('Error saving feedback:', error);
+        return false;
       }
       
       return true;
-    } catch (error) {
-      console.error('Error saving feedback:', error);
+    } catch (err) {
+      console.error('Error in saveFeedback:', err);
       return false;
     }
-  };
+  }, [user]);
 
-  const toggleSaveMessage = (item: CorporifyHistory) => {
-    const isAlreadySaved = savedMessages.some(msg => msg.id === item.id);
+  const toggleSaveMessage = useCallback((item: HistoryItem) => {
+    if (!user) return;
     
-    if (isAlreadySaved) {
-      setSavedMessages(saved => saved.filter(msg => msg.id !== item.id));
-      toast({ description: "Removed from saved messages" });
+    // Check if the item is already saved
+    const isSaved = savedMessages.some(saved => saved.id === item.id);
+    
+    let updatedSavedMessages;
+    if (isSaved) {
+      // Remove from saved
+      updatedSavedMessages = savedMessages.filter(saved => saved.id !== item.id);
     } else {
-      setSavedMessages(saved => [item, ...saved]);
-      toast({ description: "Added to saved messages" });
+      // Add to saved
+      updatedSavedMessages = [{ ...item, isSaved: true }, ...savedMessages];
     }
-  };
+    
+    setSavedMessages(updatedSavedMessages);
+    
+    // Update localStorage
+    try {
+      localStorage.setItem(`corporify_saved_${user.id}`, JSON.stringify(updatedSavedMessages));
+    } catch (error) {
+      console.error('Failed to save to localStorage', error);
+    }
+  }, [user, savedMessages]);
 
-  const removeFromSaved = (id: string) => {
-    setSavedMessages(saved => saved.filter(msg => msg.id !== id));
-    toast({ description: "Removed from saved messages" });
-  };
+  const removeFromSaved = useCallback((itemId: string) => {
+    if (!user) return;
+    
+    const updatedSavedMessages = savedMessages.filter(item => item.id !== itemId);
+    setSavedMessages(updatedSavedMessages);
+    
+    // Update localStorage
+    try {
+      localStorage.setItem(`corporify_saved_${user.id}`, JSON.stringify(updatedSavedMessages));
+    } catch (error) {
+      console.error('Failed to update localStorage', error);
+    }
+  }, [user, savedMessages]);
 
   return {
     corporifyText,
     saveFeedback,
     isLoading,
-    history,
     lastError,
     apiDiagnostics,
+    history,
     savedMessages,
     toggleSaveMessage,
     removeFromSaved
