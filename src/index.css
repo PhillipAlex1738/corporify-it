@@ -114,16 +114,3 @@
 .feature-card {
   @apply bg-white rounded-xl p-6 shadow-md transition-all duration-300 hover:shadow-lg border border-gray-100;
 }
-
-.price-card {
-  @apply bg-white rounded-xl p-8 shadow-md transition-all duration-300 hover:shadow-xl border border-gray-100 flex flex-col;
-}
-
-.price-card-popular {
-  @apply relative border-corporate-500 shadow-lg;
-}
-
-.price-card-popular::before {
-  content: "Most Popular";
-  @apply absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-corporate-500 text-white px-4 py-1 rounded-full text-xs font-bold;
-}

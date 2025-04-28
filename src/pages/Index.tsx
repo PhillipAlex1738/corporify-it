@@ -4,7 +4,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import CorporifyForm from '@/components/CorporifyForm';
 import SEO from '@/components/SEO';
 import { 
   ArrowRight, 
@@ -16,38 +15,14 @@ import {
   Clock 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 
 const Index = () => {
   const { user } = useAuth();
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
-  const [demoInput, setDemoInput] = useState('');
-  const [demoOutput, setDemoOutput] = useState('');
-  const [selectedTone, setSelectedTone] = useState('professional');
   
   useEffect(() => {
     console.log("Index page: User auth state:", user ? `Authenticated as ${user.email}` : "Not authenticated");
   }, [user]);
-
-  useEffect(() => {
-    if (demoInput) {
-      // Simple transformation logic for demo purposes
-      const toneMap = {
-        professional: "We would like to inform you that the matter is under consideration and we will revert with a decision shortly.",
-        diplomatic: "We appreciate your input on this matter and are carefully evaluating all aspects before providing a comprehensive response.",
-        friendly: "Thanks for bringing this to our attention! We're looking into it and will get back to you soon with more details.",
-        direct: "We're reviewing this matter and will provide our decision by end of week.",
-        concise: "Under review. Response expected within 48 hours."
-      };
-      
-      setTimeout(() => {
-        setDemoOutput(toneMap[selectedTone as keyof typeof toneMap] || '');
-      }, 500);
-    } else {
-      setDemoOutput('');
-    }
-  }, [demoInput, selectedTone]);
 
   // Structured data for rich search results
   const structuredData = {
@@ -90,12 +65,12 @@ const Index = () => {
               
               <div className="flex flex-col sm:flex-row gap-4 mt-4">
                 <Link to="/app">
-                  <Button className="bg-corporate-500 hover:bg-corporate-600 text-white px-8 py-6 rounded-md text-lg">
+                  <Button className="bg-corporate-800 hover:bg-corporate-700 text-white px-8 py-6 rounded-md text-lg">
                     Try Free Demo <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
                 
-                <Button variant="outline" className="border-corporate-500 text-corporate-500 hover:bg-corporate-50 px-8 py-6 rounded-md text-lg" onClick={() => setIsVideoModalOpen(true)}>
+                <Button variant="outline" className="border-corporate-800 text-corporate-800 hover:bg-corporate-50 px-8 py-6 rounded-md text-lg" onClick={() => setIsVideoModalOpen(true)}>
                   <Clock className="mr-2 h-5 w-5" /> Watch How It Works
                 </Button>
               </div>
@@ -124,7 +99,7 @@ const Index = () => {
               </div>
               
               <div className="absolute inset-0 flex items-center justify-center -z-10 opacity-30">
-                <ArrowRight className="h-20 w-20 text-corporate-500" />
+                <ArrowRight className="h-20 w-20 text-corporate-800" />
               </div>
             </div>
           </div>
@@ -141,7 +116,7 @@ const Index = () => {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="feature-card">
               <div className="h-14 w-14 bg-corporate-100 rounded-full flex items-center justify-center mb-6">
-                <Zap className="h-7 w-7 text-corporate-500" />
+                <Zap className="h-7 w-7 text-corporate-800" />
               </div>
               <h3 className="text-xl font-bold mb-3 text-corporate-800">Instant Transformation</h3>
               <p className="text-corporate-600">Transform casual messages into professional communication instantly</p>
@@ -149,7 +124,7 @@ const Index = () => {
             
             <div className="feature-card">
               <div className="h-14 w-14 bg-corporate-100 rounded-full flex items-center justify-center mb-6">
-                <MessageSquare className="h-7 w-7 text-corporate-500" />
+                <MessageSquare className="h-7 w-7 text-corporate-800" />
               </div>
               <h3 className="text-xl font-bold mb-3 text-corporate-800">Multiple Tone Options</h3>
               <p className="text-corporate-600">Choose from 5 professional tones: Formal, Diplomatic, Friendly, Direct, or Concise</p>
@@ -157,7 +132,7 @@ const Index = () => {
             
             <div className="feature-card">
               <div className="h-14 w-14 bg-corporate-100 rounded-full flex items-center justify-center mb-6">
-                <FileText className="h-7 w-7 text-corporate-500" />
+                <FileText className="h-7 w-7 text-corporate-800" />
               </div>
               <h3 className="text-xl font-bold mb-3 text-corporate-800">Template Library</h3>
               <p className="text-corporate-600">100+ pre-approved HR communication templates</p>
@@ -218,77 +193,24 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Interactive Demo */}
-      <section className="py-16 bg-white px-4">
-        <div className="container max-w-5xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 text-corporate-800">
-            Try It Yourself
-          </h2>
-          
-          <div className="bg-corporate-50 rounded-xl p-6 md:p-10 shadow-md">
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="space-y-4">
-                <label className="block font-medium text-corporate-800">Type your casual message here:</label>
-                <textarea 
-                  value={demoInput}
-                  onChange={(e) => setDemoInput(e.target.value)}
-                  placeholder="Hey team! Just wanted to update you on the project..."
-                  className="w-full h-40 p-4 rounded-md border border-gray-300 focus:ring-corporate-500 focus:border-corporate-500"
-                />
-                
-                <div>
-                  <label className="block font-medium text-corporate-800 mb-2">Select Tone:</label>
-                  <select 
-                    value={selectedTone} 
-                    onChange={(e) => setSelectedTone(e.target.value)}
-                    className="w-full p-3 rounded-md border border-gray-300 focus:ring-corporate-500 focus:border-corporate-500"
-                  >
-                    <option value="professional">Professional</option>
-                    <option value="diplomatic">Diplomatic</option>
-                    <option value="friendly">Friendly</option>
-                    <option value="direct">Direct</option>
-                    <option value="concise">Concise</option>
-                  </select>
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                <label className="block font-medium text-corporate-800">Your professional message:</label>
-                <div className="w-full h-40 p-4 rounded-md bg-white border border-gray-300 overflow-y-auto">
-                  {demoOutput ? (
-                    <p>{demoOutput}</p>
-                  ) : (
-                    <p className="text-gray-400 italic">Your professional message will appear here...</p>
-                  )}
-                </div>
-                
-                <Button className="w-full bg-corporate-500 hover:bg-corporate-600" disabled={!demoInput}>
-                  <Zap className="mr-2 h-4 w-4" /> Transform Message
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      
       {/* Trust Elements */}
       <section className="py-12 bg-white px-4">
         <div className="container max-w-5xl mx-auto">
           <div className="flex flex-wrap justify-center gap-x-12 gap-y-6">
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-corporate-500" />
+              <CheckCircle className="h-5 w-5 text-corporate-800" />
               <span>256-bit encryption</span>
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-corporate-500" />
+              <CheckCircle className="h-5 w-5 text-corporate-800" />
               <span>GDPR compliant</span>
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-corporate-500" />
+              <CheckCircle className="h-5 w-5 text-corporate-800" />
               <span>SOC 2 certified</span>
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-corporate-500" />
+              <CheckCircle className="h-5 w-5 text-corporate-800" />
               <span>14-day money-back guarantee</span>
             </div>
           </div>
@@ -305,7 +227,7 @@ const Index = () => {
             Join thousands of HR professionals using Corporify It to maintain consistent professional standards.
           </p>
           <Link to="/app">
-            <Button className="bg-white text-corporate-500 hover:bg-gray-100 px-8 py-6 text-lg">
+            <Button className="bg-white text-corporate-800 hover:bg-gray-100 px-8 py-6 text-lg">
               Start Your Free Trial Today
             </Button>
           </Link>
