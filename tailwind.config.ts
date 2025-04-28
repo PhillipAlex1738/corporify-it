@@ -61,9 +61,35 @@ export default {
 					500: '#4c7ab3',
 					600: '#3a6195',
 					700: '#304f7a',
-					800: '#2a4365', // secondary
-					900: '#1a365d', // primary
+					800: '#2a4365',
+					900: '#1a365d',
 				},
+				coral: {
+					50: '#fdf2f1',
+					100: '#fbe7e5',
+					200: '#f8d5d1',
+					300: '#f3b9b2',
+					400: '#ef9a8f',
+					500: '#E88D83',
+					600: '#d56e61',
+					700: '#bf504a',
+					800: '#9e4440',
+					900: '#83403c',
+				},
+				navy: {
+					50: '#ebeef0',
+					100: '#d0d6dd',
+					200: '#b3bfc9',
+					300: '#94a7b5',
+					400: '#7990a1',
+					500: '#5f798d',
+					600: '#4f667a',
+					700: '#3e5367',
+					800: '#2C3E50',
+					900: '#1e2a3c',
+				},
+				cream: '#FAF7F0',
+				darkgray: '#333333',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -90,16 +116,22 @@ export default {
 				"pulse-gentle": {
 					'0%, 100%': { transform: 'scale(1)' },
 					'50%': { transform: 'scale(1.05)' },
+				},
+				"message-transform": {
+					"0%": { opacity: "0", transform: "translateY(10px)" },
+					"100%": { opacity: "1", transform: "translateY(0)" }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				"pulse-gentle": "pulse-gentle 2s ease-in-out infinite",
+				"message-transform": "message-transform 0.5s ease-out forwards"
 			},
 			fontFamily: {
 				sans: ['Inter', 'sans-serif'],
 				playfair: ['Playfair Display', 'serif'],
+				freight: ['Freight Text Pro', 'Playfair Display', 'serif'],
 			},
 		}
 	},

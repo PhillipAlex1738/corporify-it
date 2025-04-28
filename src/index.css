@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,33 +7,33 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
+    --background: 40 33% 96%; /* Cream */
+    --foreground: 0 0% 20%; /* Dark Gray */
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 0 0% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 0 0% 20%;
 
-    --primary: 217 91% 15%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 9 67% 71%; /* Coral */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217 33% 28%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 210 43% 24%; /* Navy */
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 40 33% 90%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 210 40% 96%;
-    --accent-foreground: 222 47% 11%;
+    --accent: 40 33% 90%;
+    --accent-foreground: 0 0% 20%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 222 84% 5%;
+    --border: 40 33% 86%;
+    --input: 40 33% 86%;
+    --ring: 0 0% 20%;
 
     --radius: 0.5rem;
   }
@@ -44,16 +45,16 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-cream text-darkgray font-sans;
   }
 
   h1, h2, h3, h4, .heading-font {
-    @apply font-playfair;
+    @apply font-freight;
   }
 }
 
 .corporify-gradient {
-  background: linear-gradient(to right, #1a365d, #2a4365);
+  background: linear-gradient(to right, #E88D83, #d56e61);
 }
 
 .shine-effect {
@@ -85,4 +86,40 @@
   to {
     transform: translateX(100%) rotate(30deg);
   }
+}
+
+.message-transformation {
+  transition: all 0.5s ease;
+}
+
+.message-casual {
+  background-color: #f0f4f8;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  position: relative;
+}
+
+.message-professional {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.feature-card {
+  @apply bg-white rounded-xl p-6 shadow-md transition-all duration-300 hover:shadow-lg border border-gray-100;
+}
+
+.price-card {
+  @apply bg-white rounded-xl p-8 shadow-md transition-all duration-300 hover:shadow-xl border border-gray-100 flex flex-col;
+}
+
+.price-card-popular {
+  @apply relative border-coral-500 shadow-lg;
+}
+
+.price-card-popular::before {
+  content: "Most Popular";
+  @apply absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-coral-500 text-white px-4 py-1 rounded-full text-xs font-bold;
 }
