@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,6 +15,7 @@ import Terms from "./pages/Terms";
 import DataHandling from "./pages/DataHandling";
 import Support from "./pages/Support";
 import Feedback from "./pages/Feedback";
+import AppPage from "./pages/AppPage";
 
 const PageViewTracker = ({ children }: { children: React.ReactNode }) => {
   usePageView();
@@ -33,6 +35,7 @@ const App = () => (
               <Sonner />
               <Routes>
                 <Route path="/" element={<Index />} />
+                <Route path="/app" element={<AppPage />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/data-handling" element={<DataHandling />} />

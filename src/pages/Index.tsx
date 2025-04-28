@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CorporifyForm from '@/components/CorporifyForm';
@@ -88,9 +89,11 @@ const Index = () => {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 mt-4">
-                <Button className="bg-coral-500 hover:bg-coral-600 text-white px-8 py-6 rounded-md text-lg">
-                  Try Free Demo <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
+                <Link to="/app">
+                  <Button className="bg-coral-500 hover:bg-coral-600 text-white px-8 py-6 rounded-md text-lg">
+                    Try Free Demo <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
                 
                 <Button variant="outline" className="border-coral-500 text-coral-500 hover:bg-coral-50 px-8 py-6 rounded-md text-lg" onClick={() => setIsVideoModalOpen(true)}>
                   <Clock className="mr-2 h-5 w-5" /> Watch How It Works
@@ -301,9 +304,11 @@ const Index = () => {
           <p className="text-xl mb-8 opacity-90">
             Join thousands of HR professionals using Corporify to maintain consistent professional standards.
           </p>
-          <Button className="bg-white text-coral-500 hover:bg-gray-100 px-8 py-6 text-lg">
-            Start Your Free Trial Today
-          </Button>
+          <Link to="/app">
+            <Button className="bg-white text-coral-500 hover:bg-gray-100 px-8 py-6 text-lg">
+              Start Your Free Trial Today
+            </Button>
+          </Link>
         </div>
       </section>
       
@@ -313,4 +318,3 @@ const Index = () => {
 };
 
 export default Index;
-
