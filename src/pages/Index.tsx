@@ -53,7 +53,7 @@ const Index = () => {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": "Corporify",
+    "name": "Corporify It",
     "applicationCategory": "BusinessApplication",
     "description": "Transform casual messages into polished professional language instantly. Enhance your workplace communication with our AI-powered rewriting tool.",
     "offers": {
@@ -66,7 +66,7 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col bg-cream">
       <SEO
-        title="Corporify - AI Professional Communication Tool"
+        title="Corporify It - AI Professional Communication Tool"
         description="Transform casual messages into professional workplace communication in seconds. The AI-powered tool for HR teams to maintain consistent professional standards."
         path="/"
         keywords="corporate writing, professional emails, business communication, AI writing assistant, workplace communication, email tone"
@@ -80,22 +80,22 @@ const Index = () => {
         <div className="container max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="flex flex-col gap-6">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-navy-800 leading-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-corporate-800 leading-tight">
                 Transform Casual Messages into Professional Communication in Seconds
               </h1>
               
-              <p className="text-lg md:text-xl text-navy-600 max-w-xl">
+              <p className="text-lg md:text-xl text-corporate-600 max-w-xl">
                 The AI-powered tool that helps HR teams maintain consistent professional standards across all workplace communications
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 mt-4">
                 <Link to="/app">
-                  <Button className="bg-coral-500 hover:bg-coral-600 text-white px-8 py-6 rounded-md text-lg">
+                  <Button className="bg-corporate-500 hover:bg-corporate-600 text-white px-8 py-6 rounded-md text-lg">
                     Try Free Demo <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
                 
-                <Button variant="outline" className="border-coral-500 text-coral-500 hover:bg-coral-50 px-8 py-6 rounded-md text-lg" onClick={() => setIsVideoModalOpen(true)}>
+                <Button variant="outline" className="border-corporate-500 text-corporate-500 hover:bg-corporate-50 px-8 py-6 rounded-md text-lg" onClick={() => setIsVideoModalOpen(true)}>
                   <Clock className="mr-2 h-5 w-5" /> Watch How It Works
                 </Button>
               </div>
@@ -124,7 +124,7 @@ const Index = () => {
               </div>
               
               <div className="absolute inset-0 flex items-center justify-center -z-10 opacity-30">
-                <ArrowRight className="h-20 w-20 text-coral-500" />
+                <ArrowRight className="h-20 w-20 text-corporate-500" />
               </div>
             </div>
           </div>
@@ -134,33 +134,33 @@ const Index = () => {
       {/* Features Grid */}
       <section className="py-16 bg-white px-4">
         <div className="container max-w-7xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-navy-800">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-corporate-800">
             Key Features
           </h2>
           
           <div className="grid md:grid-cols-3 gap-8">
             <div className="feature-card">
-              <div className="h-14 w-14 bg-coral-100 rounded-full flex items-center justify-center mb-6">
-                <Zap className="h-7 w-7 text-coral-500" />
+              <div className="h-14 w-14 bg-corporate-100 rounded-full flex items-center justify-center mb-6">
+                <Zap className="h-7 w-7 text-corporate-500" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-navy-800">Instant Transformation</h3>
-              <p className="text-navy-600">Transform casual messages into professional communication instantly</p>
+              <h3 className="text-xl font-bold mb-3 text-corporate-800">Instant Transformation</h3>
+              <p className="text-corporate-600">Transform casual messages into professional communication instantly</p>
             </div>
             
             <div className="feature-card">
-              <div className="h-14 w-14 bg-coral-100 rounded-full flex items-center justify-center mb-6">
-                <MessageSquare className="h-7 w-7 text-coral-500" />
+              <div className="h-14 w-14 bg-corporate-100 rounded-full flex items-center justify-center mb-6">
+                <MessageSquare className="h-7 w-7 text-corporate-500" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-navy-800">Multiple Tone Options</h3>
-              <p className="text-navy-600">Choose from 5 professional tones: Formal, Diplomatic, Friendly, Direct, or Concise</p>
+              <h3 className="text-xl font-bold mb-3 text-corporate-800">Multiple Tone Options</h3>
+              <p className="text-corporate-600">Choose from 5 professional tones: Formal, Diplomatic, Friendly, Direct, or Concise</p>
             </div>
             
             <div className="feature-card">
-              <div className="h-14 w-14 bg-coral-100 rounded-full flex items-center justify-center mb-6">
-                <FileText className="h-7 w-7 text-coral-500" />
+              <div className="h-14 w-14 bg-corporate-100 rounded-full flex items-center justify-center mb-6">
+                <FileText className="h-7 w-7 text-corporate-500" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-navy-800">Template Library</h3>
-              <p className="text-navy-600">100+ pre-approved HR communication templates</p>
+              <h3 className="text-xl font-bold mb-3 text-corporate-800">Template Library</h3>
+              <p className="text-corporate-600">100+ pre-approved HR communication templates</p>
             </div>
           </div>
         </div>
@@ -169,7 +169,7 @@ const Index = () => {
       {/* Social Proof */}
       <section className="py-16 px-4">
         <div className="container max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-12 text-navy-800">
+          <h2 className="text-2xl font-bold text-center mb-12 text-corporate-800">
             Used by HR teams at Fortune 500 companies
           </h2>
           
@@ -189,8 +189,8 @@ const Index = () => {
           </div>
           
           <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-md">
-            <div className="text-xl italic text-navy-700 mb-6">
-              "Corporify reduced our communication review time by 75% and improved our team's professional image."
+            <div className="text-xl italic text-corporate-700 mb-6">
+              "Corporify It reduced our communication review time by 75% and improved our team's professional image."
             </div>
             <div className="flex items-center gap-4">
               <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center">
@@ -198,7 +198,7 @@ const Index = () => {
               </div>
               <div>
                 <p className="font-bold">Sarah Chen</p>
-                <p className="text-sm text-navy-600">HR Director at TechCorp</p>
+                <p className="text-sm text-corporate-600">HR Director at TechCorp</p>
               </div>
             </div>
           </div>
@@ -211,7 +211,7 @@ const Index = () => {
               <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
               <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
             </div>
-            <div className="text-navy-700 font-medium">
+            <div className="text-corporate-700 font-medium">
               4.8/5 from 1000+ HR Professionals
             </div>
           </div>
@@ -221,27 +221,27 @@ const Index = () => {
       {/* Interactive Demo */}
       <section className="py-16 bg-white px-4">
         <div className="container max-w-5xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 text-navy-800">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 text-corporate-800">
             Try It Yourself
           </h2>
           
-          <div className="bg-navy-50 rounded-xl p-6 md:p-10 shadow-md">
+          <div className="bg-corporate-50 rounded-xl p-6 md:p-10 shadow-md">
             <div className="grid md:grid-cols-2 gap-8">
               <div className="space-y-4">
-                <label className="block font-medium text-navy-800">Type your casual message here:</label>
+                <label className="block font-medium text-corporate-800">Type your casual message here:</label>
                 <textarea 
                   value={demoInput}
                   onChange={(e) => setDemoInput(e.target.value)}
                   placeholder="Hey team! Just wanted to update you on the project..."
-                  className="w-full h-40 p-4 rounded-md border border-gray-300 focus:ring-coral-500 focus:border-coral-500"
+                  className="w-full h-40 p-4 rounded-md border border-gray-300 focus:ring-corporate-500 focus:border-corporate-500"
                 />
                 
                 <div>
-                  <label className="block font-medium text-navy-800 mb-2">Select Tone:</label>
+                  <label className="block font-medium text-corporate-800 mb-2">Select Tone:</label>
                   <select 
                     value={selectedTone} 
                     onChange={(e) => setSelectedTone(e.target.value)}
-                    className="w-full p-3 rounded-md border border-gray-300 focus:ring-coral-500 focus:border-coral-500"
+                    className="w-full p-3 rounded-md border border-gray-300 focus:ring-corporate-500 focus:border-corporate-500"
                   >
                     <option value="professional">Professional</option>
                     <option value="diplomatic">Diplomatic</option>
@@ -253,7 +253,7 @@ const Index = () => {
               </div>
               
               <div className="space-y-4">
-                <label className="block font-medium text-navy-800">Your professional message:</label>
+                <label className="block font-medium text-corporate-800">Your professional message:</label>
                 <div className="w-full h-40 p-4 rounded-md bg-white border border-gray-300 overflow-y-auto">
                   {demoOutput ? (
                     <p>{demoOutput}</p>
@@ -262,7 +262,7 @@ const Index = () => {
                   )}
                 </div>
                 
-                <Button className="w-full bg-coral-500 hover:bg-coral-600" disabled={!demoInput}>
+                <Button className="w-full bg-corporate-500 hover:bg-corporate-600" disabled={!demoInput}>
                   <Zap className="mr-2 h-4 w-4" /> Transform Message
                 </Button>
               </div>
@@ -276,19 +276,19 @@ const Index = () => {
         <div className="container max-w-5xl mx-auto">
           <div className="flex flex-wrap justify-center gap-x-12 gap-y-6">
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-coral-500" />
+              <CheckCircle className="h-5 w-5 text-corporate-500" />
               <span>256-bit encryption</span>
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-coral-500" />
+              <CheckCircle className="h-5 w-5 text-corporate-500" />
               <span>GDPR compliant</span>
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-coral-500" />
+              <CheckCircle className="h-5 w-5 text-corporate-500" />
               <span>SOC 2 certified</span>
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-coral-500" />
+              <CheckCircle className="h-5 w-5 text-corporate-500" />
               <span>14-day money-back guarantee</span>
             </div>
           </div>
@@ -296,16 +296,16 @@ const Index = () => {
       </section>
       
       {/* CTA Section */}
-      <section className="py-16 corporify-gradient px-4">
+      <section className="py-16 bg-corporate-gradient px-4">
         <div className="container max-w-4xl mx-auto text-center text-white">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Ready to transform your workplace communications?
           </h2>
           <p className="text-xl mb-8 opacity-90">
-            Join thousands of HR professionals using Corporify to maintain consistent professional standards.
+            Join thousands of HR professionals using Corporify It to maintain consistent professional standards.
           </p>
           <Link to="/app">
-            <Button className="bg-white text-coral-500 hover:bg-gray-100 px-8 py-6 text-lg">
+            <Button className="bg-white text-corporate-500 hover:bg-gray-100 px-8 py-6 text-lg">
               Start Your Free Trial Today
             </Button>
           </Link>

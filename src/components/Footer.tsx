@@ -6,11 +6,11 @@ import { ArrowRight } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-navy-800 text-white py-12">
+    <footer className="bg-corporate-800 text-white py-12">
       <div className="container max-w-7xl mx-auto px-4">
         <div className="grid md:grid-cols-4 gap-8">
           <div className="col-span-full md:col-span-1">
-            <h2 className="font-freight text-2xl font-bold mb-4">Corporify</h2>
+            <h2 className="font-freight text-2xl font-bold mb-4">Corporify It</h2>
             <p className="text-sm text-gray-300 mb-6">
               Transform casual messages into professional workplace communication in seconds.
             </p>
@@ -58,18 +58,18 @@ const Footer = () => {
               <Input 
                 type="email" 
                 placeholder="Email address" 
-                className="bg-navy-700 border-navy-600 text-white" 
+                className="bg-corporate-700 border-corporate-600 text-white" 
               />
-              <Button type="submit" className="bg-coral-500 hover:bg-coral-600 px-3">
+              <Button type="submit" className="bg-corporate-500 hover:bg-corporate-600 px-3">
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </form>
           </div>
         </div>
         
-        <div className="border-t border-navy-700 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center">
+        <div className="border-t border-corporate-700 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-gray-400">
-            © {new Date().getFullYear()} Corporify. All rights reserved.
+            © {new Date().getFullYear()} Corporify It. All rights reserved.
           </p>
           <div className="flex gap-4 mt-4 md:mt-0">
             <a href="#" className="text-gray-400 hover:text-white">

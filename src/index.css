@@ -57,6 +57,10 @@
   background: linear-gradient(to right, #E88D83, #d56e61);
 }
 
+.bg-corporate-gradient {
+  background: linear-gradient(to right, #4c7ab3, #3a6195);
+}
+
 .shine-effect {
   position: relative;
   overflow: hidden;
@@ -116,10 +120,10 @@
 }
 
 .price-card-popular {
-  @apply relative border-coral-500 shadow-lg;
+  @apply relative border-corporate-500 shadow-lg;
 }
 
 .price-card-popular::before {
   content: "Most Popular";
-  @apply absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-coral-500 text-white px-4 py-1 rounded-full text-xs font-bold;
+  @apply absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-corporate-500 text-white px-4 py-1 rounded-full text-xs font-bold;
 }

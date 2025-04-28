@@ -34,24 +34,24 @@ const Header = () => {
     <header className="w-full py-4 px-6 bg-white shadow-sm">
       <div className="container max-w-7xl mx-auto flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <div className="corporify-gradient p-2 rounded-lg">
-            <h1 className="text-white font-bold text-xl">Corporify</h1>
+          <div className="bg-corporate-gradient p-2 rounded-lg">
+            <h1 className="text-white font-bold text-xl">Corporify It</h1>
           </div>
         </div>
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
-          <a href="#features" className="text-navy-800 hover:text-coral-500 font-medium">Features</a>
-          <a href="#pricing" className="text-navy-800 hover:text-coral-500 font-medium">Pricing</a>
-          <a href="#testimonials" className="text-navy-800 hover:text-coral-500 font-medium">Testimonials</a>
-          <a href="#demo" className="text-navy-800 hover:text-coral-500 font-medium">Try it</a>
+          <a href="#features" className="text-corporate-800 hover:text-corporate-500 font-medium">Features</a>
+          <a href="#pricing" className="text-corporate-800 hover:text-corporate-500 font-medium">Pricing</a>
+          <a href="#testimonials" className="text-corporate-800 hover:text-corporate-500 font-medium">Testimonials</a>
+          <a href="#demo" className="text-corporate-800 hover:text-corporate-500 font-medium">Try it</a>
         </nav>
         
         <div className="hidden md:flex items-center gap-3">
           {user ? (
             <>
               <div className="flex items-center gap-2">
-                <UserRound className="h-4 w-4 text-navy-600" />
+                <UserRound className="h-4 w-4 text-corporate-600" />
                 <span className="text-sm font-medium">{user.email}</span>
               </div>
               
@@ -59,7 +59,7 @@ const Header = () => {
                 onClick={() => setIsPricingModalOpen(true)}
                 variant="outline" 
                 size="sm"
-                className="border-coral-500 text-coral-500 hover:bg-coral-50"
+                className="border-corporate-500 text-corporate-500 hover:bg-corporate-50"
               >
                 <Clock className="h-4 w-4 mr-1" /> Premium
               </Button>
@@ -79,13 +79,13 @@ const Header = () => {
             <>
               <Button 
                 variant="ghost"
-                className="text-navy-800 hover:text-coral-500"
+                className="text-corporate-800 hover:text-corporate-500"
                 onClick={() => setIsAuthModalOpen(true)}
               >
                 Sign In
               </Button>
               <Button 
-                className="bg-coral-500 hover:bg-coral-600"
+                className="bg-corporate-500 hover:bg-corporate-600"
                 onClick={() => setIsAuthModalOpen(true)}
               >
                 Get Started
@@ -100,9 +100,9 @@ const Header = () => {
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           {isMobileMenuOpen ? (
-            <X className="h-6 w-6 text-navy-800" />
+            <X className="h-6 w-6 text-corporate-800" />
           ) : (
-            <Menu className="h-6 w-6 text-navy-800" />
+            <Menu className="h-6 w-6 text-corporate-800" />
           )}
         </button>
       </div>
@@ -113,28 +113,28 @@ const Header = () => {
           <nav className="flex flex-col space-y-4">
             <a 
               href="#features" 
-              className="text-navy-800 hover:text-coral-500 font-medium py-2"
+              className="text-corporate-800 hover:text-corporate-500 font-medium py-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Features
             </a>
             <a 
               href="#pricing" 
-              className="text-navy-800 hover:text-coral-500 font-medium py-2"
+              className="text-corporate-800 hover:text-corporate-500 font-medium py-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Pricing
             </a>
             <a 
               href="#testimonials" 
-              className="text-navy-800 hover:text-coral-500 font-medium py-2"
+              className="text-corporate-800 hover:text-corporate-500 font-medium py-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Testimonials
             </a>
             <a 
               href="#demo" 
-              className="text-navy-800 hover:text-coral-500 font-medium py-2"
+              className="text-corporate-800 hover:text-corporate-500 font-medium py-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Try it
@@ -144,7 +144,7 @@ const Header = () => {
               {user ? (
                 <>
                   <div className="flex items-center gap-2 py-2">
-                    <UserRound className="h-4 w-4 text-navy-600" />
+                    <UserRound className="h-4 w-4 text-corporate-600" />
                     <span className="text-sm font-medium">{user.email}</span>
                   </div>
                   
@@ -155,7 +155,7 @@ const Header = () => {
                     }}
                     variant="outline" 
                     size="sm"
-                    className="border-coral-500 text-coral-500 hover:bg-coral-50 w-full mb-2"
+                    className="border-corporate-500 text-corporate-500 hover:bg-corporate-50 w-full mb-2"
                   >
                     <Clock className="h-4 w-4 mr-1" /> Premium
                   </Button>
@@ -175,7 +175,7 @@ const Header = () => {
                 <>
                   <Button 
                     variant="ghost"
-                    className="text-navy-800 hover:text-coral-500 w-full mb-2"
+                    className="text-corporate-800 hover:text-corporate-500 w-full mb-2"
                     onClick={() => {
                       setIsAuthModalOpen(true);
                       setIsMobileMenuOpen(false);
@@ -184,7 +184,7 @@ const Header = () => {
                     Sign In
                   </Button>
                   <Button 
-                    className="bg-coral-500 hover:bg-coral-600 w-full"
+                    className="bg-corporate-500 hover:bg-corporate-600 w-full"
                     onClick={() => {
                       setIsAuthModalOpen(true);
                       setIsMobileMenuOpen(false);
