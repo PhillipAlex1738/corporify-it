@@ -1,17 +1,17 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import AuthModal from '@/components/AuthModal';
-import PricingModal from '@/components/PricingModal';
 import { UserRound, LogOut, Clock, Menu, X } from 'lucide-react';
 
 const Header = () => {
   const { user, logout } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
   
   useEffect(() => {
     console.log("Header: User auth state:", user ? `Authenticated as ${user.email}` : "Not authenticated");
@@ -30,21 +30,49 @@ const Header = () => {
     }
   };
 
+  const scrollToSection = (sectionId: string) => {
+    if (location.pathname !== '/') {
+      // If not on the landing page, navigate to it with hash
+      window.location.href = `/#${sectionId}`;
+      return;
+    }
+    
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+      setIsMobileMenuOpen(false);
+    }
+  };
+
   return (
     <header className="w-full py-4 px-6 bg-white shadow-sm">
       <div className="container max-w-7xl mx-auto flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <div className="bg-corporate-gradient p-2 rounded-lg">
+          <Link to="/" className="bg-corporate-gradient p-2 rounded-lg">
             <h1 className="text-white font-bold text-xl">Corporify It</h1>
-          </div>
+          </Link>
         </div>
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
-          <a href="#features" className="text-corporate-800 hover:text-corporate-500 font-medium">Features</a>
-          <a href="#pricing" className="text-corporate-800 hover:text-corporate-500 font-medium">Pricing</a>
-          <a href="#testimonials" className="text-corporate-800 hover:text-corporate-500 font-medium">Testimonials</a>
-          <a href="#demo" className="text-corporate-800 hover:text-corporate-500 font-medium">Try it</a>
+          <button 
+            onClick={() => scrollToSection('features')} 
+            className="text-corporate-800 hover:text-corporate-500 font-medium"
+          >
+            Features
+          </button>
+          <button 
+            onClick={() => scrollToSection('testimonials')} 
+            className="text-corporate-800 hover:text-corporate-500 font-medium"
+          >
+            Testimonials
+          </button>
+          <Link 
+            to="/app" 
+            className="text-corporate-800 hover:text-corporate-500 font-medium"
+          >
+            Try It
+          </Link>
         </nav>
         
         <div className="hidden md:flex items-center gap-3">
@@ -111,34 +139,25 @@ const Header = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-md z-50 py-4 px-6">
           <nav className="flex flex-col space-y-4">
-            <a 
-              href="#features" 
+            <button 
+              onClick={() => scrollToSection('features')} 
               className="text-corporate-800 hover:text-corporate-500 font-medium py-2"
-              onClick={() => setIsMobileMenuOpen(false)}
             >
               Features
-            </a>
-            <a 
-              href="#pricing" 
+            </button>
+            <button 
+              onClick={() => scrollToSection('testimonials')} 
               className="text-corporate-800 hover:text-corporate-500 font-medium py-2"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Pricing
-            </a>
-            <a 
-              href="#testimonials" 
-              className="text-corporate-800 hover:text-corporate-500 font-medium py-2"
-              onClick={() => setIsMobileMenuOpen(false)}
             >
               Testimonials
-            </a>
-            <a 
-              href="#demo" 
+            </button>
+            <Link 
+              to="/app" 
               className="text-corporate-800 hover:text-corporate-500 font-medium py-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Try it
-            </a>
+              Try It
+            </Link>
             
             <div className="pt-4 border-t">
               {user ? (
@@ -203,10 +222,6 @@ const Header = () => {
       <AuthModal 
         isOpen={isAuthModalOpen} 
         onClose={() => setIsAuthModalOpen(false)} 
-      />
-      <PricingModal 
-        isOpen={isPricingModalOpen} 
-        onClose={() => setIsPricingModalOpen(false)} 
       />
     </header>
   );

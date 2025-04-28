@@ -107,7 +107,7 @@ const Index = () => {
       </section>
       
       {/* Features Grid */}
-      <section className="py-16 bg-white px-4">
+      <section id="features" className="py-16 bg-white px-4">
         <div className="container max-w-7xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-corporate-800">
             Key Features
@@ -142,7 +142,7 @@ const Index = () => {
       </section>
       
       {/* Social Proof */}
-      <section className="py-16 px-4">
+      <section id="testimonials" className="py-16 px-4">
         <div className="container max-w-7xl mx-auto">
           <h2 className="text-2xl font-bold text-center mb-12 text-corporate-800">
             Used by HR teams at Fortune 500 companies
