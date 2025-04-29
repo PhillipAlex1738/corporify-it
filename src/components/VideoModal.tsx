@@ -58,7 +58,6 @@ const VideoModal = ({
               controls
               autoPlay
               playsInline
-              type={`video/${videoType}`}
             >
               <source src={videoUrl} type={`video/${videoType}`} />
               Your browser does not support the video tag.
