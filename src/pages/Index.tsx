@@ -39,8 +39,8 @@ const Index = () => {
     }
   };
 
-  // Dropbox video URL
-  const dropboxVideoUrl = "https://www.dropbox.com/scl/fi/vw6kr32j33nb479pt78z7/VQQRIMHUHP6F4C33.mp4?rlkey=lv9wpgb5xnfx2f30vmm2z64z2&st=5wy3ubeu&dl=0";
+  // Direct Dropbox video URL
+  const dropboxVideoUrl = "https://dl.dropboxusercontent.com/scl/fi/vw6kr32j33nb479pt78z7/VQQRIMHUHP6F4C33.mp4?rlkey=lv9wpgb5xnfx2f30vmm2z64z2";
 
   return (
     <div className="min-h-screen flex flex-col bg-cream">

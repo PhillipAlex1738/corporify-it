@@ -29,15 +29,27 @@ const VideoModal = ({
   const [processedUrl, setProcessedUrl] = useState<string>(videoUrl);
   
   useEffect(() => {
-    // Process Dropbox links to convert them to direct download links
-    if (videoUrl && videoUrl.includes('dropbox.com') && !videoUrl.includes('raw=1')) {
-      // Replace www.dropbox.com with dl.dropboxusercontent.com and add raw=1
-      const directUrl = videoUrl.replace('www.dropbox.com', 'dl.dropboxusercontent.com')
-                                 .replace('?dl=0', '?raw=1')
-                                 .replace('&dl=0', '&raw=1');
-      setProcessedUrl(directUrl);
-    } else {
-      setProcessedUrl(videoUrl);
+    if (videoUrl) {
+      // Handle direct dl.dropboxusercontent.com links (already converted)
+      if (videoUrl.includes('dl.dropboxusercontent.com')) {
+        // Ensure raw=1 parameter is present
+        const urlWithRaw = videoUrl.includes('raw=1') ? 
+          videoUrl : 
+          videoUrl + (videoUrl.includes('?') ? '&raw=1' : '?raw=1');
+        setProcessedUrl(urlWithRaw);
+      } 
+      // Handle normal www.dropbox.com links
+      else if (videoUrl.includes('www.dropbox.com')) {
+        // Replace www.dropbox.com with dl.dropboxusercontent.com and add raw=1
+        const directUrl = videoUrl.replace('www.dropbox.com', 'dl.dropboxusercontent.com')
+                                  .replace('?dl=0', '?raw=1')
+                                  .replace('&dl=0', '&raw=1');
+        setProcessedUrl(directUrl);
+      } 
+      // Handle any other video URL
+      else {
+        setProcessedUrl(videoUrl);
+      }
     }
   }, [videoUrl]);
 
