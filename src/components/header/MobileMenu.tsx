@@ -1,6 +1,6 @@
 
-import { NavigationItems } from './NavigationItems';
-import { UserMenu } from './UserMenu';
+import NavigationItems from './NavigationItems';
+import UserMenu from './UserMenu';
 
 type MobileMenuProps = {
   isOpen: boolean;
