@@ -38,9 +38,10 @@ export const useAuthState = () => {
         throw error;
       }
 
+      // Always show a success toast when login is successful (regardless of email confirmation)
       toast({
-        title: isEmailNotConfirmed ? "Login successful" : "Logged in to Corporify It",
-        description: isEmailNotConfirmed ? "Welcome to Corporify It!" : "Welcome back!",
+        title: "Login successful",
+        description: "Welcome to Corporify It!",
       });
       
       return { success };

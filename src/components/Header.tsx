@@ -97,21 +97,13 @@ const Header = () => {
               </Button>
             </>
           ) : (
-            <>
-              <Button 
-                variant="ghost"
-                className="text-corporate-800 hover:text-corporate-500"
-                onClick={() => setIsAuthModalOpen(true)}
-              >
-                Sign In
-              </Button>
-              <Button 
-                className="bg-corporate-500 hover:bg-corporate-600"
-                onClick={() => setIsAuthModalOpen(true)}
-              >
-                Get Started
-              </Button>
-            </>
+            <Button 
+              variant="ghost"
+              className="text-corporate-800 hover:text-corporate-500"
+              onClick={() => setIsAuthModalOpen(true)}
+            >
+              Sign In
+            </Button>
           )}
         </div>
         
@@ -172,27 +164,16 @@ const Header = () => {
                   </Button>
                 </>
               ) : (
-                <>
-                  <Button 
-                    variant="ghost"
-                    className="text-corporate-800 hover:text-corporate-500 w-full mb-2"
-                    onClick={() => {
-                      setIsAuthModalOpen(true);
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    Sign In
-                  </Button>
-                  <Button 
-                    className="bg-corporate-500 hover:bg-corporate-600 w-full"
-                    onClick={() => {
-                      setIsAuthModalOpen(true);
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    Get Started
-                  </Button>
-                </>
+                <Button 
+                  variant="ghost"
+                  className="text-corporate-800 hover:text-corporate-500 w-full"
+                  onClick={() => {
+                    setIsAuthModalOpen(true);
+                    setIsMobileMenuOpen(false);
+                  }}
+                >
+                  Sign In
+                </Button>
               )}
             </div>
           </nav>
