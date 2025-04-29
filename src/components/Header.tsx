@@ -89,11 +89,11 @@ const Header = () => {
                 onClick={handleLogout}
                 variant="ghost" 
                 size="sm"
-                className="text-gray-500"
+                className="text-gray-500 hover:text-gray-700 hover:bg-gray-100"
                 disabled={isLoggingOut}
               >
                 <LogOut className="h-4 w-4 mr-1" />
-                <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
+                <span>{isLoggingOut ? "Logging out..." : "Sign Out"}</span>
               </Button>
             </>
           ) : (
@@ -164,11 +164,11 @@ const Header = () => {
                     onClick={handleLogout}
                     variant="ghost" 
                     size="sm"
-                    className="text-gray-500 w-full"
+                    className="text-gray-500 w-full hover:text-gray-700 hover:bg-gray-100"
                     disabled={isLoggingOut}
                   >
                     <LogOut className="h-4 w-4 mr-1" />
-                    <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
+                    <span>{isLoggingOut ? "Logging out..." : "Sign Out"}</span>
                   </Button>
                 </>
               ) : (
