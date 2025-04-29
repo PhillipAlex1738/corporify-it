@@ -39,6 +39,9 @@ const Index = () => {
     }
   };
 
+  // Dropbox video URL
+  const dropboxVideoUrl = "https://www.dropbox.com/scl/fi/vw6kr32j33nb479pt78z7/VQQRIMHUHP6F4C33.mp4?rlkey=lv9wpgb5xnfx2f30vmm2z64z2&st=5wy3ubeu&dl=0";
+
   return (
     <div className="min-h-screen flex flex-col bg-cream">
       <SEO
@@ -85,8 +88,10 @@ const Index = () => {
             <VideoModal 
               isOpen={isVideoModalOpen} 
               onClose={() => setIsVideoModalOpen(false)} 
-              videoUrl="https://www.youtube.com/embed/dQw4w9WgXcQ"
-              videoType="youtube"
+              videoUrl={dropboxVideoUrl}
+              videoType="external"
+              title="How Corporify It Works"
+              description="See how Corporify It transforms your casual communication into professional messages in seconds."
             />
             
             <div className="relative">

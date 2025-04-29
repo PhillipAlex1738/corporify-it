@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -13,7 +13,7 @@ interface VideoModalProps {
   isOpen: boolean;
   onClose: () => void;
   videoUrl?: string;
-  videoType?: 'youtube' | 'mp4' | 'webm' | 'ogg';
+  videoType?: 'youtube' | 'mp4' | 'webm' | 'ogg' | 'external';
   title?: string;
   description?: string;
 }
@@ -26,6 +26,21 @@ const VideoModal = ({
   title = "How Corporify It Works",
   description = "See how Corporify It transforms your casual communication into professional messages in seconds."
 }: VideoModalProps) => {
+  const [processedUrl, setProcessedUrl] = useState<string>(videoUrl);
+  
+  useEffect(() => {
+    // Process Dropbox links to convert them to direct download links
+    if (videoUrl && videoUrl.includes('dropbox.com') && !videoUrl.includes('raw=1')) {
+      // Replace www.dropbox.com with dl.dropboxusercontent.com and add raw=1
+      const directUrl = videoUrl.replace('www.dropbox.com', 'dl.dropboxusercontent.com')
+                                 .replace('?dl=0', '?raw=1')
+                                 .replace('&dl=0', '&raw=1');
+      setProcessedUrl(directUrl);
+    } else {
+      setProcessedUrl(videoUrl);
+    }
+  }, [videoUrl]);
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-4xl p-0 overflow-hidden">
@@ -40,9 +55,9 @@ const VideoModal = ({
         </DialogHeader>
         
         <div className="aspect-video w-full bg-black">
-          {videoUrl && videoType === 'youtube' && (
+          {processedUrl && videoType === 'youtube' && (
             <iframe 
-              src={videoUrl}
+              src={processedUrl}
               className="w-full h-full"
               title="Product Demo Video"
               frameBorder="0"
@@ -50,16 +65,16 @@ const VideoModal = ({
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             ></iframe>
           )}
-          {videoUrl && (videoType === 'mp4' || videoType === 'webm' || videoType === 'ogg') && (
+          {processedUrl && (videoType === 'mp4' || videoType === 'webm' || videoType === 'ogg' || videoType === 'external') && (
             <video
-              src={videoUrl}
+              src={processedUrl}
               className="w-full h-full"
               title="Product Demo Video"
               controls
               autoPlay
               playsInline
             >
-              <source src={videoUrl} type={`video/${videoType}`} />
+              <source src={processedUrl} type={videoType === 'external' ? 'video/mp4' : `video/${videoType}`} />
               Your browser does not support the video tag.
             </video>
           )}
