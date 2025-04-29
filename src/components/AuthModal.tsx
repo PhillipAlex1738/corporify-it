@@ -60,14 +60,14 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         console.log(`Login attempt result: ${success ? 'success' : 'failure'}`);
         if (success) {
           console.log("Login successful, closing modal");
-          onClose();
+          setTimeout(() => onClose(), 500); // Small delay to ensure state changes propagate
         }
       } else {
         const { success } = await signUp(email, password);
         console.log(`Signup attempt result: ${success ? 'success' : 'failure'}`);
         if (success) {
           console.log("Signup successful, closing modal");
-          onClose();
+          setTimeout(() => onClose(), 500); // Small delay to ensure state changes propagate
         }
       }
     } catch (error: any) {

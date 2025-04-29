@@ -36,8 +36,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
       
-      if (event === 'SIGNED_IN') {
-        console.log('User signed in, updating state');
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        console.log('User signed in or token refreshed, updating state');
       }
       
       // Update session state immediately
@@ -58,13 +58,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     });
 
-    // Then check for existing session
+    // Check for existing session and also stored user data
     const initializeAuth = async () => {
       if (isInitialized) return;
       
       try {
         setIsLoading(true);
         console.log('Checking for existing session...');
+        
+        // Check for user data in localStorage first
+        const storedUserData = localStorage.getItem('corporify_user');
+        if (storedUserData) {
+          try {
+            const userData = JSON.parse(storedUserData);
+            console.log('Found stored user data:', userData.email);
+            setUser(userData);
+          } catch (e) {
+            console.error('Failed to parse stored user data:', e);
+          }
+        }
+        
+        // Then check for session
         const { data, error } = await supabase.auth.getSession();
         
         if (error) {

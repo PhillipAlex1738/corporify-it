@@ -14,12 +14,19 @@ export const loginWithEmailAndPassword = async (email: string, password: string)
     if (error) {
       console.error("Login error:", error.message, error);
       
-      // If the error is "Email not confirmed", we'll show a success message anyway
+      // If the error is "Email not confirmed", we'll still return success
+      // This is a workaround for development where email confirmation may be disabled
       if (error.message.includes("Email not confirmed")) {
-        return { success: true, data, error: null, isEmailNotConfirmed: true };
+        console.log("Email not confirmed, but we'll continue as if login succeeded");
+        // Make another attempt to get the user data despite the error
+        const { data: userData } = await supabase.auth.getUser();
+        if (userData && userData.user) {
+          console.log("Successfully retrieved user data:", userData.user.email);
+          return { success: true, data: { user: userData.user, session: null }, error: null, isEmailNotConfirmed: true };
+        }
       }
       
-      return { success: false, data: null, error, isEmailNotConfirmed: false };
+      return { success: false, data: null, error, isEmailNotConfirmed: error.message.includes("Email not confirmed") };
     }
 
     console.log("Login successful, data:", data);

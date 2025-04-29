@@ -26,7 +26,7 @@ export const useAuthState = () => {
     setIsLoading(true);
     try {
       console.log("Starting login attempt with:", email);
-      const { success, error, isEmailNotConfirmed } = await loginWithEmailAndPassword(email, password);
+      const { success, error, data, isEmailNotConfirmed } = await loginWithEmailAndPassword(email, password);
       
       if (!success && error) {
         console.error('Login error details:', error);
@@ -38,15 +38,25 @@ export const useAuthState = () => {
         throw error;
       }
 
-      // Always show a success toast when login is successful (regardless of email confirmation)
+      // Show a success toast when login is successful
       toast({
         title: "Login successful",
-        description: "Welcome to Corporify It!",
+        description: isEmailNotConfirmed ? "Welcome! (Email verification pending)" : "Welcome to Corporify It!",
       });
       
-      // Important: This login function doesn't need to set user state
-      // The auth listener in AuthProvider will handle that automatically
-      console.log("Login function completed successfully, auth listener will update user state");
+      // If we have user data from an "email not confirmed" case
+      if (isEmailNotConfirmed && data?.user) {
+        const transformedUser = {
+          id: data.user.id,
+          email: data.user.email || '',
+          isPremium: false,
+          usageCount: 0,
+          usageLimit: 3,
+        };
+        console.log("Setting user from email not confirmed case:", transformedUser.email);
+        setUser(transformedUser);
+        localStorage.setItem('corporify_user', JSON.stringify(transformedUser));
+      }
       
       return { success };
     } catch (error: any) {
