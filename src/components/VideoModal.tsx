@@ -13,7 +13,7 @@ interface VideoModalProps {
   isOpen: boolean;
   onClose: () => void;
   videoUrl?: string;
-  videoType?: 'youtube' | 'mp4';
+  videoType?: 'youtube' | 'mp4' | 'webm' | 'ogg';
   title?: string;
   description?: string;
 }
@@ -50,7 +50,7 @@ const VideoModal = ({
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             ></iframe>
           )}
-          {videoUrl && videoType === 'mp4' && (
+          {videoUrl && (videoType === 'mp4' || videoType === 'webm' || videoType === 'ogg') && (
             <video
               src={videoUrl}
               className="w-full h-full"
@@ -58,7 +58,9 @@ const VideoModal = ({
               controls
               autoPlay
               playsInline
+              type={`video/${videoType}`}
             >
+              <source src={videoUrl} type={`video/${videoType}`} />
               Your browser does not support the video tag.
             </video>
           )}

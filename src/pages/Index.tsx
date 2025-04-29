@@ -85,8 +85,8 @@ const Index = () => {
             <VideoModal 
               isOpen={isVideoModalOpen} 
               onClose={() => setIsVideoModalOpen(false)} 
-              videoUrl="/lovable-uploads/your-video-filename.mp4" 
-              videoType="mp4"
+              videoUrl="https://www.youtube.com/embed/dQw4w9WgXcQ"
+              videoType="youtube"
             />
             
             <div className="relative">
