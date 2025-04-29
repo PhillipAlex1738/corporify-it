@@ -48,12 +48,14 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         const { success } = await login(email, password);
         console.log(`Login attempt result: ${success ? 'success' : 'failure'}`);
         if (success) {
+          console.log("Login successful, closing modal");
           onClose();
         }
       } else {
         const { success } = await signUp(email, password);
         console.log(`Signup attempt result: ${success ? 'success' : 'failure'}`);
         if (success) {
+          console.log("Signup successful, closing modal");
           onClose();
         }
       }
