@@ -44,6 +44,10 @@ export const useAuthState = () => {
         description: "Welcome to Corporify It!",
       });
       
+      // Important: This login function doesn't need to set user state
+      // The auth listener in AuthProvider will handle that automatically
+      console.log("Login function completed successfully, auth listener will update user state");
+      
       return { success };
     } catch (error: any) {
       console.error('Login failed', error);

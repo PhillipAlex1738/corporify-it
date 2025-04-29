@@ -36,6 +36,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
       
+      if (event === 'SIGNED_IN') {
+        console.log('User signed in, updating state');
+      }
+      
       // Update session state immediately
       setSession(newSession);
       

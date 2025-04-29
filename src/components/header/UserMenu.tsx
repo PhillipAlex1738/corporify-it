@@ -34,6 +34,7 @@ const UserMenu = ({ isMobile = false, onModalOpen }: UserMenuProps) => {
   };
 
   if (user) {
+    console.log("Rendering user menu for authenticated user:", user.email);
     return (
       <div className={`flex ${isMobile ? 'flex-col' : 'items-center'} gap-2`}>
         <div className={`flex items-center gap-2 ${isMobile ? 'py-2' : ''}`}>

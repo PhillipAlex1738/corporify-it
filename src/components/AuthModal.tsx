@@ -31,6 +31,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   // If user becomes authenticated while modal is open, close it
   useEffect(() => {
     if (user && isOpen) {
+      console.log("User detected, closing auth modal:", user.email);
       onClose();
     }
   }, [user, isOpen, onClose]);
