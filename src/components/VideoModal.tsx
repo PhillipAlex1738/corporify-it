@@ -30,12 +30,13 @@ const VideoModal = ({
   
   useEffect(() => {
     if (videoUrl) {
-      // Handle direct dl.dropboxusercontent.com links (already converted)
+      // Handle direct dl.dropboxusercontent.com links
       if (videoUrl.includes('dl.dropboxusercontent.com')) {
-        // Ensure raw=1 parameter is present
+        // Always ensure raw=1 parameter is present for Dropbox links
         const urlWithRaw = videoUrl.includes('raw=1') ? 
           videoUrl : 
-          videoUrl + (videoUrl.includes('?') ? '&raw=1' : '?raw=1');
+          `${videoUrl}${videoUrl.includes('?') ? '&' : '?'}raw=1`;
+        console.log("Processed Dropbox URL:", urlWithRaw);
         setProcessedUrl(urlWithRaw);
       } 
       // Handle normal www.dropbox.com links
@@ -44,6 +45,7 @@ const VideoModal = ({
         const directUrl = videoUrl.replace('www.dropbox.com', 'dl.dropboxusercontent.com')
                                   .replace('?dl=0', '?raw=1')
                                   .replace('&dl=0', '&raw=1');
+        console.log("Converted Dropbox URL:", directUrl);
         setProcessedUrl(directUrl);
       } 
       // Handle any other video URL
@@ -79,14 +81,18 @@ const VideoModal = ({
           )}
           {processedUrl && (videoType === 'mp4' || videoType === 'webm' || videoType === 'ogg' || videoType === 'external') && (
             <video
-              src={processedUrl}
               className="w-full h-full"
               title="Product Demo Video"
               controls
-              autoPlay
+              autoPlay={false}
               playsInline
+              preload="auto"
+              onError={(e) => console.error("Video error:", e)}
             >
-              <source src={processedUrl} type={videoType === 'external' ? 'video/mp4' : `video/${videoType}`} />
+              <source 
+                src={processedUrl} 
+                type={videoType === 'external' ? 'video/mp4' : `video/${videoType}`} 
+              />
               Your browser does not support the video tag.
             </video>
           )}
