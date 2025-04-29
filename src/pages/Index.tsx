@@ -85,7 +85,8 @@ const Index = () => {
             <VideoModal 
               isOpen={isVideoModalOpen} 
               onClose={() => setIsVideoModalOpen(false)} 
-              videoUrl="https://www.youtube.com/embed/dQw4w9WgXcQ" // Replace with your actual video URL
+              videoUrl="/path/to/your/video.mp4" // Replace with your MP4 file path
+              videoType="mp4"
             />
             
             <div className="relative">

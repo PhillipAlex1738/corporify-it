@@ -13,9 +13,15 @@ interface VideoModalProps {
   isOpen: boolean;
   onClose: () => void;
   videoUrl?: string;
+  videoType?: 'youtube' | 'mp4';
 }
 
-const VideoModal = ({ isOpen, onClose, videoUrl = "https://www.youtube.com/embed/dQw4w9WgXcQ" }: VideoModalProps) => {
+const VideoModal = ({ 
+  isOpen, 
+  onClose, 
+  videoUrl = "https://www.youtube.com/embed/dQw4w9WgXcQ",
+  videoType = 'youtube'
+}: VideoModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-4xl p-0 overflow-hidden">
@@ -30,7 +36,7 @@ const VideoModal = ({ isOpen, onClose, videoUrl = "https://www.youtube.com/embed
         </DialogHeader>
         
         <div className="aspect-video w-full bg-black">
-          {videoUrl && (
+          {videoUrl && videoType === 'youtube' && (
             <iframe 
               src={videoUrl}
               className="w-full h-full"
@@ -39,6 +45,18 @@ const VideoModal = ({ isOpen, onClose, videoUrl = "https://www.youtube.com/embed
               allowFullScreen
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             ></iframe>
+          )}
+          {videoUrl && videoType === 'mp4' && (
+            <video
+              src={videoUrl}
+              className="w-full h-full"
+              title="Product Demo Video"
+              controls
+              autoPlay
+              playsInline
+            >
+              Your browser does not support the video tag.
+            </video>
           )}
         </div>
         
