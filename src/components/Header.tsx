@@ -86,15 +86,6 @@ const Header = () => {
               </div>
               
               <Button 
-                onClick={() => setIsPricingModalOpen(true)}
-                variant="outline" 
-                size="sm"
-                className="border-corporate-500 text-corporate-500 hover:bg-corporate-50"
-              >
-                <Clock className="h-4 w-4 mr-1" /> Premium
-              </Button>
-              
-              <Button 
                 onClick={handleLogout}
                 variant="ghost" 
                 size="sm"
@@ -168,18 +159,6 @@ const Header = () => {
                     <UserRound className="h-4 w-4 text-corporate-600" />
                     <span className="text-sm font-medium">{user.email}</span>
                   </div>
-                  
-                  <Button 
-                    onClick={() => {
-                      setIsPricingModalOpen(true);
-                      setIsMobileMenuOpen(false);
-                    }}
-                    variant="outline" 
-                    size="sm"
-                    className="border-corporate-500 text-corporate-500 hover:bg-corporate-50 w-full mb-2"
-                  >
-                    <Clock className="h-4 w-4 mr-1" /> Premium
-                  </Button>
                   
                   <Button 
                     onClick={handleLogout}
