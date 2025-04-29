@@ -85,7 +85,7 @@ const Index = () => {
             <VideoModal 
               isOpen={isVideoModalOpen} 
               onClose={() => setIsVideoModalOpen(false)} 
-              videoUrl="/path/to/your/video.mp4" // Replace with your MP4 file path
+              videoUrl="/lovable-uploads/your-video-filename.mp4" 
               videoType="mp4"
             />
             

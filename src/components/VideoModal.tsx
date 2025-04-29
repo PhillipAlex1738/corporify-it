@@ -14,19 +14,23 @@ interface VideoModalProps {
   onClose: () => void;
   videoUrl?: string;
   videoType?: 'youtube' | 'mp4';
+  title?: string;
+  description?: string;
 }
 
 const VideoModal = ({ 
   isOpen, 
   onClose, 
   videoUrl = "https://www.youtube.com/embed/dQw4w9WgXcQ",
-  videoType = 'youtube'
+  videoType = 'youtube',
+  title = "How Corporify It Works",
+  description = "See how Corporify It transforms your casual communication into professional messages in seconds."
 }: VideoModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-4xl p-0 overflow-hidden">
         <DialogHeader className="p-4 flex flex-row items-center justify-between">
-          <DialogTitle>How Corporify It Works</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
           <button 
             onClick={onClose}
             className="rounded-full p-1 hover:bg-gray-200 transition-colors"
@@ -61,7 +65,7 @@ const VideoModal = ({
         </div>
         
         <DialogDescription className="p-4 text-center">
-          See how Corporify It transforms your casual communication into professional messages in seconds.
+          {description}
         </DialogDescription>
       </DialogContent>
     </Dialog>
