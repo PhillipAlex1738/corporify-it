@@ -35,7 +35,7 @@ const UserMenu = ({ isMobile = false, onModalOpen }: UserMenuProps) => {
 
   if (user) {
     return (
-      <>
+      <div className={`flex ${isMobile ? 'flex-col' : 'items-center'} gap-2`}>
         <div className={`flex items-center gap-2 ${isMobile ? 'py-2' : ''}`}>
           <UserRound className="h-4 w-4 text-corporate-600" />
           <span className="text-sm font-medium">{user.email}</span>
@@ -45,13 +45,13 @@ const UserMenu = ({ isMobile = false, onModalOpen }: UserMenuProps) => {
           onClick={handleLogout}
           variant="ghost" 
           size="sm"
-          className={`text-gray-500 hover:text-gray-700 hover:bg-gray-100 ${isMobile ? 'w-full' : ''}`}
+          className={`text-gray-500 hover:text-gray-700 hover:bg-gray-100 ${isMobile ? 'w-full justify-start' : ''}`}
           disabled={isLoggingOut}
         >
           <LogOut className="h-4 w-4 mr-1" />
           <span>{isLoggingOut ? "Logging out..." : "Sign Out"}</span>
         </Button>
-      </>
+      </div>
     );
   }
   

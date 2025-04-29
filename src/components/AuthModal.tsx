@@ -24,8 +24,16 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [password, setPassword] = useState('');
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
   const [localLoading, setLocalLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
-  const { login, signUp, isLoading } = useAuth();
+  const { login, signUp, isLoading, user } = useAuth();
+  
+  // If user becomes authenticated while modal is open, close it
+  useEffect(() => {
+    if (user && isOpen) {
+      onClose();
+    }
+  }, [user, isOpen, onClose]);
   
   // Reset states when modal closes or opens
   useEffect(() => {
@@ -33,6 +41,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       setLocalLoading(false);
       setEmail('');
       setPassword('');
+      setError(null);
     }
   }, [isOpen]);
 
@@ -41,6 +50,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     if (localLoading || isLoading) return; // Prevent multiple submissions
     
     setLocalLoading(true);
+    setError(null);
     console.log(`Attempting ${activeTab} with email: ${email}`);
     
     try {
@@ -59,8 +69,9 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
           onClose();
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(`${activeTab} error:`, error);
+      setError(error?.message || `${activeTab === 'login' ? 'Login' : 'Sign up'} failed. Please try again.`);
     } finally {
       // Always reset local loading state
       setLocalLoading(false);
@@ -93,6 +104,11 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
           
           <TabsContent value="login">
             <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+              {error && (
+                <div className="text-red-500 text-sm p-2 bg-red-50 rounded border border-red-200">
+                  {error}
+                </div>
+              )}
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -133,6 +149,11 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
           
           <TabsContent value="signup">
             <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+              {error && (
+                <div className="text-red-500 text-sm p-2 bg-red-50 rounded border border-red-200">
+                  {error}
+                </div>
+              )}
               <div className="space-y-2">
                 <Label htmlFor="signup-email">Email</Label>
                 <Input
