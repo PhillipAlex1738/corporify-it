@@ -1,10 +1,70 @@
 
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Footer = () => {
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email || !email.includes("@")) {
+      toast({
+        title: "Invalid email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      const { error } = await supabase
+        .from("newsletter_subscribers")
+        .insert({ email });
+      
+      if (error) {
+        if (error.code === "23505") { // Unique violation error code
+          toast({
+            title: "Already subscribed",
+            description: "This email is already subscribed to our newsletter.",
+            variant: "default",
+          });
+        } else {
+          console.error("Newsletter subscription error:", error);
+          toast({
+            title: "Subscription failed",
+            description: "An error occurred. Please try again later.",
+            variant: "destructive",
+          });
+        }
+      } else {
+        toast({
+          title: "Subscription successful!",
+          description: "Thank you for subscribing to our newsletter.",
+        });
+        setEmail("");
+      }
+    } catch (error) {
+      console.error("Newsletter subscription error:", error);
+      toast({
+        title: "Subscription failed",
+        description: "An error occurred. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <footer className="bg-corporate-800 text-white py-12">
       <div className="container max-w-7xl mx-auto px-4">
@@ -54,14 +114,25 @@ const Footer = () => {
             <p className="text-sm text-gray-300 mb-4">
               Get professional communication tips in your inbox
             </p>
-            <form className="flex gap-2">
+            <form className="flex flex-col sm:flex-row gap-2" onSubmit={handleSubmit}>
               <Input 
                 type="email" 
-                placeholder="Email address" 
-                className="bg-corporate-700 border-corporate-600 text-white" 
+                placeholder="Email address"
+                className="bg-corporate-700 border-corporate-600 text-white"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isSubmitting}
               />
-              <Button type="submit" className="bg-corporate-500 hover:bg-corporate-600 px-3">
-                <ArrowRight className="h-4 w-4" />
+              <Button 
+                type="submit" 
+                className="bg-corporate-500 hover:bg-corporate-600 px-3"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <ArrowRight className="h-4 w-4" />
+                )}
               </Button>
             </form>
           </div>
