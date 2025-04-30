@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
-import VideoModal from '@/components/VideoModal';
 import { 
   ArrowRight, 
   Zap, 
@@ -13,13 +12,13 @@ import {
   FileText, 
   MessageSquare, 
   Clock,
-  Play
+  Play,
+  ExternalLink
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const { user } = useAuth();
-  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   
   useEffect(() => {
     console.log("Index page: User auth state:", user ? `Authenticated as ${user.email}` : "Not authenticated");
@@ -74,25 +73,20 @@ const Index = () => {
                   </Button>
                 </Link>
                 
-                <Button 
-                  variant="outline" 
-                  className="border-corporate-800 text-corporate-800 hover:bg-corporate-50 px-8 py-6 rounded-md text-lg"
-                  onClick={() => setIsVideoModalOpen(true)}
+                <a 
+                  href={dropboxVideoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <Play className="mr-2 h-5 w-5" /> Watch How It Works
-                </Button>
+                  <Button 
+                    variant="outline" 
+                    className="border-corporate-800 text-corporate-800 hover:bg-corporate-50 px-8 py-6 rounded-md text-lg"
+                  >
+                    <Play className="mr-2 h-5 w-5" /> Watch How It Works <ExternalLink className="ml-2 h-4 w-4" />
+                  </Button>
+                </a>
               </div>
             </div>
-            
-            {/* Video Modal */}
-            <VideoModal 
-              isOpen={isVideoModalOpen} 
-              onClose={() => setIsVideoModalOpen(false)} 
-              videoUrl={dropboxVideoUrl}
-              videoType="external"
-              title="How Corporify It Works"
-              description="See how Corporify It transforms your casual communication into professional messages in seconds."
-            />
             
             <div className="relative">
               <div className="grid grid-cols-2 gap-4">
