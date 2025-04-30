@@ -7,7 +7,7 @@ import {
   DialogTitle,
   DialogDescription
 } from '@/components/ui/dialog';
-import { X } from 'lucide-react';
+import { X, ExternalLink } from 'lucide-react';
 
 interface VideoModalProps {
   isOpen: boolean;
@@ -60,12 +60,23 @@ const VideoModal = ({
       <DialogContent className="sm:max-w-4xl p-0 overflow-hidden">
         <DialogHeader className="p-4 flex flex-row items-center justify-between">
           <DialogTitle>{title}</DialogTitle>
-          <button 
-            onClick={onClose}
-            className="rounded-full p-1 hover:bg-gray-200 transition-colors"
-          >
-            <X className="h-4 w-4" />
-          </button>
+          <div className="flex items-center gap-2">
+            <a 
+              href={processedUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full p-1 hover:bg-gray-200 transition-colors"
+              title="Open video in new tab"
+            >
+              <ExternalLink className="h-4 w-4" />
+            </a>
+            <button 
+              onClick={onClose}
+              className="rounded-full p-1 hover:bg-gray-200 transition-colors"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
         </DialogHeader>
         
         <div className="aspect-video w-full bg-black">
@@ -100,6 +111,16 @@ const VideoModal = ({
         
         <DialogDescription className="p-4 text-center">
           {description}
+          <div className="mt-2">
+            <a 
+              href={processedUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-corporate-800 hover:text-corporate-600 inline-flex items-center gap-1"
+            >
+              Open video in new tab <ExternalLink className="h-3 w-3" />
+            </a>
+          </div>
         </DialogDescription>
       </DialogContent>
     </Dialog>
