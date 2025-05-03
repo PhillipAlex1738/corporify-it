@@ -5,7 +5,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Loader2, Copy, MessageCircle, ThumbsUp, ThumbsDown, Sparkles, RefreshCw, AlertCircle, Terminal, FileText } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
-import { useCorporify, type ToneOption } from '@/hooks/useCorporify';
+import { useCorporify, type ToneOption, FREE_DEMO_DAILY_LIMIT } from '@/hooks/useCorporify';
 import { useAuth } from '@/hooks/useAuth';
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import ToneSelector from './ToneSelector';
@@ -13,48 +13,23 @@ import TemplateSelector from './TemplateSelector';
 import HistoryTab from './HistoryTab';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import PDFGenerator from './PDFGenerator';
-
-// Limit: 5 per day for anonymous users; unlimited for authenticated.
-const FREE_DEMO_DAILY_LIMIT = 5;
-
-function getAnonUsage() {
-  const today = new Date().toISOString().slice(0, 10);
-  try {
-    const usageJSON = localStorage.getItem('corporify_anon_usage');
-    if (usageJSON) {
-      const data = JSON.parse(usageJSON);
-      if (data.date === today) return data.count || 0;
-    }
-    return 0;
-  } catch {
-    return 0;
-  }
-}
-
-function incrementAnonUsage() {
-  const today = new Date().toISOString().slice(0, 10);
-  let count = getAnonUsage() + 1;
-  localStorage.setItem('corporify_anon_usage', JSON.stringify({ date: today, count }));
-}
-
-function resetAnonUsageIfNeeded() {
-  const today = new Date().toISOString().slice(0, 10);
-  try {
-    const usageJSON = localStorage.getItem('corporify_anon_usage');
-    if (usageJSON) {
-      const data = JSON.parse(usageJSON);
-      if (data.date !== today) {
-        localStorage.setItem('corporify_anon_usage', JSON.stringify({ date: today, count: 0 }));
-      }
-    }
-  } catch {
-    // ignore
-  }
-}
+import UsageDisplay from './UsageDisplay';
 
 const CorporifyForm = () => {
   useEffect(() => {
-    resetAnonUsageIfNeeded();
+    // Reset anonymous usage tracking if it's a new day
+    const today = new Date().toISOString().slice(0, 10);
+    try {
+      const usageJSON = localStorage.getItem('corporify_anon_usage');
+      if (usageJSON) {
+        const data = JSON.parse(usageJSON);
+        if (data.date !== today) {
+          localStorage.setItem('corporify_anon_usage', JSON.stringify({ date: today, count: 0 }));
+        }
+      }
+    } catch {
+      // ignore
+    }
   }, []);
 
   const [inputText, setInputText] = useState('Hey team, I think we need to talk about the new feature. It seems like there\'s a problem with it and we should fix it soon.');
@@ -70,19 +45,16 @@ const CorporifyForm = () => {
     history,
     savedMessages,
     toggleSaveMessage,
-    removeFromSaved
+    removeFromSaved,
+    dailyUsage,
+    isLimitReached
   } = useCorporify();
   const { user } = useAuth();
   const { toast } = useToast();
   const [feedbackGiven, setFeedbackGiven] = useState<'like' | 'dislike' | null>(null);
   const [showDiagnostics, setShowDiagnostics] = useState(false);
   const [activeTab, setActiveTab] = useState<'compose' | 'history'>('compose');
-  const [anonUsage, setAnonUsage] = useState(getAnonUsage());
   const [showPDF, setShowPDF] = useState(false);
-
-  useEffect(() => {
-    setAnonUsage(getAnonUsage());
-  }, [outputText]);
 
   const handleCorporify = async () => {
     if (!inputText.trim()) {
@@ -97,15 +69,13 @@ const CorporifyForm = () => {
     setApiErrorDetails(null);
     setShowDiagnostics(false);
 
-    // Enforce anon limit only for anon users
-    if (!user) {
-      if (anonUsage >= FREE_DEMO_DAILY_LIMIT) {
-        toast({
-          description: `You've reached the free daily limit (${FREE_DEMO_DAILY_LIMIT}). Sign in for unlimited use!`,
-          variant: "destructive",
-        });
-        return;
-      }
+    // Check if anonymous user has reached their daily limit
+    if (isLimitReached()) {
+      toast({
+        description: `You've reached the free daily limit (${FREE_DEMO_DAILY_LIMIT}). Sign in for unlimited use!`,
+        variant: "destructive",
+      });
+      return;
     }
 
     try {
@@ -113,8 +83,6 @@ const CorporifyForm = () => {
       if (result) {
         setOutputText(result);
         setFeedbackGiven(null);
-        if (!user) incrementAnonUsage();
-        setAnonUsage(getAnonUsage());
       } else if (lastError) {
         setApiErrorDetails(lastError);
       }
@@ -180,7 +148,7 @@ const CorporifyForm = () => {
   };
 
   // Anonymous only: check and limit demo usage
-  const isAnonLimitReached = !user && anonUsage >= FREE_DEMO_DAILY_LIMIT;
+  const isAnonLimitReached = isLimitReached();
   const isButtonDisabled = isLoading || isAnonLimitReached;
 
   return (
@@ -197,6 +165,8 @@ const CorporifyForm = () => {
         </TabsList>
         
         <TabsContent value="compose">
+          <UsageDisplay />
+          
           <div className="mb-4">
             <div className="flex flex-wrap gap-2 justify-between items-center mb-2">
               <div className="flex-grow">

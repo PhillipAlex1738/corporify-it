@@ -8,6 +8,9 @@ export type ToneOption = 'professional' | 'formal' | 'friendly' | 'concise' | 'd
 
 export type HistoryItem = CorporifyHistory;
 
+// Free demo users get 5 transformations per day
+export const FREE_DEMO_DAILY_LIMIT = 5;
+
 export const useCorporify = () => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -16,6 +19,7 @@ export const useCorporify = () => {
   const [apiDiagnostics, setApiDiagnostics] = useState<any | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [savedMessages, setSavedMessages] = useState<HistoryItem[]>([]);
+  const [dailyUsage, setDailyUsage] = useState(0);
 
   useEffect(() => {
     if (user) {
@@ -33,11 +37,65 @@ export const useCorporify = () => {
       } catch (error) {
         console.error('Failed to load history from localStorage', error);
       }
+    } else {
+      // For anonymous users, check their usage count
+      checkAnonUsage();
     }
   }, [user]);
 
+  const checkAnonUsage = () => {
+    const today = new Date().toISOString().slice(0, 10);
+    try {
+      const usageJSON = localStorage.getItem('corporify_anon_usage');
+      if (usageJSON) {
+        const data = JSON.parse(usageJSON);
+        if (data.date === today) {
+          setDailyUsage(data.count || 0);
+        } else {
+          // Reset usage for new day
+          localStorage.setItem('corporify_anon_usage', JSON.stringify({ date: today, count: 0 }));
+          setDailyUsage(0);
+        }
+      } else {
+        localStorage.setItem('corporify_anon_usage', JSON.stringify({ date: today, count: 0 }));
+        setDailyUsage(0);
+      }
+    } catch (error) {
+      console.error('Failed to check anonymous usage', error);
+      setDailyUsage(0);
+    }
+  };
+
+  const incrementAnonUsage = () => {
+    const today = new Date().toISOString().slice(0, 10);
+    const newCount = dailyUsage + 1;
+    setDailyUsage(newCount);
+    try {
+      localStorage.setItem('corporify_anon_usage', JSON.stringify({ date: today, count: newCount }));
+      
+      // Trigger an event for other components to update
+      window.dispatchEvent(new Event('corporifyUsageUpdated'));
+    } catch (error) {
+      console.error('Failed to update anonymous usage count', error);
+    }
+  };
+
+  const isLimitReached = useCallback(() => {
+    return !user && dailyUsage >= FREE_DEMO_DAILY_LIMIT;
+  }, [user, dailyUsage]);
+
   const corporifyText = useCallback(async (text: string, tone: ToneOption = 'professional'): Promise<string | null> => {
     if (!text.trim()) return null;
+    
+    // Check if anonymous user has reached their daily limit
+    if (isLimitReached()) {
+      toast({
+        title: "Daily limit reached",
+        description: `Free demo users are limited to ${FREE_DEMO_DAILY_LIMIT} transformations per day. Sign in for unlimited use.`,
+        variant: "destructive",
+      });
+      return null;
+    }
     
     setIsLoading(true);
     setLastError(null);
@@ -97,6 +155,9 @@ export const useCorporify = () => {
         } catch (error) {
           console.error('Failed to save history to localStorage', error);
         }
+      } else {
+        // Increment anonymous user usage count
+        incrementAnonUsage();
       }
       
       return result;
@@ -113,7 +174,7 @@ export const useCorporify = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [user, history, toast]);
+  }, [user, history, toast, dailyUsage, isLimitReached]);
 
   const saveFeedback = useCallback(async (input: string, output: string, isPositive: boolean): Promise<boolean> => {
     if (!user) return false;
@@ -176,12 +237,15 @@ export const useCorporify = () => {
   return {
     corporifyText,
     saveFeedback,
+    toggleSaveMessage,
+    removeFromSaved,
     isLoading,
     lastError,
     apiDiagnostics,
     history,
     savedMessages,
-    toggleSaveMessage,
-    removeFromSaved
+    dailyUsage,
+    isLimitReached,
+    FREE_DEMO_DAILY_LIMIT
   };
 };

@@ -2,6 +2,7 @@
 import { Progress } from '@/components/ui/progress';
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect, useState } from 'react';
+import { FREE_DEMO_DAILY_LIMIT } from '@/hooks/useCorporify';
 
 function resetAnonUsageIfNeeded() {
   const today = new Date().toISOString().slice(0, 10);
@@ -21,7 +22,6 @@ function resetAnonUsageIfNeeded() {
 const UsageDisplay = () => {
   const { user } = useAuth();
   const [anonUsage, setAnonUsage] = useState(0);
-  const FREE_DEMO_DAILY_LIMIT = 5;
   
   // Get anonymous usage count from localStorage
   const getAnonUsage = () => {
