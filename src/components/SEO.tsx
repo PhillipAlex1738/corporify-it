@@ -69,8 +69,11 @@ const SEO = ({
         </script>
       )}
       
+      {/* Favicon */}
+      <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+      
       {/* Security Headers - Updated to allow Supabase connections */}
-      <meta httpEquiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://*.supabase.co; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:;" />
+      <meta httpEquiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://*.supabase.co; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:;" />
       <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
       <meta httpEquiv="X-Frame-Options" content="SAMEORIGIN" />
       <meta httpEquiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains" />

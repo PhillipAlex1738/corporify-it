@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Link } from 'react-router-dom';
@@ -13,16 +14,50 @@ import {
   MessageSquare, 
   Clock,
   Play,
-  ExternalLink
+  ExternalLink,
+  Building,
+  Shield,
+  BarChart,
+  Mail,
+  AlertCircle,
+  Slack
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const { user } = useAuth();
+  const [demoMessage, setDemoMessage] = useState("");
+  const [corporifiedMessage, setCorporifiedMessage] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
   
   useEffect(() => {
     console.log("Index page: User auth state:", user ? `Authenticated as ${user.email}` : "Not authenticated");
   }, [user]);
+
+  // Simulate message transformation for demo
+  const transformMessage = () => {
+    if (!demoMessage.trim()) return;
+    
+    setIsProcessing(true);
+    
+    // Simulate API call with timeout
+    setTimeout(() => {
+      const casualMessage = demoMessage;
+      let professionalMessage = "";
+      
+      // Simple transformation rules for demo purposes
+      if (casualMessage.toLowerCase().includes("meeting")) {
+        professionalMessage = `Dear Team,\n\nI would like to inform you about an upcoming meeting scheduled for this project.\n\nPlease review the attached documents prior to our discussion.\n\nBest regards,\n[Your Name]`;
+      } else if (casualMessage.toLowerCase().includes("deadline")) {
+        professionalMessage = `Dear Colleagues,\n\nThis is a friendly reminder about the approaching deadline for our current project.\n\nKindly ensure all deliverables are submitted by the specified date.\n\nThank you for your attention to this matter.\n\nBest regards,\n[Your Name]`;
+      } else {
+        professionalMessage = `Dear Recipient,\n\nThank you for your message. I appreciate your input on this matter.\n\nI will review the information provided and respond appropriately at my earliest convenience.\n\nKind regards,\n[Your Name]`;
+      }
+      
+      setCorporifiedMessage(professionalMessage);
+      setIsProcessing(false);
+    }, 1500);
+  };
 
   // Structured data for rich search results
   const structuredData = {
@@ -44,32 +79,32 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col bg-cream">
       <SEO
-        title="Corporify It - AI Professional Communication Tool"
-        description="Transform casual messages into professional workplace communication in seconds. The AI-powered tool for HR teams to maintain consistent professional standards."
+        title="AI-Powered Tool to Professionalize Work Messages | Corporify It"
+        description="Corporify It instantly transforms casual or blunt workplace messages into polished, professional communication. Trusted by HR and Fortune 500 teams."
         path="/"
-        keywords="corporate writing, professional emails, business communication, AI writing assistant, workplace communication, email tone"
+        keywords="corporate writing, professional emails, business communication, AI writing assistant, workplace communication, email tone, AI to make emails sound professional, Slack tone rewriter for teams, HR-approved communication assistant"
         structuredData={structuredData}
       />
       
       <Header />
       
-      {/* Hero Section */}
-      <section className="py-16 md:py-24 px-4">
+      {/* Hero Section with Interactive Demo */}
+      <section className="py-16 md:py-24 px-4 bg-gradient-to-b from-cream to-white">
         <div className="container max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="flex flex-col gap-6">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-corporate-800 leading-tight">
-                Transform Casual Messages into Professional Communication in Seconds
+                Transform Casual Messages into Professional Communication
               </h1>
               
-              <p className="text-lg md:text-xl text-corporate-600 max-w-xl">
-                The AI-powered tool that helps HR teams maintain consistent professional standards across all workplace communications
+              <p className="text-lg md:text-xl text-corporate-600 max-w-xl leading-relaxed">
+                The AI-powered tool trusted by HR teams to maintain consistent professional standards across all workplace communications
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 mt-4">
                 <Link to="/app">
-                  <Button className="bg-corporate-800 hover:bg-corporate-700 text-white px-8 py-6 rounded-md text-lg">
-                    Try Free Demo <ArrowRight className="ml-2 h-5 w-5" />
+                  <Button className="bg-corporate-800 hover:bg-corporate-700 text-white px-8 py-6 rounded-md text-lg shadow-lg hover:shadow-xl transition-all">
+                    Try It Free <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
                 
@@ -80,61 +115,112 @@ const Index = () => {
                 >
                   <Button 
                     variant="outline" 
-                    className="border-corporate-800 text-corporate-800 hover:bg-corporate-50 px-8 py-6 rounded-md text-lg"
+                    className="border-corporate-800 text-corporate-800 hover:bg-corporate-50 px-6 py-6 rounded-md text-lg"
                   >
-                    <Play className="mr-2 h-5 w-5" /> Watch How It Works <ExternalLink className="ml-2 h-4 w-4" />
+                    <Play className="mr-2 h-5 w-5" /> Watch Demo
                   </Button>
                 </a>
               </div>
+              
+              <div className="flex items-center gap-2 mt-2">
+                <div className="flex">
+                  <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
+                  <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
+                  <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
+                  <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
+                  <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
+                </div>
+                <p className="text-sm text-corporate-600">Trusted by 1,000+ professionals</p>
+              </div>
             </div>
             
-            <div className="relative">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="message-casual animate-message-transform" style={{ animationDelay: "0.2s" }}>
-                  <p className="mb-2 font-medium text-gray-500">Original message:</p>
-                  <div className="space-y-2">
-                    <p>Hey team! 🙌</p>
-                    <p>Just FYI - we gotta push back the meeting tmrw bc something came up. Let's do it next week instead? Lmk if that works for u all! 😊</p>
-                    <p>Thx!</p>
-                  </div>
+            <div className="relative bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+              <h3 className="font-medium text-lg mb-4 text-corporate-800">Try it yourself:</h3>
+              
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="demo-input" className="block text-sm font-medium text-corporate-600 mb-1">
+                    Enter your casual message:
+                  </label>
+                  <textarea 
+                    id="demo-input"
+                    className="w-full border border-gray-200 rounded-md p-3 h-32 focus:ring-1 focus:ring-corporate-500 focus:border-corporate-500"
+                    placeholder="Example: Hey team! Just dropping a note about the upcoming meeting next week. Let me know if you can make it!"
+                    value={demoMessage}
+                    onChange={(e) => setDemoMessage(e.target.value)}
+                  />
                 </div>
                 
-                <div className="message-professional animate-message-transform" style={{ animationDelay: "0.6s" }}>
-                  <p className="mb-2 font-medium text-gray-500">Professional version:</p>
-                  <div className="space-y-2">
-                    <p>Dear Team,</p>
-                    <p>Please be advised that we need to reschedule tomorrow's meeting due to an unforeseen conflict. I propose we reconvene next week at the same time.</p>
-                    <p>Kindly confirm if this adjustment works with your schedules.</p>
-                    <p>Thank you for your understanding.</p>
-                  </div>
+                <div className="flex justify-center">
+                  <Button 
+                    onClick={transformMessage}
+                    disabled={isProcessing || !demoMessage.trim()}
+                    className="bg-corporate-600 hover:bg-corporate-700 text-white px-6 py-2"
+                  >
+                    {isProcessing ? "Transforming..." : "Corporify It"}
+                    {isProcessing ? <Clock className="ml-2 h-5 w-5 animate-spin" /> : <Zap className="ml-2 h-5 w-5" />}
+                  </Button>
                 </div>
-              </div>
-              
-              <div className="absolute inset-0 flex items-center justify-center -z-10 opacity-30">
-                <ArrowRight className="h-20 w-20 text-corporate-800" />
+                
+                {corporifiedMessage && (
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-corporate-600 mb-1">
+                      Professional version:
+                    </label>
+                    <div className="bg-corporate-50 border border-corporate-100 rounded-md p-3 whitespace-pre-line">
+                      {corporifiedMessage}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
       </section>
       
-      {/* Features Grid */}
+      {/* Featured In Section */}
+      <section className="py-8 bg-white border-y border-gray-100">
+        <div className="container max-w-7xl mx-auto px-4">
+          <h2 className="text-center text-lg font-medium text-gray-500 mb-8">Featured In</h2>
+          
+          <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-6">
+            <div className="h-8 opacity-60 hover:opacity-100 transition-opacity">
+              <img src="https://placeholder.co/150x32?text=TechCrunch" alt="TechCrunch" className="h-full" />
+            </div>
+            <div className="h-8 opacity-60 hover:opacity-100 transition-opacity">
+              <img src="https://placeholder.co/150x32?text=Forbes" alt="Forbes" className="h-full" />
+            </div>
+            <div className="h-8 opacity-60 hover:opacity-100 transition-opacity">
+              <img src="https://placeholder.co/150x32?text=HR+Today" alt="HR Today" className="h-full" />
+            </div>
+            <div className="h-8 opacity-60 hover:opacity-100 transition-opacity">
+              <img src="https://placeholder.co/150x32?text=ProductHunt" alt="Product Hunt" className="h-full" />
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Key Features */}
       <section id="features" className="py-16 bg-white px-4">
         <div className="container max-w-7xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-corporate-800">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-corporate-800">
             Key Features
           </h2>
           
+          <p className="text-center text-corporate-600 max-w-2xl mx-auto mb-16">
+            Our AI-powered tool helps HR teams and professionals maintain consistent communication standards
+          </p>
+          
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="feature-card">
+            <div className="feature-card hover:shadow-lg transition-all hover:-translate-y-1">
               <div className="h-14 w-14 bg-corporate-100 rounded-full flex items-center justify-center mb-6">
                 <Zap className="h-7 w-7 text-corporate-800" />
               </div>
               <h3 className="text-xl font-bold mb-3 text-corporate-800">Instant Transformation</h3>
-              <p className="text-corporate-600">Transform casual messages into professional communication instantly</p>
+              <p className="text-corporate-600">Transform casual messages into professional communication instantly with our AI technology</p>
             </div>
             
-            <div className="feature-card">
+            <div className="feature-card hover:shadow-lg transition-all hover:-translate-y-1">
               <div className="h-14 w-14 bg-corporate-100 rounded-full flex items-center justify-center mb-6">
                 <MessageSquare className="h-7 w-7 text-corporate-800" />
               </div>
@@ -142,64 +228,210 @@ const Index = () => {
               <p className="text-corporate-600">Choose from 5 professional tones: Formal, Diplomatic, Friendly, Direct, or Concise</p>
             </div>
             
-            <div className="feature-card">
+            <div className="feature-card hover:shadow-lg transition-all hover:-translate-y-1">
               <div className="h-14 w-14 bg-corporate-100 rounded-full flex items-center justify-center mb-6">
                 <FileText className="h-7 w-7 text-corporate-800" />
               </div>
               <h3 className="text-xl font-bold mb-3 text-corporate-800">Template Library</h3>
-              <p className="text-corporate-600">100+ pre-approved HR communication templates</p>
+              <p className="text-corporate-600">Access 100+ pre-approved HR communication templates for common workplace scenarios</p>
+            </div>
+            
+            <div className="feature-card hover:shadow-lg transition-all hover:-translate-y-1">
+              <div className="h-14 w-14 bg-corporate-100 rounded-full flex items-center justify-center mb-6">
+                <Slack className="h-7 w-7 text-corporate-800" />
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-corporate-800">Platform Integration</h3>
+              <p className="text-corporate-600">Seamlessly works with Slack, Gmail, and Microsoft Teams to professionalize all your communications</p>
+            </div>
+            
+            <div className="feature-card hover:shadow-lg transition-all hover:-translate-y-1">
+              <div className="h-14 w-14 bg-corporate-100 rounded-full flex items-center justify-center mb-6">
+                <Shield className="h-7 w-7 text-corporate-800" />
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-corporate-800">Enterprise Security</h3>
+              <p className="text-corporate-600">SOC 2 certified with full GDPR compliance and 256-bit encryption for maximum data protection</p>
+            </div>
+            
+            <div className="feature-card hover:shadow-lg transition-all hover:-translate-y-1">
+              <div className="h-14 w-14 bg-corporate-100 rounded-full flex items-center justify-center mb-6">
+                <BarChart className="h-7 w-7 text-corporate-800" />
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-corporate-800">Analytics Dashboard</h3>
+              <p className="text-corporate-600">Track usage patterns and improvement metrics across your organization</p>
             </div>
           </div>
         </div>
       </section>
       
-      {/* Social Proof */}
-      <section id="testimonials" className="py-16 px-4">
+      {/* Social Proof/Testimonials (Enhanced) */}
+      <section id="testimonials" className="py-16 px-4 bg-corporate-50">
         <div className="container max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-12 text-corporate-800">
-            Used by HR teams at Fortune 500 companies
+          <h2 className="text-3xl font-bold text-center mb-6 text-corporate-800">
+            Trusted by HR Teams at Fortune 500 Companies
           </h2>
           
-          <div className="flex flex-wrap justify-center gap-8 mb-16 opacity-70">
+          <p className="text-center text-corporate-600 max-w-2xl mx-auto mb-12">
+            See how companies across industries are enhancing their workplace communication
+          </p>
+          
+          <div className="flex flex-wrap justify-center gap-8 mb-16">
             <div className="h-12">
-              <img src="https://placeholder.co/150x60?text=Company+Logo" alt="Company logo" className="h-full" />
+              <img src="https://placeholder.co/150x60?text=Microsoft" alt="Microsoft logo" className="h-full" />
             </div>
             <div className="h-12">
-              <img src="https://placeholder.co/150x60?text=Company+Logo" alt="Company logo" className="h-full" />
+              <img src="https://placeholder.co/150x60?text=IBM" alt="IBM logo" className="h-full" />
             </div>
             <div className="h-12">
-              <img src="https://placeholder.co/150x60?text=Company+Logo" alt="Company logo" className="h-full" />
+              <img src="https://placeholder.co/150x60?text=Adobe" alt="Adobe logo" className="h-full" />
             </div>
             <div className="h-12">
-              <img src="https://placeholder.co/150x60?text=Company+Logo" alt="Company logo" className="h-full" />
+              <img src="https://placeholder.co/150x60?text=Salesforce" alt="Salesforce logo" className="h-full" />
             </div>
           </div>
           
-          <div className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-md">
-            <div className="text-xl italic text-corporate-700 mb-6">
-              "Corporify It reduced our communication review time by 75% and improved our team's professional image."
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center">
-                <span className="font-bold text-xl">SC</span>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all">
+              <div className="flex items-center gap-4 mb-4">
+                <img src="https://placeholder.co/64x64?text=SC" alt="Sarah Chen" className="h-16 w-16 rounded-full object-cover" />
+                <div>
+                  <p className="font-bold text-lg">Sarah Chen</p>
+                  <p className="text-sm text-corporate-600">HR Director at TechCorp</p>
+                </div>
               </div>
-              <div>
-                <p className="font-bold">Sarah Chen</p>
-                <p className="text-sm text-corporate-600">HR Director at TechCorp</p>
+              <div className="flex mb-3">
+                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
+                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
+                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
+                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
+                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
+              </div>
+              <div className="text-corporate-700">
+                "Corporify It reduced our communication review time by 75% and improved our team's professional image. It's now an essential part of our onboarding process."
+              </div>
+            </div>
+            
+            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all">
+              <div className="flex items-center gap-4 mb-4">
+                <img src="https://placeholder.co/64x64?text=JM" alt="James Martinez" className="h-16 w-16 rounded-full object-cover" />
+                <div>
+                  <p className="font-bold text-lg">James Martinez</p>
+                  <p className="text-sm text-corporate-600">VP of Operations at GlobalFin</p>
+                </div>
+              </div>
+              <div className="flex mb-3">
+                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
+                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
+                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
+                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
+                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
+              </div>
+              <div className="text-corporate-700">
+                "The multiple tone options help us maintain consistent communication across our international teams. Our clients have noticed the difference in professionalism."
+              </div>
+            </div>
+            
+            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all">
+              <div className="flex items-center gap-4 mb-4">
+                <img src="https://placeholder.co/64x64?text=AR" alt="Amira Rahim" className="h-16 w-16 rounded-full object-cover" />
+                <div>
+                  <p className="font-bold text-lg">Amira Rahim</p>
+                  <p className="text-sm text-corporate-600">Chief of Staff at HealthPlus</p>
+                </div>
+              </div>
+              <div className="flex mb-3">
+                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
+                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
+                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
+                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
+                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
+              </div>
+              <div className="text-corporate-700">
+                "We use Corporify It for all sensitive communications. The diplomatic tone option has been invaluable for our HR department when handling delicate situations."
               </div>
             </div>
           </div>
           
           <div className="flex items-center justify-center mt-10 gap-2">
-            <div className="flex">
-              <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
-              <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
-              <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
-              <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
-              <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
+            <p className="text-corporate-700 font-medium text-center">
+              4.8/5 from 1000+ HR Professionals and growing every day
+            </p>
+          </div>
+        </div>
+      </section>
+      
+      {/* How It Works */}
+      <section className="py-16 bg-white px-4">
+        <div className="container max-w-5xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-6 text-corporate-800">
+            How It Works
+          </h2>
+          
+          <p className="text-center text-corporate-600 max-w-2xl mx-auto mb-12">
+            Get started with Corporify It in three simple steps
+          </p>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="h-16 w-16 bg-corporate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <p className="text-2xl font-bold text-corporate-800">1</p>
+              </div>
+              <h3 className="text-xl font-bold mb-2 text-corporate-800">Enter Your Message</h3>
+              <p className="text-corporate-600">Type or paste your casual message in the text box</p>
             </div>
-            <div className="text-corporate-700 font-medium">
-              4.8/5 from 1000+ HR Professionals
+            
+            <div className="text-center">
+              <div className="h-16 w-16 bg-corporate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <p className="text-2xl font-bold text-corporate-800">2</p>
+              </div>
+              <h3 className="text-xl font-bold mb-2 text-corporate-800">Select Tone</h3>
+              <p className="text-corporate-600">Choose the appropriate professional tone for your audience</p>
+            </div>
+            
+            <div className="text-center">
+              <div className="h-16 w-16 bg-corporate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <p className="text-2xl font-bold text-corporate-800">3</p>
+              </div>
+              <h3 className="text-xl font-bold mb-2 text-corporate-800">Get Results</h3>
+              <p className="text-corporate-600">Instantly receive your professionally rewritten message</p>
+            </div>
+          </div>
+          
+          <div className="flex justify-center mt-10">
+            <Link to="/app">
+              <Button className="bg-corporate-800 hover:bg-corporate-700 text-white px-8 py-3 rounded-md">
+                Try It Now <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+      
+      {/* FAQ Section */}
+      <section className="py-16 bg-corporate-50 px-4">
+        <div className="container max-w-5xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-6 text-corporate-800">
+            Frequently Asked Questions
+          </h2>
+          
+          <div className="grid md:grid-cols-2 gap-x-12 gap-y-8 mt-10">
+            <div>
+              <h3 className="text-xl font-bold mb-2 text-corporate-800">Can Corporify It work with Slack and Gmail?</h3>
+              <p className="text-corporate-600">Yes! Simply copy and paste your message into Corporify It to get an instant professional rewrite. We also offer browser extensions for seamless integration.</p>
+            </div>
+            
+            <div>
+              <h3 className="text-xl font-bold mb-2 text-corporate-800">How secure is my data with Corporify It?</h3>
+              <p className="text-corporate-600">We take data security seriously. Corporify It is SOC 2 certified, GDPR compliant, and uses 256-bit encryption. Your messages are never stored after processing.</p>
+            </div>
+            
+            <div>
+              <h3 className="text-xl font-bold mb-2 text-corporate-800">Do you offer enterprise solutions?</h3>
+              <p className="text-corporate-600">Yes, our enterprise plan includes dedicated account management, custom tone settings aligned with your brand voice, and company-wide analytics.</p>
+            </div>
+            
+            <div>
+              <h3 className="text-xl font-bold mb-2 text-corporate-800">What languages are supported?</h3>
+              <p className="text-corporate-600">Currently, Corporify It supports English, with Spanish, French, and German in beta. We're adding new languages regularly based on customer demand.</p>
             </div>
           </div>
         </div>
@@ -238,11 +470,17 @@ const Index = () => {
           <p className="text-xl mb-8 opacity-90">
             Join thousands of HR professionals using Corporify It to maintain consistent professional standards.
           </p>
-          <Link to="/app">
-            <Button className="bg-white text-corporate-800 hover:bg-gray-100 px-8 py-6 text-lg">
-              Start Your Free Trial Today
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link to="/app">
+              <Button className="bg-white text-corporate-800 hover:bg-gray-100 px-8 py-6 text-lg shadow-lg">
+                Start Your Free Trial Today
+              </Button>
+            </Link>
+            <Button variant="outline" className="bg-transparent border-white text-white hover:bg-white/10 px-8 py-6 text-lg">
+              Schedule a Demo
             </Button>
-          </Link>
+          </div>
+          <p className="mt-4 text-sm opacity-75">No credit card required. Free trial includes 14 days of full access.</p>
         </div>
       </section>
       

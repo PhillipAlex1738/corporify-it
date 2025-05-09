@@ -42,9 +42,21 @@ const NavigationItems = ({ isMobile = false, onItemClick }: NavigationItemsProps
       >
         Testimonials
       </button>
+      <button 
+        onClick={() => scrollToSection('how-it-works')} 
+        className={baseClassName}
+      >
+        How It Works
+      </button>
+      <button 
+        onClick={() => scrollToSection('pricing')} 
+        className={baseClassName}
+      >
+        Pricing
+      </button>
       <Link 
         to="/app" 
-        className={baseClassName}
+        className={baseClassName + " ml-2 px-4 py-1 bg-corporate-800 text-white rounded hover:bg-corporate-700"}
         onClick={onItemClick}
       >
         Try It
