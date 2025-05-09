@@ -56,32 +56,56 @@ serve(async (req) => {
         // Continue with guest email
       }
     }
-    
-    // Create a Checkout Session
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price: priceId || 'price_1OvnbMGbxbUXFlc3k78WPGFC', // Default price ID
-          quantity: 1,
-        },
-      ],
-      mode: 'payment',
-      success_url: `${req.headers.get('origin')}/app?payment=success`,
-      cancel_url: `${req.headers.get('origin')}/app?payment=canceled`,
-      customer_email: customerEmail,
-    });
 
-    return new Response(
-      JSON.stringify({ url: session.url }),
-      { 
-        status: 200,
-        headers: { 
-          ...corsHeaders,
-          'Content-Type': 'application/json' 
+    // Create a default price ID if none is provided
+    // Note: This is a placeholder and should be replaced with a real test price ID from your Stripe account
+    const defaultPriceId = 'price_1234567890'; // Placeholder price ID
+    const usePriceId = priceId || defaultPriceId;
+    
+    try {
+      // Create a Checkout Session
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price: usePriceId, 
+            quantity: 1,
+          },
+        ],
+        mode: 'payment',
+        success_url: `${req.headers.get('origin')}/app?payment=success`,
+        cancel_url: `${req.headers.get('origin')}/app?payment=canceled`,
+        customer_email: customerEmail,
+      });
+
+      return new Response(
+        JSON.stringify({ url: session.url }),
+        { 
+          status: 200,
+          headers: { 
+            ...corsHeaders,
+            'Content-Type': 'application/json' 
+          }
         }
-      }
-    );
+      );
+    } catch (stripeError) {
+      console.error('Stripe API error:', stripeError);
+      
+      // Return a more descriptive error message
+      return new Response(
+        JSON.stringify({ 
+          error: stripeError.message,
+          type: 'stripe_error'
+        }),
+        { 
+          status: 400,  // Use 400 instead of 500 for Stripe-specific errors
+          headers: { 
+            ...corsHeaders,
+            'Content-Type': 'application/json' 
+          }
+        }
+      );
+    }
   } catch (error) {
     console.error('Error in create-payment function:', error);
     
