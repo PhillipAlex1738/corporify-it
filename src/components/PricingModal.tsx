@@ -17,87 +17,66 @@ type PricingModalProps = {
 const PricingModal = ({ isOpen, onClose }: PricingModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden">
         <div className="corporify-gradient p-6 text-white">
           <DialogHeader className="mb-4">
             <DialogTitle className="text-white flex items-center gap-2 text-2xl">
               <Zap className="h-5 w-5" />
-              Premium Features
+              Premium Plans
             </DialogTitle>
             <DialogDescription className="text-white/80 text-base">
-              Coming Soon! Join our waitlist to be notified when premium is available.
+              Choose the right plan for your communication needs
             </DialogDescription>
           </DialogHeader>
         </div>
         
         <div className="p-6">
-          <div className="grid gap-6">
-            <div className="grid gap-4">
-              <div className="flex items-center gap-3">
-                <Check className="h-5 w-5 text-corporate-500" />
-                <div>
-                  <h3 className="font-medium">Advanced Tone Control</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Access to additional tones and customization options for more precise communications.
-                  </p>
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Basic Plan */}
+            <div className="border rounded-lg p-6 hover:shadow-md transition-all">
+              <div className="text-center mb-4">
+                <h3 className="text-xl font-bold text-corporate-800">Basic Plan</h3>
+                <div className="flex items-baseline justify-center my-4">
+                  <span className="text-3xl font-bold">$9.99</span>
+                  <span className="text-muted-foreground ml-1">/month</span>
                 </div>
               </div>
               
-              <div className="flex items-center gap-3">
-                <Globe className="h-5 w-5 text-corporate-500" />
-                <div>
-                  <h3 className="font-medium">Multi-Language Support</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Transform your messages into multiple professional languages beyond English.
-                  </p>
+              <div className="space-y-4 mb-6">
+                <div className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">Unlimited Transformations</p>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <Check className="h-5 w-5 text-corporate-500" />
-                <div>
-                  <h3 className="font-medium">Custom Templates</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Create and save your own templates for frequently used message types.
-                  </p>
+                
+                <div className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">All Tone Options</p>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <Check className="h-5 w-5 text-corporate-500" />
-                <div>
-                  <h3 className="font-medium">Enhanced Analytics</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Detailed insights on your communication patterns and improvements.
-                  </p>
+                
+                <div className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">Saved History</p>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <Headphones className="h-5 w-5 text-corporate-500" />
-                <div>
-                  <h3 className="font-medium">Speech-to-Text Translations</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Convert your spoken words directly into polished corporate language.
-                  </p>
+                
+                <div className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">Basic Templates</p>
+                  </div>
                 </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <Check className="h-5 w-5 text-corporate-500" />
-                <div>
-                  <h3 className="font-medium">Bulk Processing</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Transform multiple messages at once for efficient communication overhauls.
-                  </p>
+                
+                <div className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">Email Support</p>
+                  </div>
                 </div>
-              </div>
-            </div>
-            
-            <div className="border-t pt-4 mt-2">
-              <div className="flex items-baseline justify-center mb-4">
-                <span className="text-3xl font-bold">$9.99</span>
-                <span className="text-muted-foreground ml-1">/month</span>
               </div>
               
               <Button 
@@ -106,11 +85,78 @@ const PricingModal = ({ isOpen, onClose }: PricingModalProps) => {
               >
                 <Clock className="mr-2 h-4 w-4" /> Coming Soon
               </Button>
-              
-              <p className="text-xs text-center text-muted-foreground mt-4">
-                Join our waitlist to be notified when premium features become available.
-              </p>
             </div>
+            
+            {/* Professional Plan */}
+            <div className="border rounded-lg p-6 bg-corporate-50 border-corporate-200 hover:shadow-md transition-all relative">
+              <div className="absolute top-0 right-0 bg-corporate-800 text-white text-xs font-bold px-3 py-1 transform translate-y-0 rounded-bl rounded-tr">
+                POPULAR
+              </div>
+              
+              <div className="text-center mb-4">
+                <h3 className="text-xl font-bold text-corporate-800">Professional Plan</h3>
+                <div className="flex items-baseline justify-center my-4">
+                  <span className="text-3xl font-bold">$19.99</span>
+                  <span className="text-muted-foreground ml-1">/month</span>
+                </div>
+              </div>
+              
+              <div className="space-y-4 mb-6">
+                <div className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">Everything in Basic</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">Advanced Tone Customization</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">Custom Templates</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <Globe className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">Multi-Language Support</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <Headphones className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">Priority Support</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">API Access (Limited)</p>
+                  </div>
+                </div>
+              </div>
+              
+              <Button 
+                className="w-full bg-corporate-800 hover:bg-corporate-900 font-medium"
+                disabled
+              >
+                <Clock className="mr-2 h-4 w-4" /> Coming Soon
+              </Button>
+            </div>
+          </div>
+          
+          <div className="mt-6 text-center text-sm text-muted-foreground">
+            <p>Free Demo includes 5 free transformations per day and basic professional tone.</p>
+            <p className="mt-2">Join our waitlist to be notified when premium plans become available.</p>
           </div>
         </div>
       </DialogContent>
@@ -119,4 +165,3 @@ const PricingModal = ({ isOpen, onClose }: PricingModalProps) => {
 };
 
 export default PricingModal;
-

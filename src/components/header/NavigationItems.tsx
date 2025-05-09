@@ -5,9 +5,10 @@ import { Link } from 'react-router-dom';
 type NavigationItemsProps = {
   isMobile?: boolean;
   onItemClick?: () => void;
+  onPricingClick?: () => void;
 };
 
-const NavigationItems = ({ isMobile = false, onItemClick }: NavigationItemsProps) => {
+const NavigationItems = ({ isMobile = false, onItemClick, onPricingClick }: NavigationItemsProps) => {
   const location = useLocation();
 
   const scrollToSection = (sectionId: string) => {
@@ -49,7 +50,7 @@ const NavigationItems = ({ isMobile = false, onItemClick }: NavigationItemsProps
         How It Works
       </button>
       <button 
-        onClick={() => scrollToSection('pricing')} 
+        onClick={onPricingClick || (() => scrollToSection('pricing'))} 
         className={baseClassName}
       >
         Pricing
