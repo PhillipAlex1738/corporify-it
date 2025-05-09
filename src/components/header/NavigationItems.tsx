@@ -5,10 +5,9 @@ import { Link } from 'react-router-dom';
 type NavigationItemsProps = {
   isMobile?: boolean;
   onItemClick?: () => void;
-  onPricingClick?: () => void;
 };
 
-const NavigationItems = ({ isMobile = false, onItemClick, onPricingClick }: NavigationItemsProps) => {
+const NavigationItems = ({ isMobile = false, onItemClick }: NavigationItemsProps) => {
   const location = useLocation();
 
   const scrollToSection = (sectionId: string) => {
@@ -38,22 +37,16 @@ const NavigationItems = ({ isMobile = false, onItemClick, onPricingClick }: Navi
         Features
       </button>
       <button 
-        onClick={() => scrollToSection('testimonials')} 
+        onClick={() => scrollToSection('pricing')} 
         className={baseClassName}
       >
-        Testimonials
+        Pricing
       </button>
       <button 
         onClick={() => scrollToSection('how-it-works')} 
         className={baseClassName}
       >
         How It Works
-      </button>
-      <button 
-        onClick={onPricingClick || (() => scrollToSection('pricing'))} 
-        className={baseClassName}
-      >
-        Pricing
       </button>
       <Link 
         to="/app" 

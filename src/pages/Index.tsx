@@ -263,104 +263,189 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Social Proof/Testimonials (Enhanced) */}
-      <section id="testimonials" className="py-16 px-4 bg-corporate-50">
+      {/* Pricing Section */}
+      <section id="pricing" className="py-16 px-4 bg-corporate-50">
         <div className="container max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-6 text-corporate-800">
-            Trusted by HR Teams at Fortune 500 Companies
+            Choose Your Plan
           </h2>
           
           <p className="text-center text-corporate-600 max-w-2xl mx-auto mb-12">
-            See how companies across industries are enhancing their workplace communication
+            Get started with our free demo or choose a premium plan that suits your needs
           </p>
           
-          <div className="flex flex-wrap justify-center gap-8 mb-16">
-            <div className="h-12">
-              <img src="https://placeholder.co/150x60?text=Microsoft" alt="Microsoft logo" className="h-full" />
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Free Demo */}
+            <div className="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-all">
+              <div className="text-center mb-6">
+                <h3 className="text-xl font-bold text-corporate-800">Free Demo</h3>
+                <div className="flex items-baseline justify-center my-4">
+                  <span className="text-3xl font-bold">$0</span>
+                  <span className="text-muted-foreground ml-1">/month</span>
+                </div>
+              </div>
+              
+              <div className="space-y-4 mb-8">
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">5 Free Transformations Per Day</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">Basic Professional Tone</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">Instant Results</p>
+                  </div>
+                </div>
+              </div>
+              
+              <Link to="/app" className="block w-full">
+                <Button className="w-full bg-corporate-800 hover:bg-corporate-900 font-medium">
+                  Get Started Now
+                </Button>
+              </Link>
             </div>
-            <div className="h-12">
-              <img src="https://placeholder.co/150x60?text=IBM" alt="IBM logo" className="h-full" />
+            
+            {/* Basic Plan */}
+            <div className="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-all">
+              <div className="text-center mb-6">
+                <h3 className="text-xl font-bold text-corporate-800">Basic Plan</h3>
+                <div className="flex items-baseline justify-center my-4">
+                  <span className="text-3xl font-bold">$9.99</span>
+                  <span className="text-muted-foreground ml-1">/month</span>
+                </div>
+              </div>
+              
+              <div className="space-y-4 mb-8">
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">Unlimited Transformations</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">All Tone Options</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">Saved History</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">Basic Templates</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">Email Support</p>
+                  </div>
+                </div>
+              </div>
+              
+              <Button 
+                className="w-full bg-corporate-800 hover:bg-corporate-900 font-medium"
+                disabled
+              >
+                <Clock className="mr-2 h-4 w-4" /> Coming Soon
+              </Button>
             </div>
-            <div className="h-12">
-              <img src="https://placeholder.co/150x60?text=Adobe" alt="Adobe logo" className="h-full" />
-            </div>
-            <div className="h-12">
-              <img src="https://placeholder.co/150x60?text=Salesforce" alt="Salesforce logo" className="h-full" />
+            
+            {/* Professional Plan */}
+            <div className="bg-white p-8 rounded-xl shadow-md border-2 border-corporate-500 hover:shadow-lg transition-all relative">
+              <div className="absolute top-0 right-0 bg-corporate-800 text-white text-xs font-bold px-3 py-1 transform translate-y-0 rounded-bl rounded-tr">
+                POPULAR
+              </div>
+              
+              <div className="text-center mb-6">
+                <h3 className="text-xl font-bold text-corporate-800">Professional Plan</h3>
+                <div className="flex items-baseline justify-center my-4">
+                  <span className="text-3xl font-bold">$19.99</span>
+                  <span className="text-muted-foreground ml-1">/month</span>
+                </div>
+              </div>
+              
+              <div className="space-y-4 mb-8">
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">Everything in Basic</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">Advanced Tone Customization</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">Custom Templates</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">Multi-Language Support</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">Priority Support</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-corporate-500" />
+                  <div>
+                    <p className="font-medium">API Access (Limited)</p>
+                  </div>
+                </div>
+              </div>
+              
+              <Button 
+                className="w-full bg-corporate-800 hover:bg-corporate-900 font-medium"
+                disabled
+              >
+                <Clock className="mr-2 h-4 w-4" /> Coming Soon
+              </Button>
             </div>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all">
-              <div className="flex items-center gap-4 mb-4">
-                <img src="https://placeholder.co/64x64?text=SC" alt="Sarah Chen" className="h-16 w-16 rounded-full object-cover" />
-                <div>
-                  <p className="font-bold text-lg">Sarah Chen</p>
-                  <p className="text-sm text-corporate-600">HR Director at TechCorp</p>
-                </div>
-              </div>
-              <div className="flex mb-3">
-                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
-                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
-                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
-                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
-                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
-              </div>
-              <div className="text-corporate-700">
-                "Corporify It reduced our communication review time by 75% and improved our team's professional image. It's now an essential part of our onboarding process."
-              </div>
-            </div>
-            
-            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all">
-              <div className="flex items-center gap-4 mb-4">
-                <img src="https://placeholder.co/64x64?text=JM" alt="James Martinez" className="h-16 w-16 rounded-full object-cover" />
-                <div>
-                  <p className="font-bold text-lg">James Martinez</p>
-                  <p className="text-sm text-corporate-600">VP of Operations at GlobalFin</p>
-                </div>
-              </div>
-              <div className="flex mb-3">
-                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
-                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
-                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
-                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
-                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
-              </div>
-              <div className="text-corporate-700">
-                "The multiple tone options help us maintain consistent communication across our international teams. Our clients have noticed the difference in professionalism."
-              </div>
-            </div>
-            
-            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all">
-              <div className="flex items-center gap-4 mb-4">
-                <img src="https://placeholder.co/64x64?text=AR" alt="Amira Rahim" className="h-16 w-16 rounded-full object-cover" />
-                <div>
-                  <p className="font-bold text-lg">Amira Rahim</p>
-                  <p className="text-sm text-corporate-600">Chief of Staff at HealthPlus</p>
-                </div>
-              </div>
-              <div className="flex mb-3">
-                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
-                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
-                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
-                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
-                <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
-              </div>
-              <div className="text-corporate-700">
-                "We use Corporify It for all sensitive communications. The diplomatic tone option has been invaluable for our HR department when handling delicate situations."
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex items-center justify-center mt-10 gap-2">
-            <p className="text-corporate-700 font-medium text-center">
-              4.8/5 from 1000+ HR Professionals and growing every day
-            </p>
+          <div className="mt-8 text-center text-sm text-muted-foreground">
+            <p>All plans include our basic security features. Enterprise solutions with custom requirements available upon request.</p>
+            <p className="mt-2">Join our waitlist to be notified when premium plans become available.</p>
           </div>
         </div>
       </section>
       
       {/* How It Works */}
-      <section className="py-16 bg-white px-4">
+      <section id="how-it-works" className="py-16 bg-white px-4">
         <div className="container max-w-5xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-6 text-corporate-800">
             How It Works
@@ -480,7 +565,7 @@ const Index = () => {
               Schedule a Demo
             </Button>
           </div>
-          <p className="mt-4 text-sm opacity-75">No credit card required. Free trial includes 14 days of full access.</p>
+          <p className="mt-4 text-sm opacity-75">No credit card required. Free trial includes 5 transformations per day.</p>
         </div>
       </section>
       

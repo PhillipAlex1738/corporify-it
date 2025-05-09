@@ -1,11 +1,9 @@
 
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
-import PricingModal from '@/components/PricingModal';
 import { HeaderLogo, NavigationItems, UserMenu, MobileMenu } from '@/components/header';
 
 const Header = () => {
-  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   return (
@@ -40,12 +38,6 @@ const Header = () => {
       <MobileMenu 
         isOpen={isMobileMenuOpen} 
         onClose={() => setIsMobileMenuOpen(false)} 
-      />
-
-      {/* Modals */}
-      <PricingModal
-        isOpen={isPricingModalOpen}
-        onClose={() => setIsPricingModalOpen(false)}
       />
     </header>
   );
