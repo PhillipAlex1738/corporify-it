@@ -80,7 +80,7 @@ const PremiumPage = () => {
                 </ul>
               </div>
               <PaymentButton 
-                priceId="price_1OvnbMGbxbUXFlc3k78WPGFC"
+                priceId="price_1RMviRB1VwDQf2qkLLWRzpOy"
                 buttonText="Get Basic" 
                 className="w-full"
               />
@@ -122,7 +122,7 @@ const PremiumPage = () => {
                 </ul>
               </div>
               <PaymentButton 
-                priceId="price_1OvnbnGbxbUXFlc3QYv8fTYO" 
+                priceId="price_1RMviRB1VwDQf2qkUmhoiTiZ" 
                 buttonText="Get Professional" 
                 className="w-full bg-corporate-500 hover:bg-corporate-600"
               />
@@ -161,7 +161,7 @@ const PremiumPage = () => {
                 </ul>
               </div>
               <PaymentButton 
-                priceId="price_1OvncAGbxbUXFlc3tdTbVZxM"
+                priceId="price_1RMvjRB1VwDQf2qkLLWRzpOy"
                 buttonText="Get Enterprise" 
                 className="w-full"
               />
