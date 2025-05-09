@@ -3,3 +3,6 @@ project_id = "omxtrdmtdrdovculcywf"
 
 [functions.corporify]
 verify_jwt = false
+
+[functions.create-payment]
+verify_jwt = false

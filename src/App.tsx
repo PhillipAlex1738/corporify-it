@@ -16,6 +16,7 @@ import DataHandling from "./pages/DataHandling";
 import Support from "./pages/Support";
 import Feedback from "./pages/Feedback";
 import AppPage from "./pages/AppPage";
+import PremiumPage from "./pages/Premium";
 
 const PageViewTracker = ({ children }: { children: React.ReactNode }) => {
   usePageView();
@@ -36,6 +37,7 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/app" element={<AppPage />} />
+                <Route path="/premium" element={<PremiumPage />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/data-handling" element={<DataHandling />} />

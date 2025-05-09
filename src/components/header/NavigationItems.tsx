@@ -1,6 +1,8 @@
 
 import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { CreditCard } from 'lucide-react';
 
 type NavigationItemsProps = {
   isMobile?: boolean;
@@ -50,11 +52,25 @@ const NavigationItems = ({ isMobile = false, onItemClick }: NavigationItemsProps
       </button>
       <Link 
         to="/app" 
-        className={baseClassName + " ml-2 px-4 py-1 bg-corporate-800 text-white rounded hover:bg-corporate-700"}
+        className={baseClassName}
         onClick={onItemClick}
       >
         Try It
       </Link>
+      {location.pathname === '/app' && (
+        <Link 
+          to="#" 
+          onClick={(e) => {
+            e.preventDefault();
+            // Redirect to premium payment
+            window.location.href = "/premium";
+          }}
+          className={baseClassName + " ml-2 px-4 py-1 bg-corporate-800 text-white rounded hover:bg-corporate-700 flex items-center"}
+        >
+          <CreditCard className="mr-1 h-4 w-4" />
+          Premium
+        </Link>
+      )}
     </>
   );
 };
