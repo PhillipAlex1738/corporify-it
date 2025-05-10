@@ -28,6 +28,9 @@ serve(async (req) => {
     // Parse the request body
     const { priceId } = await req.json();
     
+    // Log the received price ID for debugging
+    console.log(`Creating checkout with price ID: ${priceId}`);
+    
     // Get auth header to identify the user if logged in
     const authHeader = req.headers.get('Authorization');
     let customerEmail = 'guest@example.com'; // Default for non-authenticated users
@@ -50,34 +53,32 @@ serve(async (req) => {
         const userData = await response.json();
         if (userData.email) {
           customerEmail = userData.email;
+          console.log(`User email found: ${customerEmail}`);
         }
       } catch (error) {
         console.log('Error getting user:', error.message);
         // Continue with guest email
       }
     }
-
-    // Create a default price ID if none is provided
-    // Note: This is a placeholder and should be replaced with a real test price ID from your Stripe account
-    const defaultPriceId = 'price_1234567890'; // Placeholder price ID
-    const usePriceId = priceId || defaultPriceId;
     
+    // Create a Checkout Session
     try {
-      // Create a Checkout Session
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         line_items: [
           {
-            price: usePriceId, 
+            price: priceId,
             quantity: 1,
           },
         ],
         mode: 'payment',
-        success_url: `${req.headers.get('origin')}/app?payment=success`,
-        cancel_url: `${req.headers.get('origin')}/app?payment=canceled`,
+        success_url: `${req.headers.get('origin')}/premium?payment=success`,
+        cancel_url: `${req.headers.get('origin')}/premium?payment=canceled`,
         customer_email: customerEmail,
       });
 
+      console.log(`Checkout session created successfully: ${session.id}`);
+      
       return new Response(
         JSON.stringify({ url: session.url }),
         { 

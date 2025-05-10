@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -80,7 +79,7 @@ const PremiumPage = () => {
                 </ul>
               </div>
               <PaymentButton 
-                priceId="price_1RMviRB1VwDQf2qkLLWRzpOy"
+                priceId="price_1RMvjRB1VwDQf2qkLLWRzpOy"
                 buttonText="Get Basic" 
                 className="w-full"
               />
