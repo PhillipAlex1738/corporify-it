@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -51,7 +52,7 @@ const PremiumPage = () => {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Basic Plan */}
             <div className="bg-white p-6 rounded-xl shadow-md border-2 border-gray-200 flex flex-col">
               <div className="flex-1">
@@ -86,7 +87,7 @@ const PremiumPage = () => {
             </div>
             
             {/* Professional Plan */}
-            <div className="bg-white p-6 rounded-xl shadow-lg border-2 border-corporate-500 flex flex-col relative transform scale-105">
+            <div className="bg-white p-6 rounded-xl shadow-lg border-2 border-corporate-500 flex flex-col relative">
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-corporate-500 text-white px-4 py-1 rounded-full text-sm font-bold">
                 MOST POPULAR
               </div>
@@ -126,45 +127,6 @@ const PremiumPage = () => {
                 className="w-full bg-corporate-500 hover:bg-corporate-600"
               />
             </div>
-            
-            {/* Enterprise Plan */}
-            <div className="bg-white p-6 rounded-xl shadow-md border-2 border-gray-200 flex flex-col">
-              <div className="flex-1">
-                <h3 className="text-xl font-bold text-corporate-800 mb-2">Enterprise</h3>
-                <div className="text-3xl font-bold text-corporate-800 mb-4">$49.99<span className="text-lg font-normal text-gray-500">/month</span></div>
-                <ul className="space-y-2 mb-6">
-                  <li className="flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    Unlimited messages
-                  </li>
-                  <li className="flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    Custom tone creation
-                  </li>
-                  <li className="flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    Dedicated support
-                  </li>
-                  <li className="flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    Team management
-                  </li>
-                </ul>
-              </div>
-              <PaymentButton 
-                priceId="price_1RMvjRB1VwDQf2qkLLWRzpOy"
-                buttonText="Get Enterprise" 
-                className="w-full"
-              />
-            </div>
           </div>
           
           <div className="mt-12 bg-gray-50 p-6 rounded-xl">
@@ -172,15 +134,15 @@ const PremiumPage = () => {
             <div className="space-y-4">
               <div>
                 <h4 className="font-medium text-corporate-700">How does billing work?</h4>
-                <p className="text-gray-600">You'll be charged immediately upon subscription and then on a monthly basis. You can cancel anytime from your account page.</p>
+                <p className="text-gray-600">You'll be charged immediately for a one-time payment. You can purchase again at any time.</p>
               </div>
               <div>
                 <h4 className="font-medium text-corporate-700">Is there a free trial?</h4>
                 <p className="text-gray-600">We offer a limited number of free transformations daily. Premium plans begin immediately upon purchase.</p>
               </div>
               <div>
-                <h4 className="font-medium text-corporate-700">Can I switch plans?</h4>
-                <p className="text-gray-600">Yes, you can upgrade or downgrade at any time. The new rate will be prorated for your billing cycle.</p>
+                <h4 className="font-medium text-corporate-700">What is included in each plan?</h4>
+                <p className="text-gray-600">Basic gives you more message capacity and basic tone options. Professional includes unlimited messages, all tone options, and additional features like PDF exports.</p>
               </div>
             </div>
           </div>
