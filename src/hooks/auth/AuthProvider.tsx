@@ -37,21 +37,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
       
-      if (event === 'SIGNED_IN') {
-        console.log('User signed in, updating state');
-        // Send welcome email on first sign in
-        if (newSession?.user?.email) {
-          // Use setTimeout to avoid deadlocks with Supabase
-          setTimeout(() => {
-            sendWelcomeEmail(newSession.user.email);
-          }, 0);
-        }
-      }
-      
-      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        console.log('User signed in or token refreshed, updating state');
-      }
-      
       // Update session state immediately
       setSession(newSession);
       
@@ -65,6 +50,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (newUser) {
           setTimeout(() => {
             saveUserToLocalStorage(newUser);
+            
+            // Send welcome email on SIGNED_IN event only, not on token refresh
+            if (event === 'SIGNED_IN' && newSession.user.email) {
+              console.log('Sending welcome email for new sign-in:', newSession.user.email);
+              sendWelcomeEmail(newSession.user.email).catch(err => {
+                console.error('Failed to send welcome email:', err);
+                // Don't block the auth flow if email fails
+              });
+            }
           }, 0);
         }
       }

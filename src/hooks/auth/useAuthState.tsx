@@ -93,19 +93,16 @@ export const useAuthState = () => {
         setUser(newUser);
         
         toast({
-          title: "Account created and logged in",
-          description: "Welcome to Corporify It! You can start using the app immediately.",
+          title: "Account created",
+          description: "Welcome to Corporify It! You can start using the app immediately. Please check your email for verification.",
         });
-        
-        // Send welcome email
-        sendWelcomeEmail(newUser.email);
         
         return { success };
       }
 
       toast({
-        title: "Account created for Corporify It",
-        description: "Welcome to Corporify It! Please log in to start using the app.",
+        title: "Account created",
+        description: "Welcome to Corporify It! Please check your email to verify your account.",
       });
       
       return { success };
@@ -127,7 +124,17 @@ export const useAuthState = () => {
     setIsLoading(true);
     try {
       console.log("Starting logout attempt");
-      await signOut();
+      const { error } = await signOut();
+      if (error) {
+        console.error('Logout error:', error);
+        toast({
+          title: "Logout failed",
+          description: error.message || "Please try again.",
+          variant: "destructive",
+        });
+        throw error;
+      }
+      
       console.log("Logout successful - waiting for auth state change to clear user data");
       // Note: We don't clear user data here because the auth listener will do that
       toast({
@@ -179,12 +186,17 @@ export const useAuthState = () => {
     try {
       console.log("Sending welcome email to:", email);
       
-      await supabase.functions.invoke('send-email', {
+      const response = await supabase.functions.invoke('send-email', {
         body: {
           type: 'welcome',
           data: { email }
         }
       });
+      
+      if (response.error) {
+        console.error("Error sending welcome email:", response.error);
+        return;
+      }
       
       console.log("Welcome email sent successfully");
     } catch (error) {
