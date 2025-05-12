@@ -9,6 +9,7 @@ import {
   signOut,
   upgradeUserAccount
 } from '@/services/authService';
+import { supabase } from '@/integrations/supabase/client';
 
 // The admin email address - hardcoded for now
 const ADMIN_EMAIL = "admin@corporifyit.io"; 
@@ -95,6 +96,10 @@ export const useAuthState = () => {
           title: "Account created and logged in",
           description: "Welcome to Corporify It! You can start using the app immediately.",
         });
+        
+        // Send welcome email
+        sendWelcomeEmail(newUser.email);
+        
         return { success };
       }
 
@@ -169,6 +174,24 @@ export const useAuthState = () => {
       setIsLoading(false);
     }
   };
+  
+  const sendWelcomeEmail = async (email: string): Promise<void> => {
+    try {
+      console.log("Sending welcome email to:", email);
+      
+      await supabase.functions.invoke('send-email', {
+        body: {
+          type: 'welcome',
+          data: { email }
+        }
+      });
+      
+      console.log("Welcome email sent successfully");
+    } catch (error) {
+      console.error("Error sending welcome email:", error);
+      // Don't throw error here, as this is not critical functionality
+    }
+  };
 
   return {
     user,
@@ -182,5 +205,6 @@ export const useAuthState = () => {
     signUp,
     logout,
     upgradeAccount,
+    sendWelcomeEmail,
   };
 };

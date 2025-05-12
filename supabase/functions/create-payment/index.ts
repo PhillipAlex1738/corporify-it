@@ -34,6 +34,7 @@ serve(async (req) => {
     // Get auth header to identify the user if logged in
     const authHeader = req.headers.get('Authorization');
     let customerEmail = 'guest@example.com'; // Default for non-authenticated users
+    let userData = null;
     
     // If authenticated, get the user's email
     if (authHeader) {
@@ -50,7 +51,7 @@ serve(async (req) => {
           }
         });
         
-        const userData = await response.json();
+        userData = await response.json();
         if (userData.email) {
           customerEmail = userData.email;
           console.log(`User email found: ${customerEmail}`);
@@ -59,6 +60,18 @@ serve(async (req) => {
         console.log('Error getting user:', error.message);
         // Continue with guest email
       }
+    }
+    
+    // Determine plan name and amount based on priceId
+    let planName = "Premium";
+    let amount = "$19.99";
+    
+    if (priceId === "price_1RMvjRB1VwDQf2qkLLWRzpOy") {
+      planName = "Basic";
+      amount = "$9.99";
+    } else if (priceId === "price_1RMviRB1VwDQf2qkUmhoiTiZ") {
+      planName = "Professional";
+      amount = "$19.99";
     }
     
     // Create a Checkout Session
@@ -71,10 +84,14 @@ serve(async (req) => {
             quantity: 1,
           },
         ],
-        mode: 'payment',  // Changed from 'subscription' to 'payment' for one-time payments
-        success_url: `${req.headers.get('origin')}/premium?payment=success`,
+        mode: 'payment',  // One-time payments
+        success_url: `${req.headers.get('origin')}/premium?payment=success&plan=${planName}`,
         cancel_url: `${req.headers.get('origin')}/premium?payment=canceled`,
         customer_email: customerEmail,
+        metadata: {
+          planName,
+          amount
+        }
       });
 
       console.log(`Checkout session created successfully: ${session.id}`);

@@ -7,12 +7,16 @@ import PaymentButton from '@/components/PaymentButton';
 import { useLocation } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
 import { useEffect } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 
 const PremiumPage = () => {
   const location = useLocation();
   const { toast } = useToast();
+  const { user } = useAuth();
   const searchParams = new URLSearchParams(location.search);
   const paymentStatus = searchParams.get('payment');
+  const planName = searchParams.get('plan');
 
   useEffect(() => {
     if (paymentStatus === 'success') {
@@ -21,6 +25,14 @@ const PremiumPage = () => {
         description: "Thank you for your purchase. Your premium features are now activated.",
         variant: "default",
       });
+      
+      if (user && planName) {
+        // Send purchase confirmation email
+        sendPurchaseConfirmationEmail(user.email, planName);
+        
+        // Upgrade user account in the auth system
+        upgradeUserAccount();
+      }
     } else if (paymentStatus === 'canceled') {
       toast({
         title: "Payment canceled",
@@ -28,7 +40,46 @@ const PremiumPage = () => {
         variant: "destructive",
       });
     }
-  }, [paymentStatus, toast]);
+  }, [paymentStatus, toast, user, planName]);
+  
+  const sendPurchaseConfirmationEmail = async (email: string, plan: string) => {
+    try {
+      const amount = plan === 'Basic' ? '$9.99' : '$19.99';
+      
+      await supabase.functions.invoke('send-email', {
+        body: { 
+          type: 'purchase',
+          data: {
+            email,
+            plan,
+            amount
+          }
+        }
+      });
+      
+      console.log('Purchase confirmation email sent');
+    } catch (error) {
+      console.error('Error sending purchase confirmation email:', error);
+    }
+  };
+  
+  const upgradeUserAccount = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase.auth.updateUser({
+        data: { isPremium: true }
+      });
+      
+      if (error) {
+        console.error('Error upgrading user account:', error);
+      } else {
+        console.log('User account upgraded:', data.user);
+      }
+    } catch (error) {
+      console.error('Error upgrading user account:', error);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-cream">
@@ -57,7 +108,7 @@ const PremiumPage = () => {
             <div className="bg-white p-6 rounded-xl shadow-md border-2 border-gray-200 flex flex-col">
               <div className="flex-1">
                 <h3 className="text-xl font-bold text-corporate-800 mb-2">Basic Plan</h3>
-                <div className="text-3xl font-bold text-corporate-800 mb-4">$9.99<span className="text-lg font-normal text-gray-500">/month</span></div>
+                <div className="text-3xl font-bold text-corporate-800 mb-4">$9.99<span className="text-lg font-normal text-gray-500"> one-time</span></div>
                 <ul className="space-y-2 mb-6">
                   <li className="flex items-center">
                     <svg className="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -93,7 +144,7 @@ const PremiumPage = () => {
               </div>
               <div className="flex-1">
                 <h3 className="text-xl font-bold text-corporate-800 mb-2">Professional</h3>
-                <div className="text-3xl font-bold text-corporate-800 mb-4">$19.99<span className="text-lg font-normal text-gray-500">/month</span></div>
+                <div className="text-3xl font-bold text-corporate-800 mb-4">$19.99<span className="text-lg font-normal text-gray-500"> one-time</span></div>
                 <ul className="space-y-2 mb-6">
                   <li className="flex items-center">
                     <svg className="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

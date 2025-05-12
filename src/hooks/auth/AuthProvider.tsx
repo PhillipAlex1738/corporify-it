@@ -18,6 +18,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signUp,
     logout,
     upgradeAccount,
+    sendWelcomeEmail,
   } = useAuthState();
 
   useEffect(() => {
@@ -34,6 +35,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(null);
         localStorage.removeItem('corporify_user');
         return;
+      }
+      
+      if (event === 'SIGNED_IN') {
+        console.log('User signed in, updating state');
+        // Send welcome email on first sign in
+        if (newSession?.user?.email) {
+          // Use setTimeout to avoid deadlocks with Supabase
+          setTimeout(() => {
+            sendWelcomeEmail(newSession.user.email);
+          }, 0);
+        }
       }
       
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
@@ -111,7 +123,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('Cleaning up auth subscription');
       subscription.unsubscribe();
     };
-  }, [setSession, setUser, setIsLoading]);
+  }, [setSession, setUser, setIsLoading, sendWelcomeEmail]);
 
   const value = {
     user,
