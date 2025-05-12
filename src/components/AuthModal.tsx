@@ -8,11 +8,9 @@ import {
   DialogDescription
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
-import { Loader2 } from 'lucide-react';
+import LoginForm from './auth/LoginForm';
+import SignupForm from './auth/SignupForm';
 
 type AuthModalProps = {
   isOpen: boolean;
@@ -20,13 +18,8 @@ type AuthModalProps = {
 };
 
 const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
-  const [localLoading, setLocalLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  
-  const { login, signUp, isLoading, user } = useAuth();
+  const { user } = useAuth();
   
   // If user becomes authenticated while modal is open, close it
   useEffect(() => {
@@ -36,53 +29,21 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     }
   }, [user, isOpen, onClose]);
   
-  // Reset states when modal closes or opens
+  // Reset states when modal closes
   useEffect(() => {
     if (!isOpen) {
-      setLocalLoading(false);
-      setEmail('');
-      setPassword('');
-      setError(null);
+      // Reset tab to login when modal is closed
+      setActiveTab('login');
     }
   }, [isOpen]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (localLoading || isLoading) return; // Prevent multiple submissions
-    
-    setLocalLoading(true);
-    setError(null);
-    console.log(`Attempting ${activeTab} with email: ${email}`);
-    
-    try {
-      if (activeTab === 'login') {
-        const { success } = await login(email, password);
-        console.log(`Login attempt result: ${success ? 'success' : 'failure'}`);
-        if (success) {
-          console.log("Login successful, closing modal");
-          setTimeout(() => onClose(), 500); // Small delay to ensure state changes propagate
-        }
-      } else {
-        const { success } = await signUp(email, password);
-        console.log(`Signup attempt result: ${success ? 'success' : 'failure'}`);
-        if (success) {
-          console.log("Signup successful, closing modal");
-          setTimeout(() => onClose(), 500); // Small delay to ensure state changes propagate
-        }
-      }
-    } catch (error: any) {
-      console.error(`${activeTab} error:`, error);
-      setError(error?.message || `${activeTab === 'login' ? 'Login' : 'Sign up'} failed. Please try again.`);
-    } finally {
-      // Always reset local loading state
-      setLocalLoading(false);
-    }
+  const handleSuccess = () => {
+    onClose();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => {
       if (!open) {
-        setLocalLoading(false); // Reset loading when dialog is closed
         onClose();
       }
     }}>
@@ -104,93 +65,11 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
           </TabsList>
           
           <TabsContent value="login">
-            <form onSubmit={handleSubmit} className="space-y-4 pt-4">
-              {error && (
-                <div className="text-red-500 text-sm p-2 bg-red-50 rounded border border-red-200">
-                  {error}
-                </div>
-              )}
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="your@email.com"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={localLoading || isLoading}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={localLoading || isLoading}
-                />
-              </div>
-              <Button 
-                type="submit" 
-                className="w-full bg-corporate-800 hover:bg-corporate-900"
-                disabled={localLoading || isLoading}
-              >
-                {(localLoading || isLoading) ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Logging in...
-                  </>
-                ) : "Login"}
-              </Button>
-            </form>
+            <LoginForm onSuccess={handleSuccess} />
           </TabsContent>
           
           <TabsContent value="signup">
-            <form onSubmit={handleSubmit} className="space-y-4 pt-4">
-              {error && (
-                <div className="text-red-500 text-sm p-2 bg-red-50 rounded border border-red-200">
-                  {error}
-                </div>
-              )}
-              <div className="space-y-2">
-                <Label htmlFor="signup-email">Email</Label>
-                <Input
-                  id="signup-email"
-                  type="email"
-                  placeholder="your@email.com"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={localLoading || isLoading}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="signup-password">Password</Label>
-                <Input
-                  id="signup-password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={localLoading || isLoading}
-                />
-              </div>
-              <Button 
-                type="submit" 
-                className="w-full bg-corporate-800 hover:bg-corporate-900"
-                disabled={localLoading || isLoading}
-              >
-                {(localLoading || isLoading) ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating account...
-                  </>
-                ) : "Create Account"}
-              </Button>
-            </form>
+            <SignupForm onSuccess={handleSuccess} />
           </TabsContent>
         </Tabs>
       </DialogContent>
