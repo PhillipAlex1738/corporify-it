@@ -72,16 +72,13 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
       const result = await signUp(email, password);
       console.log(`Signup attempt result:`, result);
       
-      if (result.success) {
-        console.log("Signup successful, closing modal");
-        onSuccess();
-      } else {
-        // Only set error if one wasn't already set in the signup function
-        setLocalLoading(false);
+      if (!result.success) {
+        setError("Failed to create account. Email may already be in use.");
       }
     } catch (error: any) {
       console.error(`Signup error:`, error);
       setError(error?.message || `Sign up failed. Please try again.`);
+    } finally {
       setLocalLoading(false);
     }
   };

@@ -13,8 +13,6 @@ export const AuthStateValidator = () => {
     if (user) {
       const validateUserExists = async () => {
         try {
-          console.log("Validating user session for:", user.email);
-          
           // Use getUser to check if the session is valid
           const { data, error } = await supabase.auth.getUser();
           
@@ -31,6 +29,7 @@ export const AuthStateValidator = () => {
           }
         } catch (err) {
           console.error("Error validating user session:", err);
+          // Attempt to logout even on error
           logout();
         }
       };

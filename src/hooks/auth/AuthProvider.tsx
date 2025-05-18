@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { AuthContext } from '@/hooks/useAuthContext';
 import { useAuthState } from './useAuthState';
-import { transformUser, saveUserToLocalStorage } from '@/utils/userTransform';
+import { transformUser } from '@/utils/userTransform';
 import { useToast } from '@/components/ui/use-toast';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -26,7 +26,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Function to clear auth state
   const clearAuthState = () => {
-    console.log('Clearing auth state due to invalid session');
+    console.log('Clearing auth state');
     setUser(null);
     setSession(null);
     localStorage.removeItem('corporify_user');
@@ -35,7 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     console.log("Setting up auth provider and listeners");
     
-    // First set up the auth listener before checking for session
+    // Set up the auth listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
       console.log('Auth state changed:', event, newSession?.user?.email || 'No user');
       
@@ -53,13 +53,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const newUser = transformUser(newSession.user);
         console.log('Setting user from auth change:', newUser?.email || 'No email available');
         setUser(newUser);
-        
-        // Use setTimeout to avoid potential deadlocks with Supabase
-        if (newUser) {
-          setTimeout(() => {
-            saveUserToLocalStorage(newUser);
-          }, 0);
-        }
       }
     });
 
@@ -89,7 +82,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const userData = transformUser(sessionData.session.user);
         if (userData) {
           setUser(userData);
-          saveUserToLocalStorage(userData);
         }
       } catch (error) {
         console.error('Error checking session:', error);

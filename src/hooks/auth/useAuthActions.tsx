@@ -24,18 +24,17 @@ export const useAuthActions = () => {
   };
 
   const login = async (email: string, password: string): Promise<{ success: boolean }> => {
-    setIsLoading(true);
     try {
+      setIsLoading(true);
       console.log("Starting login attempt with:", email);
       const { success, error, data } = await loginWithEmailAndPassword(email, password);
       
       console.log("Login response:", { success, hasError: !!error, hasData: !!data });
       
-      if (!success) {
+      if (!success || error) {
         const errorMessage = error?.message || "Please check your credentials and try again.";
         console.error('Login error details:', error || "No specific error returned");
         showToast("Login failed", errorMessage, "destructive");
-        setIsLoading(false);
         return { success: false };
       }
 
@@ -59,18 +58,17 @@ export const useAuthActions = () => {
   };
 
   const signUp = async (email: string, password: string): Promise<{ success: boolean }> => {
-    setIsLoading(true);
     try {
+      setIsLoading(true);
       console.log("Starting signup attempt with:", email);
       const { success, error, user: newUser } = await signUpWithEmailAndPassword(email, password);
 
       console.log("Signup response:", { success, hasError: !!error, hasUser: !!newUser });
 
-      if (!success) {
+      if (!success || error) {
         const errorMessage = error?.message || "Please try again with a different email.";
         console.error('Signup error details:', error || "No specific error returned");
         showToast("Sign-up failed", errorMessage, "destructive");
-        setIsLoading(false);
         return { success: false };
       }
 

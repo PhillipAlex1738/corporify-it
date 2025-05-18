@@ -69,16 +69,13 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
       const result = await login(email, password);
       console.log(`Login attempt result:`, result);
       
-      if (result.success) {
-        console.log("Login successful, closing modal");
-        onSuccess();
-      } else {
-        // Only set error if one wasn't already set in the login function
-        setLocalLoading(false);
+      if (!result.success) {
+        setError("Invalid email or password. Please try again.");
       }
     } catch (error: any) {
       console.error(`Login error:`, error);
       setError(error?.message || `Login failed. Please try again.`);
+    } finally {
       setLocalLoading(false);
     }
   };
