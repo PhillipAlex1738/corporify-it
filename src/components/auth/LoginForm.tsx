@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,7 +17,20 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
   const [localLoading, setLocalLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  const { login, isLoading } = useAuth();
+  const { login, isLoading, user } = useAuth();
+  
+  // Clear error when input changes
+  useEffect(() => {
+    if (error) setError(null);
+  }, [email, password, error]);
+  
+  // If we already have a user, trigger success callback
+  useEffect(() => {
+    if (user) {
+      console.log("User already logged in, triggering success callback");
+      onSuccess();
+    }
+  }, [user, onSuccess]);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +45,7 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
       console.log(`Login attempt result: ${success ? 'success' : 'failure'}`);
       if (success) {
         console.log("Login successful, closing modal");
-        setTimeout(() => onSuccess(), 500); // Small delay to ensure state changes propagate
+        onSuccess();
       }
     } catch (error: any) {
       console.error(`Login error:`, error);

@@ -18,32 +18,51 @@ type AuthModalProps = {
 
 const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
-  const { user } = useAuth();
+  const [isClosing, setIsClosing] = useState(false);
+  const { user, isLoading } = useAuth();
   
   // If user becomes authenticated while modal is open, close it
   useEffect(() => {
-    if (user && isOpen) {
+    if (user && isOpen && !isClosing) {
       console.log("User detected, closing auth modal:", user.email);
-      onClose();
+      setIsClosing(true);
+      // Use a short timeout to ensure state transitions happen smoothly
+      setTimeout(() => {
+        onClose();
+        setIsClosing(false);
+      }, 300);
     }
-  }, [user, isOpen, onClose]);
+  }, [user, isOpen, onClose, isClosing]);
   
   // Reset states when modal closes
   useEffect(() => {
     if (!isOpen) {
       // Reset tab to login when modal is closed
       setActiveTab('login');
+      setIsClosing(false);
     }
   }, [isOpen]);
 
   const handleSuccess = () => {
-    onClose();
+    setIsClosing(true);
+    // Use a short timeout to ensure state transitions happen smoothly
+    setTimeout(() => {
+      onClose();
+      setIsClosing(false);
+    }, 300);
   };
+
+  // Don't render the modal content while we're closing to prevent any state conflicts
+  if (isClosing) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => {
-      if (!open) {
-        onClose();
+      if (!open && !isClosing) {
+        setIsClosing(true);
+        setTimeout(() => {
+          onClose();
+          setIsClosing(false);
+        }, 100);
       }
     }}>
       <DialogContent className="sm:max-w-[400px] p-0 overflow-hidden">

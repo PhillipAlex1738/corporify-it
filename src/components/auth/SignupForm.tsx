@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,11 +17,30 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
   const [localLoading, setLocalLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  const { signUp, isLoading } = useAuth();
+  const { signUp, isLoading, user } = useAuth();
+  
+  // Clear error when input changes
+  useEffect(() => {
+    if (error) setError(null);
+  }, [email, password, error]);
+  
+  // If we already have a user, trigger success callback
+  useEffect(() => {
+    if (user) {
+      console.log("User already logged in, triggering success callback");
+      onSuccess();
+    }
+  }, [user, onSuccess]);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (localLoading || isLoading) return; // Prevent multiple submissions
+    
+    // Basic client-side validation
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      return;
+    }
     
     setLocalLoading(true);
     setError(null);
@@ -32,7 +51,7 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
       console.log(`Signup attempt result: ${success ? 'success' : 'failure'}`);
       if (success) {
         console.log("Signup successful, closing modal");
-        setTimeout(() => onSuccess(), 500); // Small delay to ensure state changes propagate
+        onSuccess();
       }
     } catch (error: any) {
       console.error(`Signup error:`, error);

@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { AuthContext } from '@/hooks/useAuthContext';
 import { useAuthState } from './useAuthState';
 import { transformUser, saveUserToLocalStorage } from '@/utils/userTransform';
+import { useToast } from '@/components/ui/use-toast';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const {
@@ -20,6 +21,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     upgradeAccount,
     sendWelcomeEmail,
   } = useAuthState();
+
+  const { toast } = useToast();
 
   // Function to clear auth state
   const clearAuthState = () => {
@@ -67,6 +70,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
           }, 0);
         }
+      } else if (event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+        // If we get these events but no user data, verify if we still have a valid session
+        setTimeout(async () => {
+          const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+          if (sessionError || !sessionData.session) {
+            console.log('Session invalid during token refresh or user update, clearing auth state');
+            clearAuthState();
+          }
+        }, 0);
       }
     });
 
@@ -78,64 +90,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsLoading(true);
         console.log('Checking for existing session...');
         
-        // Check for user data in localStorage first
-        const storedUserData = localStorage.getItem('corporify_user');
-        if (storedUserData) {
-          try {
-            const userData = JSON.parse(storedUserData);
-            console.log('Found stored user data:', userData.email);
-            
-            // Verify the user still exists in Supabase before setting user state
+        // Force clear any potentially invalid stored user data first if no valid session
+        const { data: initialSession, error: initialError } = await supabase.auth.getSession();
+        if (initialError || !initialSession.session) {
+          console.log('No valid initial session found, clearing any stored user data');
+          clearAuthState();
+        }
+        
+        // Check for user data in localStorage only if we have a valid session
+        if (initialSession.session) {
+          const storedUserData = localStorage.getItem('corporify_user');
+          if (storedUserData) {
             try {
-              const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+              const userData = JSON.parse(storedUserData);
+              console.log('Found stored user data:', userData.email);
               
-              if (sessionError || !sessionData.session) {
-                console.log('No valid session found for stored user, clearing auth state');
-                clearAuthState();
-                return;
-              }
-              
-              // If we have a session, temporarily set the user
+              // Set user state from stored data while we verify with server
               setUser(userData);
+              setSession(initialSession.session);
             } catch (e) {
-              console.error('Error verifying user session:', e);
+              console.error('Failed to parse stored user data:', e);
               clearAuthState();
             }
-          } catch (e) {
-            console.error('Failed to parse stored user data:', e);
-            clearAuthState();
-          }
-        }
-        
-        // Then check for session with the server
-        const { data, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          console.error('Error getting session:', error);
-          clearAuthState();
-          return;
-        }
-        
-        console.log('Initial session check:', data.session ? `Found session for ${data.session.user.email}` : 'No session found');
-        
-        if (data.session) {
-          setSession(data.session);
-          const initialUser = transformUser(data.session.user);
-          if (initialUser) {
-            console.log('Setting initial user:', initialUser.email);
-            setUser(initialUser);
-            saveUserToLocalStorage(initialUser);
-          }
-        } else {
-          // If no server session but we have local user data, clear it
-          if (user) {
-            console.log('No server session found for user, clearing local data');
-            clearAuthState();
+          } else {
+            // We have a session but no stored user data, set from session
+            const sessionUser = transformUser(initialSession.session.user);
+            if (sessionUser) {
+              console.log('Setting user from session:', sessionUser.email);
+              setUser(sessionUser);
+              setSession(initialSession.session);
+              saveUserToLocalStorage(sessionUser);
+            }
           }
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
         clearAuthState();
+        toast({
+          title: "Authentication Error",
+          description: "There was a problem with your authentication. Please try signing in again.",
+          variant: "destructive"
+        });
       } finally {
         setIsLoading(false);
         isInitialized = true;
@@ -148,7 +143,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('Cleaning up auth subscription');
       subscription.unsubscribe();
     };
-  }, [setSession, setUser, setIsLoading, sendWelcomeEmail, user]);
+  }, [setSession, setUser, setIsLoading, sendWelcomeEmail, toast]);
 
   const value = {
     user,
