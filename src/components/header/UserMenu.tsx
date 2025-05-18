@@ -2,8 +2,10 @@
 import { useAuth } from '@/hooks/useAuth';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { LogOut, UserRound } from 'lucide-react';
+import { LogOut, UserRound, CreditCard } from 'lucide-react';
 import AuthModal from '@/components/AuthModal';
+import PricingModal from '@/components/PricingModal';
+import { useToast } from '@/components/ui/use-toast';
 
 type UserMenuProps = {
   isMobile?: boolean;
@@ -13,7 +15,9 @@ type UserMenuProps = {
 const UserMenu = ({ isMobile = false, onModalOpen }: UserMenuProps) => {
   const { user, logout } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { toast } = useToast();
 
   const handleLogout = async () => {
     try {
@@ -21,8 +25,17 @@ const UserMenu = ({ isMobile = false, onModalOpen }: UserMenuProps) => {
       console.log("Starting logout process");
       await logout();
       console.log("Logout completed successfully");
+      toast({
+        title: "Logged out successfully",
+        description: "You have been logged out of your account."
+      });
     } catch (error) {
       console.error("Logout failed:", error);
+      toast({
+        title: "Logout failed",
+        description: "There was an issue logging out. Please try again.",
+        variant: "destructive"
+      });
     } finally {
       setIsLoggingOut(false);
     }
@@ -30,6 +43,11 @@ const UserMenu = ({ isMobile = false, onModalOpen }: UserMenuProps) => {
 
   const handleAuthModalOpen = () => {
     setIsAuthModalOpen(true);
+    if (onModalOpen) onModalOpen();
+  };
+
+  const handlePremiumClick = () => {
+    setIsPricingModalOpen(true);
     if (onModalOpen) onModalOpen();
   };
 
@@ -43,6 +61,16 @@ const UserMenu = ({ isMobile = false, onModalOpen }: UserMenuProps) => {
         </div>
         
         <Button 
+          onClick={handlePremiumClick}
+          variant="outline" 
+          size="sm"
+          className={`text-corporate-800 hover:text-corporate-600 hover:bg-corporate-50 ${isMobile ? 'w-full justify-start' : ''}`}
+        >
+          <CreditCard className="h-4 w-4 mr-1" />
+          <span>Go Premium</span>
+        </Button>
+        
+        <Button 
           onClick={handleLogout}
           variant="ghost" 
           size="sm"
@@ -52,6 +80,8 @@ const UserMenu = ({ isMobile = false, onModalOpen }: UserMenuProps) => {
           <LogOut className="h-4 w-4 mr-1" />
           <span>{isLoggingOut ? "Logging out..." : "Sign Out"}</span>
         </Button>
+
+        <PricingModal isOpen={isPricingModalOpen} onClose={() => setIsPricingModalOpen(false)} />
       </div>
     );
   }
