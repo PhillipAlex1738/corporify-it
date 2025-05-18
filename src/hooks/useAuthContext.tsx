@@ -10,6 +10,7 @@ export type AuthContextType = {
   signUp: (email: string, password: string) => Promise<{ success: boolean }>;
   logout: () => Promise<void>;
   upgradeAccount: () => Promise<void>;
+  sendWelcomeEmail?: (email: string) => Promise<void>;
 };
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);

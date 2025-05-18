@@ -79,6 +79,15 @@ export const useAuthActions = () => {
           "Account created",
           "Welcome to Corporify It! You can start using the app immediately."
         );
+        
+        // Send welcome email on successful signup
+        try {
+          console.log("Sending welcome email to:", email);
+          await sendWelcomeEmail(email);
+        } catch (emailError) {
+          // Don't fail the signup if email sending fails
+          console.error("Failed to send welcome email:", emailError);
+        }
       } else {
         showToast(
           "Account created",

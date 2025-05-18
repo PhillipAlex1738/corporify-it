@@ -107,6 +107,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signUp,
     logout,
     upgradeAccount,
+    sendWelcomeEmail,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
