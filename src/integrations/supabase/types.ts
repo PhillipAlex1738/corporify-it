@@ -130,6 +130,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      delete_user_with_logs: {
+        Args: { user_email: string }
+        Returns: string
+      }
       increment_page_view: {
         Args: { page_path: string }
         Returns: undefined

@@ -9,8 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
-import LoginForm from './auth/LoginForm';
-import SignupForm from './auth/SignupForm';
+import { LoginForm, SignupForm } from './auth';
 
 type AuthModalProps = {
   isOpen: boolean;

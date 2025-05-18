@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import ErrorDisplay from './ErrorDisplay';
 
 interface LoginFormProps {
   onSuccess: () => void;
@@ -43,11 +44,8 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 pt-4">
-      {error && (
-        <div className="text-red-500 text-sm p-2 bg-red-50 rounded border border-red-200">
-          {error}
-        </div>
-      )}
+      <ErrorDisplay error={error} />
+      
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <Input
