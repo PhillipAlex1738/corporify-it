@@ -21,38 +21,40 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [isClosing, setIsClosing] = useState(false);
   const { user, isLoading } = useAuth();
   
+  // Reset states when modal opens or closes
+  useEffect(() => {
+    if (!isOpen) {
+      // Short delay before resetting to prevent visual glitches
+      const timeout = setTimeout(() => {
+        setActiveTab('login');
+        setIsClosing(false);
+      }, 300);
+      return () => clearTimeout(timeout);
+    }
+  }, [isOpen]);
+  
   // If user becomes authenticated while modal is open, close it
   useEffect(() => {
     if (user && isOpen && !isClosing) {
       console.log("User detected, closing auth modal:", user.email);
       setIsClosing(true);
       // Use a short timeout to ensure state transitions happen smoothly
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         onClose();
-        setIsClosing(false);
       }, 300);
+      return () => clearTimeout(timeout);
     }
   }, [user, isOpen, onClose, isClosing]);
-  
-  // Reset states when modal closes
-  useEffect(() => {
-    if (!isOpen) {
-      // Reset tab to login when modal is closed
-      setActiveTab('login');
-      setIsClosing(false);
-    }
-  }, [isOpen]);
 
   const handleSuccess = () => {
     setIsClosing(true);
     // Use a short timeout to ensure state transitions happen smoothly
     setTimeout(() => {
       onClose();
-      setIsClosing(false);
     }, 300);
   };
 
-  // Don't render the modal content while we're closing to prevent any state conflicts
+  // Don't render the modal content while we're closing to prevent state conflicts
   if (isClosing) return null;
 
   return (
@@ -61,8 +63,7 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         setIsClosing(true);
         setTimeout(() => {
           onClose();
-          setIsClosing(false);
-        }, 100);
+        }, 300);
       }
     }}>
       <DialogContent className="sm:max-w-[400px] p-0 overflow-hidden">
@@ -84,12 +85,14 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
               <TabsTrigger 
                 value="login" 
                 className="data-[state=active]:bg-white data-[state=active]:shadow-none"
+                disabled={isLoading || isClosing}
               >
                 Login
               </TabsTrigger>
               <TabsTrigger 
                 value="signup"
                 className="data-[state=active]:bg-white data-[state=active]:shadow-none"
+                disabled={isLoading || isClosing}
               >
                 Sign Up
               </TabsTrigger>

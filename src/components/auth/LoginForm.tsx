@@ -32,9 +32,32 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
     }
   }, [user, onSuccess]);
   
+  // Safety timeout to prevent infinite loading state
+  useEffect(() => {
+    let timeoutId: number | undefined;
+    
+    if (localLoading) {
+      timeoutId = window.setTimeout(() => {
+        console.log("Login timeout reached - resetting loading state");
+        setLocalLoading(false);
+        setError("Login attempt timed out. Please try again.");
+      }, 10000); // 10 second timeout
+    }
+    
+    return () => {
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
+  }, [localLoading]);
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (localLoading || isLoading) return; // Prevent multiple submissions
+    
+    // Basic validation
+    if (!email || !password) {
+      setError("Please enter both email and password");
+      return;
+    }
     
     setLocalLoading(true);
     setError(null);
@@ -46,11 +69,14 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
       if (success) {
         console.log("Login successful, closing modal");
         onSuccess();
+      } else {
+        // If login returns success: false but no error was thrown
+        setError("Login failed. Please check your credentials and try again.");
+        setLocalLoading(false);
       }
     } catch (error: any) {
       console.error(`Login error:`, error);
       setError(error?.message || `Login failed. Please try again.`);
-    } finally {
       setLocalLoading(false);
     }
   };

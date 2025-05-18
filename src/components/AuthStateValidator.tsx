@@ -28,16 +28,34 @@ export const AuthStateValidator = () => {
             });
             
             // User doesn't exist in Supabase, log out locally
-            logout().catch(err => {
-              console.error("Error during auto-logout:", err);
-            });
+            await logout();
           } else {
             console.log("User validated successfully:", data.user.email);
+            
+            // Check if the user ID matches - if not, there might be a stale session
+            if (data.user.id !== user.id) {
+              console.log("User ID mismatch, logging out");
+              toast({
+                title: "Authentication issue",
+                description: "There was a problem with your session. Please sign in again.",
+                variant: "destructive"
+              });
+              await logout();
+            }
           }
         } catch (err) {
           console.error("Error validating user session:", err);
           // If we encounter an error during validation, it's safest to log the user out
-          logout().catch(error => console.error("Error during fallback logout:", error));
+          try {
+            await logout();
+            toast({
+              title: "Session error",
+              description: "We encountered a problem with your session. Please sign in again.",
+              variant: "destructive"
+            });
+          } catch (logoutError) {
+            console.error("Error during fallback logout:", logoutError);
+          }
         }
       };
       

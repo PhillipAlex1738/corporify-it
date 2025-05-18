@@ -32,11 +32,33 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
     }
   }, [user, onSuccess]);
   
+  // Safety timeout to prevent infinite loading state
+  useEffect(() => {
+    let timeoutId: number | undefined;
+    
+    if (localLoading) {
+      timeoutId = window.setTimeout(() => {
+        console.log("Signup timeout reached - resetting loading state");
+        setLocalLoading(false);
+        setError("Signup attempt timed out. Please try again.");
+      }, 15000); // 15 second timeout (signup may take longer than login)
+    }
+    
+    return () => {
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
+  }, [localLoading]);
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (localLoading || isLoading) return; // Prevent multiple submissions
     
     // Basic client-side validation
+    if (!email || !password) {
+      setError("Please enter both email and password");
+      return;
+    }
+    
     if (password.length < 6) {
       setError("Password must be at least 6 characters long");
       return;
@@ -52,11 +74,14 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
       if (success) {
         console.log("Signup successful, closing modal");
         onSuccess();
+      } else {
+        // If signup returns success: false but no error was thrown
+        setError("Account creation failed. Please try again.");
+        setLocalLoading(false);
       }
     } catch (error: any) {
       console.error(`Signup error:`, error);
       setError(error?.message || `Sign up failed. Please try again.`);
-    } finally {
       setLocalLoading(false);
     }
   };
