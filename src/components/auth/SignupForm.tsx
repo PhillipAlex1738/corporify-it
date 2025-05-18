@@ -43,11 +43,11 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <ErrorDisplay error={error} />
       
       <div className="space-y-2">
-        <Label htmlFor="signup-email">Email</Label>
+        <Label htmlFor="signup-email" className="text-sm font-medium text-gray-700">Email</Label>
         <Input
           id="signup-email"
           type="email"
@@ -56,10 +56,11 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           disabled={localLoading || isLoading}
+          className="w-full px-3 py-2 border rounded-md"
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="signup-password">Password</Label>
+        <Label htmlFor="signup-password" className="text-sm font-medium text-gray-700">Password</Label>
         <Input
           id="signup-password"
           type="password"
@@ -67,6 +68,7 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           disabled={localLoading || isLoading}
+          className="w-full px-3 py-2 border rounded-md"
         />
       </div>
       <Button 
