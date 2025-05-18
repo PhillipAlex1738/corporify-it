@@ -18,54 +18,36 @@ type AuthModalProps = {
 
 const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>('login');
-  const [isClosing, setIsClosing] = useState(false);
   const { user, isLoading } = useAuth();
   
-  // Reset states when modal opens or closes
+  // Reset state when modal opens
   useEffect(() => {
-    if (!isOpen) {
-      // Short delay before resetting to prevent visual glitches
-      const timeout = setTimeout(() => {
-        setActiveTab('login');
-        setIsClosing(false);
-      }, 300);
-      return () => clearTimeout(timeout);
+    if (isOpen) {
+      console.log("Auth modal opened, setting tab to login");
+      setActiveTab('login');
     }
   }, [isOpen]);
   
   // If user becomes authenticated while modal is open, close it
   useEffect(() => {
-    if (user && isOpen && !isClosing) {
+    if (user && isOpen) {
       console.log("User detected, closing auth modal:", user.email);
-      setIsClosing(true);
-      // Use a short timeout to ensure state transitions happen smoothly
-      const timeout = setTimeout(() => {
-        onClose();
-      }, 300);
-      return () => clearTimeout(timeout);
+      onClose();
     }
-  }, [user, isOpen, onClose, isClosing]);
+  }, [user, isOpen, onClose]);
 
   const handleSuccess = () => {
-    setIsClosing(true);
-    // Use a short timeout to ensure state transitions happen smoothly
-    setTimeout(() => {
-      onClose();
-    }, 300);
+    console.log("Auth success, closing modal");
+    onClose();
   };
 
-  // Don't render the modal content while we're closing to prevent state conflicts
-  if (isClosing) return null;
-
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => {
-      if (!open && !isClosing) {
-        setIsClosing(true);
-        setTimeout(() => {
-          onClose();
-        }, 300);
-      }
-    }}>
+    <Dialog 
+      open={isOpen} 
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
       <DialogContent className="sm:max-w-[400px] p-0 overflow-hidden">
         <div className="bg-rose-500 p-4">
           <DialogHeader>
@@ -80,19 +62,23 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         </div>
         
         <div className="p-4">
-          <Tabs defaultValue="login" value={activeTab} onValueChange={(v) => setActiveTab(v as 'login' | 'signup')}>
+          <Tabs 
+            value={activeTab} 
+            onValueChange={(v) => setActiveTab(v as 'login' | 'signup')}
+            defaultValue="login"
+          >
             <TabsList className="grid w-full grid-cols-2 mb-4 bg-gray-100">
               <TabsTrigger 
                 value="login" 
                 className="data-[state=active]:bg-white data-[state=active]:shadow-none"
-                disabled={isLoading || isClosing}
+                disabled={isLoading}
               >
                 Login
               </TabsTrigger>
               <TabsTrigger 
                 value="signup"
                 className="data-[state=active]:bg-white data-[state=active]:shadow-none"
-                disabled={isLoading || isClosing}
+                disabled={isLoading}
               >
                 Sign Up
               </TabsTrigger>

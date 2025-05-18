@@ -27,39 +27,36 @@ export const useAuthActions = () => {
     setIsLoading(true);
     try {
       console.log("Starting login attempt with:", email);
-      const { success, error, data, isEmailNotConfirmed } = await loginWithEmailAndPassword(email, password);
+      const { success, error, data } = await loginWithEmailAndPassword(email, password);
       
-      if (!success && error) {
-        console.error('Login error details:', error);
-        showToast(
-          "Login failed",
-          error.message || "Please check your credentials and try again.",
-          "destructive"
-        );
-        throw error;
+      console.log("Login response:", { success, hasError: !!error, hasData: !!data });
+      
+      if (!success) {
+        if (error) {
+          console.error('Login error details:', error);
+          showToast(
+            "Login failed",
+            error.message || "Please check your credentials and try again.",
+            "destructive"
+          );
+        } else {
+          showToast(
+            "Login failed",
+            "Please check your credentials and try again.",
+            "destructive"
+          );
+        }
+        
+        setIsLoading(false);
+        return { success: false };
       }
 
-      // Show a success toast when login is successful
-      showToast(
-        "Login successful",
-        isEmailNotConfirmed ? "Welcome! (Email verification pending)" : "Welcome to Corporify It!"
-      );
-      
-      // If we have user data from an "email not confirmed" case
-      if (isEmailNotConfirmed && data?.user) {
-        const transformedUser = {
-          id: data.user.id,
-          email: data.user.email || '',
-          isPremium: false,
-          usageCount: 0,
-          usageLimit: 3,
-        };
-        console.log("Setting user from email not confirmed case:", transformedUser.email);
-        setUser(transformedUser);
-        localStorage.setItem('corporify_user', JSON.stringify(transformedUser));
+      // Success case - show toast only if we have session data
+      if (data && (data.session || data.user)) {
+        showToast("Login successful", "Welcome to Corporify It!");
       }
       
-      return { success };
+      return { success: true };
     } catch (error: any) {
       console.error('Login failed', error);
       showToast(
@@ -67,8 +64,8 @@ export const useAuthActions = () => {
         error.message || "Please check your credentials and try again.",
         "destructive"
       );
-      setIsLoading(false); // Ensure loading is reset on error
-      throw error;
+      setIsLoading(false);
+      return { success: false };
     } finally {
       setIsLoading(false);
     }
@@ -80,32 +77,43 @@ export const useAuthActions = () => {
       console.log("Starting signup attempt with:", email);
       const { success, error, user: newUser } = await signUpWithEmailAndPassword(email, password);
 
-      if (!success && error) {
-        showToast(
-          "Sign-up failed",
-          error.message || "Please try again with a different email.",
-          "destructive"
-        );
-        throw error;
+      console.log("Signup response:", { success, hasError: !!error, hasUser: !!newUser });
+
+      if (!success) {
+        if (error) {
+          console.error('Signup error details:', error);
+          showToast(
+            "Sign-up failed",
+            error.message || "Please try again with a different email.",
+            "destructive"
+          );
+        } else {
+          showToast(
+            "Sign-up failed",
+            "Please try again with a different email.",
+            "destructive"
+          );
+        }
+        
+        setIsLoading(false);
+        return { success: false };
       }
 
+      // Set user if we have one
       if (newUser) {
         setUser(newUser);
-        
         showToast(
           "Account created",
-          "Welcome to Corporify It! You can start using the app immediately. Please check your email for verification."
+          "Welcome to Corporify It! You can start using the app immediately."
         );
-        
-        return { success };
+      } else {
+        showToast(
+          "Account created",
+          "Welcome to Corporify It! Please check your email to verify your account."
+        );
       }
-
-      showToast(
-        "Account created",
-        "Welcome to Corporify It! Please check your email to verify your account."
-      );
       
-      return { success };
+      return { success: true };
     } catch (error: any) {
       console.error('Sign-up failed', error);
       showToast(
@@ -113,8 +121,8 @@ export const useAuthActions = () => {
         error.message || "Please try again with a different email.",
         "destructive"
       );
-      setIsLoading(false); // Ensure loading is reset on error
-      throw error;
+      setIsLoading(false);
+      return { success: false };
     } finally {
       setIsLoading(false);
     }
@@ -135,7 +143,7 @@ export const useAuthActions = () => {
         console.error('Logout error:', error);
         showToast(
           "Logout warning",
-          "You've been logged out locally, but there was an issue with the server: " + error.message,
+          "You've been logged out locally, but there was an issue with the server.",
           "destructive"
         );
       } else {

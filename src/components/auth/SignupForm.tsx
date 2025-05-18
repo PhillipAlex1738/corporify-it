@@ -41,7 +41,7 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
         console.log("Signup timeout reached - resetting loading state");
         setLocalLoading(false);
         setError("Signup attempt timed out. Please try again.");
-      }, 15000); // 15 second timeout (signup may take longer than login)
+      }, 10000); // 10 second timeout
     }
     
     return () => {
@@ -69,9 +69,10 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
     console.log(`Attempting signup with email: ${email}`);
     
     try {
-      const { success } = await signUp(email, password);
-      console.log(`Signup attempt result: ${success ? 'success' : 'failure'}`);
-      if (success) {
+      const result = await signUp(email, password);
+      console.log(`Signup attempt result:`, result);
+      
+      if (result.success) {
         console.log("Signup successful, closing modal");
         onSuccess();
       } else {

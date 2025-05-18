@@ -41,7 +41,7 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
         console.log("Login timeout reached - resetting loading state");
         setLocalLoading(false);
         setError("Login attempt timed out. Please try again.");
-      }, 10000); // 10 second timeout
+      }, 8000); // Shorter 8-second timeout
     }
     
     return () => {
@@ -51,7 +51,9 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (localLoading || isLoading) return; // Prevent multiple submissions
+    
+    // Prevent multiple submissions
+    if (localLoading || isLoading) return;
     
     // Basic validation
     if (!email || !password) {
@@ -64,9 +66,10 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
     console.log(`Attempting login with email: ${email}`);
     
     try {
-      const { success } = await login(email, password);
-      console.log(`Login attempt result: ${success ? 'success' : 'failure'}`);
-      if (success) {
+      const result = await login(email, password);
+      console.log(`Login attempt result:`, result);
+      
+      if (result.success) {
         console.log("Login successful, closing modal");
         onSuccess();
       } else {

@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { transformUser, saveUserToLocalStorage, User } from '@/utils/userTransform';
 
@@ -13,31 +12,24 @@ export const loginWithEmailAndPassword = async (email: string, password: string)
 
     if (error) {
       console.error("Login error:", error.message, error);
-      
-      // If the error is "Email not confirmed", we'll still return success
-      // This is a workaround for development where email confirmation may be disabled
-      if (error.message.includes("Email not confirmed")) {
-        console.log("Email not confirmed, but we'll continue as if login succeeded");
-        // Make another attempt to get the user data despite the error
-        const { data: userData } = await supabase.auth.getUser();
-        if (userData && userData.user) {
-          console.log("Successfully retrieved user data:", userData.user.email);
-          return { success: true, data: { user: userData.user, session: null }, error: null, isEmailNotConfirmed: true };
-        }
-      }
-      
-      return { success: false, data: null, error, isEmailNotConfirmed: error.message.includes("Email not confirmed") };
+      return { success: false, data: null, error };
     }
 
-    console.log("Login successful, data:", data);
-    return { success: true, data, error: null, isEmailNotConfirmed: false };
+    // Success case with proper data
+    if (data && (data.session || data.user)) {
+      console.log("Login successful, data:", data);
+      return { success: true, data, error: null };
+    }
+    
+    // Edge case: we got a response but no proper data
+    console.warn("Login returned success but with incomplete data:", data);
+    return { success: false, data, error: new Error("Invalid response from authentication service") };
   } catch (e) {
     console.error("Unexpected login error:", e);
     return { 
       success: false, 
       data: null, 
-      error: new Error(e instanceof Error ? e.message : "Unknown login error"), 
-      isEmailNotConfirmed: false 
+      error: new Error(e instanceof Error ? e.message : "Unknown login error")
     };
   }
 };
