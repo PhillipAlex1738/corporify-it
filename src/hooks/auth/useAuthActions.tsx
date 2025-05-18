@@ -32,21 +32,9 @@ export const useAuthActions = () => {
       console.log("Login response:", { success, hasError: !!error, hasData: !!data });
       
       if (!success) {
-        if (error) {
-          console.error('Login error details:', error);
-          showToast(
-            "Login failed",
-            error.message || "Please check your credentials and try again.",
-            "destructive"
-          );
-        } else {
-          showToast(
-            "Login failed",
-            "Please check your credentials and try again.",
-            "destructive"
-          );
-        }
-        
+        const errorMessage = error?.message || "Please check your credentials and try again.";
+        console.error('Login error details:', error || "No specific error returned");
+        showToast("Login failed", errorMessage, "destructive");
         setIsLoading(false);
         return { success: false };
       }
@@ -64,7 +52,6 @@ export const useAuthActions = () => {
         error.message || "Please check your credentials and try again.",
         "destructive"
       );
-      setIsLoading(false);
       return { success: false };
     } finally {
       setIsLoading(false);
@@ -80,21 +67,9 @@ export const useAuthActions = () => {
       console.log("Signup response:", { success, hasError: !!error, hasUser: !!newUser });
 
       if (!success) {
-        if (error) {
-          console.error('Signup error details:', error);
-          showToast(
-            "Sign-up failed",
-            error.message || "Please try again with a different email.",
-            "destructive"
-          );
-        } else {
-          showToast(
-            "Sign-up failed",
-            "Please try again with a different email.",
-            "destructive"
-          );
-        }
-        
+        const errorMessage = error?.message || "Please try again with a different email.";
+        console.error('Signup error details:', error || "No specific error returned");
+        showToast("Sign-up failed", errorMessage, "destructive");
         setIsLoading(false);
         return { success: false };
       }
@@ -121,7 +96,6 @@ export const useAuthActions = () => {
         error.message || "Please try again with a different email.",
         "destructive"
       );
-      setIsLoading(false);
       return { success: false };
     } finally {
       setIsLoading(false);
@@ -129,12 +103,12 @@ export const useAuthActions = () => {
   };
 
   const logout = async (): Promise<void> => {
-    setIsLoading(true);
     try {
       console.log("Starting logout attempt");
       
       // First clear local state immediately to ensure UI updates
       clearAuthState();
+      setIsLoading(true);
       
       // Then attempt to sign out from Supabase
       const { error } = await signOut();

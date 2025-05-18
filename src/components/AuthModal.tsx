@@ -41,12 +41,17 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     onClose();
   };
 
+  // Helper to prevent closing when in loading state
+  const handleOpenChange = (open: boolean) => {
+    if (!open && !isLoading) {
+      onClose();
+    }
+  };
+
   return (
     <Dialog 
       open={isOpen} 
-      onOpenChange={(open) => {
-        if (!open) onClose();
-      }}
+      onOpenChange={handleOpenChange}
     >
       <DialogContent className="sm:max-w-[400px] p-0 overflow-hidden">
         <div className="bg-rose-500 p-4">

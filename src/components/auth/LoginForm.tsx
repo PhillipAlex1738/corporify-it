@@ -40,8 +40,8 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
       timeoutId = window.setTimeout(() => {
         console.log("Login timeout reached - resetting loading state");
         setLocalLoading(false);
-        setError("Login attempt timed out. Please try again.");
-      }, 8000); // Shorter 8-second timeout
+        setError("Login request timed out. Please try again.");
+      }, 10000); // 10-second timeout
     }
     
     return () => {
@@ -73,8 +73,7 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
         console.log("Login successful, closing modal");
         onSuccess();
       } else {
-        // If login returns success: false but no error was thrown
-        setError("Login failed. Please check your credentials and try again.");
+        // Only set error if one wasn't already set in the login function
         setLocalLoading(false);
       }
     } catch (error: any) {

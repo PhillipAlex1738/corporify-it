@@ -40,8 +40,8 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
       timeoutId = window.setTimeout(() => {
         console.log("Signup timeout reached - resetting loading state");
         setLocalLoading(false);
-        setError("Signup attempt timed out. Please try again.");
-      }, 10000); // 10 second timeout
+        setError("Signup request timed out. Please try again.");
+      }, 10000); // 10-second timeout
     }
     
     return () => {
@@ -76,8 +76,7 @@ const SignupForm = ({ onSuccess }: SignupFormProps) => {
         console.log("Signup successful, closing modal");
         onSuccess();
       } else {
-        // If signup returns success: false but no error was thrown
-        setError("Account creation failed. Please try again.");
+        // Only set error if one wasn't already set in the signup function
         setLocalLoading(false);
       }
     } catch (error: any) {

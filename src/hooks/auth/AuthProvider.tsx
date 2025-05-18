@@ -34,7 +34,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     console.log("Setting up auth provider and listeners");
-    let isInitialized = false;
     
     // First set up the auth listener before checking for session
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
@@ -59,91 +58,54 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (newUser) {
           setTimeout(() => {
             saveUserToLocalStorage(newUser);
-            
-            // Send welcome email on SIGNED_IN event only, not on token refresh
-            if (event === 'SIGNED_IN' && newSession.user.email) {
-              console.log('Sending welcome email for new sign-in:', newSession.user.email);
-              sendWelcomeEmail(newSession.user.email).catch(err => {
-                console.error('Failed to send welcome email:', err);
-                // Don't block the auth flow if email fails
-              });
-            }
           }, 0);
         }
-      } else if (event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
-        // If we get these events but no user data, verify if we still have a valid session
-        setTimeout(async () => {
-          const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-          if (sessionError || !sessionData.session) {
-            console.log('Session invalid during token refresh or user update, clearing auth state');
-            clearAuthState();
-          }
-        }, 0);
       }
     });
 
-    // Check for existing session and also stored user data
-    const initializeAuth = async () => {
-      if (isInitialized) return;
-      
+    // Check for existing session after setting up listeners
+    const checkSession = async () => {
       try {
         setIsLoading(true);
         console.log('Checking for existing session...');
         
-        // Force clear any potentially invalid stored user data first if no valid session
-        const { data: initialSession, error: initialError } = await supabase.auth.getSession();
-        if (initialError || !initialSession.session) {
-          console.log('No valid initial session found, clearing any stored user data');
+        const { data: sessionData, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Error fetching session:', error);
           clearAuthState();
+          return;
         }
         
-        // Check for user data in localStorage only if we have a valid session
-        if (initialSession.session) {
-          const storedUserData = localStorage.getItem('corporify_user');
-          if (storedUserData) {
-            try {
-              const userData = JSON.parse(storedUserData);
-              console.log('Found stored user data:', userData.email);
-              
-              // Set user state from stored data while we verify with server
-              setUser(userData);
-              setSession(initialSession.session);
-            } catch (e) {
-              console.error('Failed to parse stored user data:', e);
-              clearAuthState();
-            }
-          } else {
-            // We have a session but no stored user data, set from session
-            const sessionUser = transformUser(initialSession.session.user);
-            if (sessionUser) {
-              console.log('Setting user from session:', sessionUser.email);
-              setUser(sessionUser);
-              setSession(initialSession.session);
-              saveUserToLocalStorage(sessionUser);
-            }
-          }
+        if (!sessionData?.session) {
+          console.log('No valid session found');
+          clearAuthState();
+          return;
+        }
+        
+        console.log('Valid session found:', sessionData.session.user.email);
+        setSession(sessionData.session);
+        
+        const userData = transformUser(sessionData.session.user);
+        if (userData) {
+          setUser(userData);
+          saveUserToLocalStorage(userData);
         }
       } catch (error) {
-        console.error('Error initializing auth:', error);
+        console.error('Error checking session:', error);
         clearAuthState();
-        toast({
-          title: "Authentication Error",
-          description: "There was a problem with your authentication. Please try signing in again.",
-          variant: "destructive"
-        });
       } finally {
         setIsLoading(false);
-        isInitialized = true;
       }
     };
-
-    initializeAuth();
+    
+    checkSession();
 
     return () => {
       console.log('Cleaning up auth subscription');
       subscription.unsubscribe();
     };
-  }, [setSession, setUser, setIsLoading, sendWelcomeEmail, toast]);
+  }, [setSession, setUser, setIsLoading]);
 
   const value = {
     user,

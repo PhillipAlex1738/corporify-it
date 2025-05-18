@@ -15,7 +15,7 @@ export const AuthStateValidator = () => {
         try {
           console.log("Validating user session for:", user.email);
           
-          // Simple session check without complex logic
+          // Use getUser to check if the session is valid
           const { data, error } = await supabase.auth.getUser();
           
           if (error || !data.user) {
@@ -26,21 +26,20 @@ export const AuthStateValidator = () => {
               variant: "destructive"
             });
             
-            // Simple logout without additional checks
-            await logout();
+            // Logout without additional checks
+            logout();
           }
         } catch (err) {
           console.error("Error validating user session:", err);
-          // Simple error handling - just logout
-          await logout();
+          logout();
         }
       };
       
       // Run validation on component mount
       validateUserExists();
       
-      // Validation interval - reduce frequency to avoid potential race conditions
-      const intervalId = setInterval(validateUserExists, 10 * 60 * 1000); // 10 minutes
+      // Set validation interval (reduced frequency)
+      const intervalId = setInterval(validateUserExists, 15 * 60 * 1000); // 15 minutes
       
       return () => {
         clearInterval(intervalId);
@@ -48,7 +47,6 @@ export const AuthStateValidator = () => {
     }
   }, [user, logout, toast]);
   
-  // This component doesn't render anything
   return null;
 };
 

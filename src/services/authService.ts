@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { transformUser, saveUserToLocalStorage, User } from '@/utils/userTransform';
 
@@ -38,6 +39,8 @@ export const signUpWithEmailAndPassword = async (email: string, password: string
   try {
     console.log("Attempting signup with:", email);
     
+    // For development purposes, we'll use simple signUp without email verification
+    // For production, you'd want to set emailRedirectTo
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -49,6 +52,17 @@ export const signUpWithEmailAndPassword = async (email: string, password: string
     if (error) {
       console.error("Signup error:", error);
       return { success: false, data: null, error };
+    }
+
+    // Check for "null" user, which means email confirmation is required
+    if (data && data.user && data.user.identities?.length === 0) {
+      console.log("User already exists, needs to login instead:", data);
+      return { 
+        success: false, 
+        data, 
+        error: new Error("This email is already registered. Please log in instead."),
+        user: null
+      };
     }
 
     // Only proceed if both data and data.user are non-null
