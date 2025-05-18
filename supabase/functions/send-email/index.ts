@@ -62,21 +62,21 @@ async function sendWelcomeEmail(data: { email: string, firstName?: string }) {
   console.log(`Sending welcome email to ${email}`);
   
   return await resend.emails.send({
-    from: 'Corporify <onboarding@resend.dev>',
+    from: 'Corporify It <onboarding@resend.dev>',
     to: [email],
-    subject: 'Welcome to Corporify',
+    subject: 'Welcome to Corporify It',
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-        <h1 style="color: #333; text-align: center;">Welcome to Corporify!</h1>
+        <h1 style="color: #333; text-align: center;">Welcome to Corporify It!</h1>
         <p>Hi ${firstName},</p>
-        <p>Thank you for signing up with Corporify! Your account has been created successfully.</p>
-        <p>With Corporify, you can transform your casual messages into polished corporate language with just a few clicks.</p>
+        <p>Thank you for signing up with Corporify It! Your account has been created successfully.</p>
+        <p>With Corporify It, you can transform your casual messages into polished corporate language with just a few clicks.</p>
         <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
         <div style="text-align: center; margin-top: 30px;">
           <a href="${Deno.env.get('PUBLIC_APP_URL') || 'https://corporifyit.io'}/app" style="background-color: #4361ee; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Get Started</a>
         </div>
         <p style="margin-top: 30px; font-size: 12px; color: #666; text-align: center;">
-          © ${new Date().getFullYear()} Corporify. All rights reserved.
+          © ${new Date().getFullYear()} Corporify It. All rights reserved.
         </p>
       </div>
     `,
@@ -94,7 +94,7 @@ async function sendPurchaseConfirmationEmail(data: {
   console.log(`Sending purchase confirmation email to ${email} for ${plan}`);
   
   return await resend.emails.send({
-    from: 'Corporify <onboarding@resend.dev>',
+    from: 'Corporify It <onboarding@resend.dev>',
     to: [email],
     subject: 'Thank You for Your Purchase',
     html: `
@@ -114,7 +114,7 @@ async function sendPurchaseConfirmationEmail(data: {
           <a href="${Deno.env.get('PUBLIC_APP_URL') || 'https://corporifyit.io'}/app" style="background-color: #4361ee; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Start Using Premium Features</a>
         </div>
         <p style="margin-top: 30px; font-size: 12px; color: #666; text-align: center;">
-          © ${new Date().getFullYear()} Corporify. All rights reserved.
+          © ${new Date().getFullYear()} Corporify It. All rights reserved.
         </p>
       </div>
     `,
