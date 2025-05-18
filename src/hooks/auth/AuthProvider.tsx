@@ -21,6 +21,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     sendWelcomeEmail,
   } = useAuthState();
 
+  // Function to clear auth state
+  const clearAuthState = () => {
+    console.log('Clearing auth state due to invalid session');
+    setUser(null);
+    setSession(null);
+    localStorage.removeItem('corporify_user');
+  };
+
   useEffect(() => {
     console.log("Setting up auth provider and listeners");
     let isInitialized = false;
@@ -31,9 +39,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (event === 'SIGNED_OUT') {
         console.log('User signed out, clearing state');
-        setUser(null);
-        setSession(null);
-        localStorage.removeItem('corporify_user');
+        clearAuthState();
         return;
       }
       
@@ -78,17 +84,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           try {
             const userData = JSON.parse(storedUserData);
             console.log('Found stored user data:', userData.email);
-            setUser(userData);
+            
+            // Verify the user still exists in Supabase before setting user state
+            try {
+              const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+              
+              if (sessionError || !sessionData.session) {
+                console.log('No valid session found for stored user, clearing auth state');
+                clearAuthState();
+                return;
+              }
+              
+              // If we have a session, temporarily set the user
+              setUser(userData);
+            } catch (e) {
+              console.error('Error verifying user session:', e);
+              clearAuthState();
+            }
           } catch (e) {
             console.error('Failed to parse stored user data:', e);
+            clearAuthState();
           }
         }
         
-        // Then check for session
+        // Then check for session with the server
         const { data, error } = await supabase.auth.getSession();
         
         if (error) {
           console.error('Error getting session:', error);
+          clearAuthState();
           return;
         }
         
@@ -102,9 +126,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setUser(initialUser);
             saveUserToLocalStorage(initialUser);
           }
+        } else {
+          // If no server session but we have local user data, clear it
+          if (user) {
+            console.log('No server session found for user, clearing local data');
+            clearAuthState();
+          }
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
+        clearAuthState();
       } finally {
         setIsLoading(false);
         isInitialized = true;
@@ -117,7 +148,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('Cleaning up auth subscription');
       subscription.unsubscribe();
     };
-  }, [setSession, setUser, setIsLoading, sendWelcomeEmail]);
+  }, [setSession, setUser, setIsLoading, sendWelcomeEmail, user]);
 
   const value = {
     user,

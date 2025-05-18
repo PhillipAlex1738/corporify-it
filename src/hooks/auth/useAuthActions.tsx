@@ -15,6 +15,14 @@ export const useAuthActions = () => {
   const { toast } = useToast();
   const { sendWelcomeEmail, showToast } = useAuthNotifications();
 
+  // Helper function to force clear auth state
+  const clearAuthState = () => {
+    console.log("Forcefully clearing all auth state");
+    setUser(null);
+    setSession(null);
+    localStorage.removeItem('corporify_user');
+  };
+
   const login = async (email: string, password: string): Promise<{ success: boolean }> => {
     setIsLoading(true);
     try {
@@ -116,35 +124,37 @@ export const useAuthActions = () => {
     setIsLoading(true);
     try {
       console.log("Starting logout attempt");
+      
+      // First clear local state immediately to ensure UI updates
+      clearAuthState();
+      
+      // Then attempt to sign out from Supabase
       const { error } = await signOut();
+      
       if (error) {
         console.error('Logout error:', error);
         showToast(
-          "Logout failed",
-          error.message || "Please try again.",
+          "Logout warning",
+          "You've been logged out locally, but there was an issue with the server: " + error.message,
           "destructive"
         );
-        throw error;
+      } else {
+        console.log("Logout successful");
+        showToast(
+          "Logged out",
+          "You've been logged out successfully."
+        );
       }
-      
-      console.log("Logout successful - waiting for auth state change to clear user data");
-      // Note: We don't clear user data here because the auth listener will do that
-      showToast(
-        "Logged out",
-        "You've been logged out successfully."
-      );
     } catch (error: any) {
       console.error('Logout failed', error);
       showToast(
-        "Logout failed",
-        error.message || "Please try again.",
+        "Logout warning",
+        "You've been logged out locally, but there was an issue with the server.",
         "destructive"
       );
-      // Force clear user data even if there's an error
-      setUser(null);
-      setSession(null);
-      localStorage.removeItem('corporify_user');
     } finally {
+      // Ensure auth state is cleared even if there was an error
+      clearAuthState();
       setIsLoading(false);
     }
   };
@@ -179,6 +189,7 @@ export const useAuthActions = () => {
     signUp,
     logout,
     upgradeAccount,
-    sendWelcomeEmail
+    sendWelcomeEmail,
+    clearAuthState
   };
 };

@@ -8,6 +8,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from '@/hooks/auth';
 import { usePageView } from '@/hooks/usePageView';
 import ProtectedRoute from "@/components/ProtectedRoute";
+import AuthStateValidator from "@/components/AuthStateValidator";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Privacy from "./pages/Privacy";
@@ -32,6 +33,7 @@ const App = () => (
         <AuthProvider>
           <BrowserRouter>
             <PageViewTracker>
+              <AuthStateValidator />
               <Toaster />
               <Sonner />
               <Routes>
