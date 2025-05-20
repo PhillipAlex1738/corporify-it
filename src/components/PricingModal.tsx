@@ -6,8 +6,8 @@ import {
   DialogTitle,
   DialogDescription
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Check, Zap, Clock, Globe, Headphones } from 'lucide-react';
+import { Check, Zap, Globe, Headphones } from 'lucide-react';
+import PaymentButton from '@/components/PaymentButton';
 
 type PricingModalProps = {
   isOpen: boolean;
@@ -79,12 +79,11 @@ const PricingModal = ({ isOpen, onClose }: PricingModalProps) => {
                 </div>
               </div>
               
-              <Button 
+              <PaymentButton 
+                priceId="price_1RMvjRB1VwDQf2qkLLWRzpOy" 
+                buttonText="Get Basic Plan"
                 className="w-full bg-corporate-800 hover:bg-corporate-900 font-medium"
-                disabled
-              >
-                <Clock className="mr-2 h-4 w-4" /> Coming Soon
-              </Button>
+              />
             </div>
             
             {/* Professional Plan */}
@@ -145,18 +144,17 @@ const PricingModal = ({ isOpen, onClose }: PricingModalProps) => {
                 </div>
               </div>
               
-              <Button 
+              <PaymentButton 
+                priceId="price_1RMviRB1VwDQf2qkUmhoiTiZ" 
+                buttonText="Get Professional Plan"
                 className="w-full bg-corporate-800 hover:bg-corporate-900 font-medium"
-                disabled
-              >
-                <Clock className="mr-2 h-4 w-4" /> Coming Soon
-              </Button>
+              />
             </div>
           </div>
           
           <div className="mt-6 text-center text-sm text-muted-foreground">
             <p>Free Demo includes 5 free transformations per day and basic professional tone.</p>
-            <p className="mt-2">Join our waitlist to be notified when premium plans become available.</p>
+            <p className="mt-2">Upgrade now to unlock all premium features and unlimited transformations!</p>
           </div>
         </div>
       </DialogContent>
