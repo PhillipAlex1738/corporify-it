@@ -66,10 +66,10 @@ serve(async (req) => {
     let planName = "Premium";
     let amount = "$19.99";
     
-    if (priceId === "price_1RMvjRB1VwDQf2qkLLWRzpOy") {
+    if (priceId === "basic_price_id_here") {
       planName = "Basic";
       amount = "$9.99";
-    } else if (priceId === "price_1RMviRB1VwDQf2qkUmhoiTiZ") {
+    } else if (priceId === "professional_price_id_here") {
       planName = "Professional";
       amount = "$19.99";
     }
