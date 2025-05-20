@@ -69,7 +69,7 @@ serve(async (req) => {
     if (priceId === "price_1RQgpkB1VwDQf2qkZ6LpRTve") {
       planName = "Basic";
       amount = "$9.99";
-    } else if (priceId === "price_1RQgq7B1VwDQf2qkhfn5Tsm") {
+    } else if (priceId === "price_1RQgq7B1VwDQf2qkhfn5Tsmu") {
       planName = "Professional";
       amount = "$19.99";
     }

@@ -173,7 +173,7 @@ const PremiumPage = () => {
                 </ul>
               </div>
               <PaymentButton 
-                priceId="price_1RQgq7B1VwDQf2qkhfn5Tsm" 
+                priceId="price_1RQgq7B1VwDQf2qkhfn5Tsmu" 
                 buttonText="Get Professional" 
                 className="w-full bg-corporate-500 hover:bg-corporate-600"
               />
