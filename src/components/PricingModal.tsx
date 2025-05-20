@@ -80,7 +80,7 @@ const PricingModal = ({ isOpen, onClose }: PricingModalProps) => {
               </div>
               
               <PaymentButton 
-                priceId="basic_price_id_here" 
+                priceId="price_1RQgpkB1VwDQf2qkZ6LpRTve" 
                 buttonText="Get Basic Plan"
                 className="w-full bg-corporate-800 hover:bg-corporate-900 font-medium"
               />
@@ -145,7 +145,7 @@ const PricingModal = ({ isOpen, onClose }: PricingModalProps) => {
               </div>
               
               <PaymentButton 
-                priceId="professional_price_id_here" 
+                priceId="price_1RQgq7B1VwDQf2qkhfn5Tsm" 
                 buttonText="Get Professional Plan"
                 className="w-full bg-corporate-800 hover:bg-corporate-900 font-medium"
               />

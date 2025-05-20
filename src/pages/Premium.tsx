@@ -131,7 +131,7 @@ const PremiumPage = () => {
                 </ul>
               </div>
               <PaymentButton 
-                priceId="price_1RMvjRB1VwDQf2qkLLWRzpOy"
+                priceId="price_1RQgpkB1VwDQf2qkZ6LpRTve"
                 buttonText="Get Basic" 
                 className="w-full"
               />
@@ -173,7 +173,7 @@ const PremiumPage = () => {
                 </ul>
               </div>
               <PaymentButton 
-                priceId="price_1RMviRB1VwDQf2qkUmhoiTiZ" 
+                priceId="price_1RQgq7B1VwDQf2qkhfn5Tsm" 
                 buttonText="Get Professional" 
                 className="w-full bg-corporate-500 hover:bg-corporate-600"
               />
