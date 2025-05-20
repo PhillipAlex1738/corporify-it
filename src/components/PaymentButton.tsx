@@ -28,6 +28,8 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
       setIsLoading(true);
       setShowConfigError(false);
       
+      console.log("Starting payment process with price ID:", priceId);
+      
       // Call the create-payment edge function
       const { data, error } = await supabase.functions.invoke('create-payment', {
         body: { priceId }
@@ -39,6 +41,7 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
 
       if (data?.url) {
         // Redirect to Stripe Checkout
+        console.log("Redirecting to Stripe checkout:", data.url);
         window.location.href = data.url;
       } else if (data?.error && data.error.includes('price')) {
         // Show specific error for price issues

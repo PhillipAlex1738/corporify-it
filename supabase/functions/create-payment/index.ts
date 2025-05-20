@@ -84,7 +84,7 @@ serve(async (req) => {
             quantity: 1,
           },
         ],
-        mode: 'payment',  // One-time payments
+        mode: 'subscription',  // Changed to subscription mode since the price IDs appear to be for recurring products
         success_url: `${req.headers.get('origin')}/premium?payment=success&plan=${planName}`,
         cancel_url: `${req.headers.get('origin')}/premium?payment=canceled`,
         customer_email: customerEmail,
