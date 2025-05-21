@@ -121,17 +121,6 @@ const Index = () => {
                   </Button>
                 </a>
               </div>
-              
-              <div className="flex items-center gap-2 mt-2">
-                <div className="flex">
-                  <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
-                  <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
-                  <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
-                  <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
-                  <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
-                </div>
-                <p className="text-sm text-corporate-600">Trusted by 1,000+ professionals</p>
-              </div>
             </div>
             
             <div className="relative bg-white rounded-xl shadow-lg p-6 border border-gray-100">
@@ -173,28 +162,6 @@ const Index = () => {
                   </div>
                 )}
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      
-      {/* Featured In Section */}
-      <section className="py-8 bg-white border-y border-gray-100">
-        <div className="container max-w-7xl mx-auto px-4">
-          <h2 className="text-center text-lg font-medium text-gray-500 mb-8">Featured In</h2>
-          
-          <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-6">
-            <div className="h-8 opacity-60 hover:opacity-100 transition-opacity">
-              <img src="https://placeholder.co/150x32?text=TechCrunch" alt="TechCrunch" className="h-full" />
-            </div>
-            <div className="h-8 opacity-60 hover:opacity-100 transition-opacity">
-              <img src="https://placeholder.co/150x32?text=Forbes" alt="Forbes" className="h-full" />
-            </div>
-            <div className="h-8 opacity-60 hover:opacity-100 transition-opacity">
-              <img src="https://placeholder.co/150x32?text=HR+Today" alt="HR Today" className="h-full" />
-            </div>
-            <div className="h-8 opacity-60 hover:opacity-100 transition-opacity">
-              <img src="https://placeholder.co/150x32?text=ProductHunt" alt="Product Hunt" className="h-full" />
             </div>
           </div>
         </div>
@@ -561,9 +528,6 @@ const Index = () => {
                 Start Your Free Trial Today
               </Button>
             </Link>
-            <Button variant="outline" className="bg-transparent border-white text-white hover:bg-white/10 px-8 py-6 text-lg">
-              Schedule a Demo
-            </Button>
           </div>
           <p className="mt-4 text-sm opacity-75">No credit card required. Free trial includes 5 transformations per day.</p>
         </div>
