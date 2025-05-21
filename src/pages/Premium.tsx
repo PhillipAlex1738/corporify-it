@@ -9,6 +9,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { AlertTriangle } from 'lucide-react';
 
 const PremiumPage = () => {
   const location = useLocation();
@@ -92,7 +93,19 @@ const PremiumPage = () => {
       
       <Header />
       
-      <main className="flex-1 py-12 px-4">
+      <main className="flex-1 py-12 px-4 relative">
+        {/* Coming Soon Overlay */}
+        <div className="absolute inset-0 bg-black/80 z-10 flex flex-col items-center justify-center text-white p-6">
+          <AlertTriangle className="h-16 w-16 text-yellow-400 mb-4" />
+          <h2 className="text-3xl font-bold mb-2">Premium Coming Soon</h2>
+          <p className="text-center mb-6 max-w-md text-lg">
+            We're working hard to bring you our premium features. Please check back soon!
+          </p>
+          <p className="text-sm text-white/70">
+            For early access or more information, please contact our support team.
+          </p>
+        </div>
+        
         <div className="container max-w-6xl mx-auto">
           <div className="mb-12 text-center">
             <h1 className="text-3xl md:text-4xl font-bold text-corporate-800 mb-4">

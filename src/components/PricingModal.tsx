@@ -6,8 +6,9 @@ import {
   DialogTitle,
   DialogDescription
 } from '@/components/ui/dialog';
-import { Check, Zap, Globe, Headphones } from 'lucide-react';
+import { Check, Zap, Globe, Headphones, AlertTriangle } from 'lucide-react';
 import PaymentButton from '@/components/PaymentButton';
+import { useState } from 'react';
 
 type PricingModalProps = {
   isOpen: boolean;
@@ -15,9 +16,27 @@ type PricingModalProps = {
 };
 
 const PricingModal = ({ isOpen, onClose }: PricingModalProps) => {
+  const [showComingSoonAlert, setShowComingSoonAlert] = useState(true);
+  
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-[800px] p-0 overflow-hidden relative">
+        {showComingSoonAlert && (
+          <div className="absolute inset-0 bg-black/80 z-50 flex flex-col items-center justify-center text-white p-6">
+            <AlertTriangle className="h-12 w-12 text-yellow-400 mb-4" />
+            <h3 className="text-xl font-bold mb-2">Premium Coming Soon</h3>
+            <p className="text-center mb-4">
+              Our premium features are currently under development and will be available soon.
+            </p>
+            <button 
+              onClick={() => setShowComingSoonAlert(false)}
+              className="bg-white text-black px-4 py-2 rounded hover:bg-gray-200 transition-colors"
+            >
+              View Plans Preview
+            </button>
+          </div>
+        )}
+        
         <div className="corporify-gradient p-6 text-white">
           <DialogHeader className="mb-4">
             <DialogTitle className="text-white flex items-center gap-2 text-2xl">
