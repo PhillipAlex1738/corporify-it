@@ -55,7 +55,7 @@ const App = () => (
                   </ProtectedRoute>
                 } />
                 <Route path="/analytics" element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requiresAdmin={true}>
                     <Analytics />
                   </ProtectedRoute>
                 } />
