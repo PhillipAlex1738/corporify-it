@@ -22,6 +22,14 @@ export const usePageView = () => {
 
         if (error) {
           console.error('Error tracking page view:', error);
+          // Only show error toast in development
+          if (process.env.NODE_ENV === 'development') {
+            toast({
+              title: "Analytics Error",
+              description: `Failed to track page view: ${error.message}`,
+              variant: "destructive"
+            });
+          }
         } else {
           console.log('Successfully tracked page view for:', location.pathname);
         }
@@ -31,5 +39,5 @@ export const usePageView = () => {
     };
 
     trackPageView();
-  }, [location.pathname]);
+  }, [location.pathname, toast]);
 };

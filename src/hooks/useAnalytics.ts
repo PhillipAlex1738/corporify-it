@@ -86,12 +86,12 @@ export const useAnalytics = (startDate?: Date) => {
   };
 
   const totalViews = useQuery({
-    queryKey: ['totalPageViews', startDate],
+    queryKey: ['totalPageViews', startDate?.toISOString()],
     queryFn: fetchTotalViews
   });
 
   const uniqueViews = useQuery({
-    queryKey: ['uniquePageViews', startDate],
+    queryKey: ['uniquePageViews', startDate?.toISOString()],
     queryFn: fetchUniqueViews
   });
 

@@ -18,6 +18,7 @@ import Support from "./pages/Support";
 import Feedback from "./pages/Feedback";
 import AppPage from "./pages/AppPage";
 import PremiumPage from "./pages/Premium";
+import Analytics from "./pages/Analytics";
 
 const PageViewTracker = ({ children }: { children: React.ReactNode }) => {
   usePageView();
@@ -51,6 +52,11 @@ const App = () => (
                 <Route path="/feedback" element={
                   <ProtectedRoute>
                     <Feedback />
+                  </ProtectedRoute>
+                } />
+                <Route path="/analytics" element={
+                  <ProtectedRoute>
+                    <Analytics />
                   </ProtectedRoute>
                 } />
                 <Route path="*" element={<NotFound />} />
