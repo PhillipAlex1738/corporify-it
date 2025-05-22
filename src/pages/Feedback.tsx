@@ -1,34 +1,45 @@
-
+import { useState } from "react";
+import SupportPageLayout from "@/components/support/SupportPageLayout";
 import FeedbackForm from "@/components/feedback/FeedbackForm";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 
 const Feedback = () => {
+  const [submitted, setSubmitted] = useState(false);
+
+  // Add schema for the feedback page
+  const feedbackSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "User Feedback - Corporify",
+    "description": "Share your experience and suggestions for Corporify. Help us improve our professional communication tool with your valuable feedback.",
+    "mainEntity": {
+      "@type": "ContactPoint",
+      "contactType": "feedback",
+      "email": "feedback@corporifyit.io"
+    }
+  };
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <main className="container py-8 flex-1">
-        <Button variant="ghost" className="mb-6" asChild>
-          <Link to="/">
-            <ChevronLeft className="mr-2 h-4 w-4" />
-            Back to Home
-          </Link>
-        </Button>
-        
-        <div className="max-w-3xl mx-auto">
-          <h1 className="font-playfair text-3xl font-bold mb-2">Your Feedback Matters</h1>
-          <p className="text-muted-foreground mb-8">
-            Help us improve Corporify by sharing your experience. Your feedback is valuable to us.
-          </p>
-          
-          <FeedbackForm />
-        </div>
-      </main>
-      <Footer />
-    </div>
+    <>
+      <SEO
+        title="Submit Feedback & Suggestions | Corporify"
+        description="Share your thoughts and suggestions about Corporify's professional communication tools. Your feedback directly shapes our product improvements and new features."
+        path="/feedback"
+        keywords="user feedback, product suggestions, user experience, feature requests, improvement ideas"
+        ogType="website"
+        schema={feedbackSchema}
+      />
+      <SupportPageLayout>
+        {submitted ? (
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">Thank you for your feedback!</h2>
+            <p className="text-gray-600">We appreciate your input and will use it to improve Corporify.</p>
+          </div>
+        ) : (
+          <FeedbackForm onSubmit={() => setSubmitted(true)} />
+        )}
+      </SupportPageLayout>
+    </>
   );
 };
 

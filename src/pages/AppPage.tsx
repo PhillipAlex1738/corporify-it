@@ -8,13 +8,31 @@ import SEO from '@/components/SEO';
 const AppPage = () => {
   const { user } = useAuth();
 
+  // Enhanced schema data for the app page
+  const appPageSchema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Corporify Message Editor",
+    "applicationCategory": "BusinessApplication",
+    "description": "Transform casual messages into professionally-crafted business communications with our AI-powered editor. Perfect for emails, Slack messages, and internal communications.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "operatingSystem": "Web browser"
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-cream">
       <SEO
-        title="Corporify It - Professional Communication Tool"
-        description="Transform casual messages into professional workplace communications with our AI-powered tool."
+        title="Professional Message Transformer | Corporify Editor"
+        description="Transform casual messages into professional workplace communications instantly. Our AI-powered tool helps you craft perfect business emails, Slack messages, and team communications."
         path="/app"
-        keywords="professional communication, email rewriter, corporate language, tone adjustment, AI writing assistant"
+        keywords="professional message editor, email rewriter, corporate language generator, business communication tool, workplace message transformer"
+        schema={appPageSchema}
+        ogType="website"
+        ogImage="https://corporifyit.io/app-og-image.png"
       />
       
       <Header />

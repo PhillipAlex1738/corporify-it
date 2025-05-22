@@ -1,61 +1,106 @@
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import SupportPageLayout from "@/components/support/SupportPageLayout";
+import SEO from "@/components/SEO";
 
 const Terms = () => {
+  // Add schema for the terms page
+  const termsSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Terms of Service - Corporify",
+    "description": "Review Corporify's terms of service agreement. Learn about the rules, guidelines, and legal terms governing the use of our professional communication tool.",
+    "mainEntity": {
+      "@type": "Article",
+      "name": "Corporify Terms of Service",
+      "articleBody": "These terms of service outline the rules and regulations for using Corporify services."
+    }
+  };
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <main className="container py-8 flex-1">
-        <Button variant="ghost" className="mb-6" asChild>
-          <Link to="/">
-            <ChevronLeft className="mr-2 h-4 w-4" />
-            Back to Home
-          </Link>
-        </Button>
-        <div className="max-w-3xl mx-auto">
-          <h1 className="font-playfair text-3xl font-bold mb-6">Terms of Service</h1>
-          <div className="prose prose-slate max-w-none">
-            <h2>1. Acceptance of Terms</h2>
-            <p>
-              By accessing or using Corporify It, you agree to be bound by these Terms of Service. If you don't agree to these terms, you should not use our service.
-            </p>
-            <h2>2. Use of Service</h2>
-            <p>
-              Corporify provides a text transformation service that converts casual text into professional workplace communication. You may use our service only for lawful purposes and in accordance with these Terms.
-            </p>
-            <h2>3. User Accounts</h2>
-            <p>
-              When you create an account, you must provide accurate and complete information. You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.
-            </p>
-            <h2>4. Usage Limits</h2>
-            <p>
-              Free accounts have a limited number of transformations per day. Premium accounts have unlimited transformations. We reserve the right to modify these limits at any time.
-            </p>
-            <h2>5. Intellectual Property</h2>
-            <p>
-              The content you submit remains yours. However, you grant us a license to use, process, and store your content as necessary to provide our services.
-            </p>
-            <h2>6. Modifications to the Service</h2>
-            <p>
-              We reserve the right to modify or discontinue the service temporarily or permanently with or without notice.
-            </p>
-            <h2>7. Limitation of Liability</h2>
-            <p>
-              Corporify and its suppliers shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of or inability to use the service.
-            </p>
-            <h2>8. Governing Law</h2>
-            <p>
-              These Terms shall be governed by the laws of the jurisdiction where we are established, without regard to its conflict of law provisions.
-            </p>
-            <p className="text-sm mt-8">Last Updated: April 12, 2025</p>
-          </div>
+    <>
+      <SEO
+        title="Terms of Service | User Agreement | Corporify"
+        description="Review Corporify's terms of service and user agreement. Understand the guidelines and legal terms governing the use of our professional communication platform."
+        path="/terms"
+        keywords="terms of service, user agreement, legal terms, usage policy, service conditions"
+        ogType="article"
+        schema={termsSchema}
+      />
+      <SupportPageLayout>
+        <div className="container py-8">
+          <h1 className="text-2xl font-bold mb-4">Terms of Service</h1>
+          <p className="mb-4">
+            Welcome to Corporify! These terms of service ("Terms") govern your
+            use of our website and services. By accessing or using our services,
+            you agree to be bound by these Terms.
+          </p>
+
+          <h2 className="text-xl font-semibold mb-2">1. Acceptance of Terms</h2>
+          <p className="mb-4">
+            By using Corporify, you agree to these Terms and our Privacy Policy.
+            If you do not agree, do not use our services.
+          </p>
+
+          <h2 className="text-xl font-semibold mb-2">2. Description of Service</h2>
+          <p className="mb-4">
+            Corporify provides an AI-powered tool that transforms casual messages
+            into professional communication.
+          </p>
+
+          <h2 className="text-xl font-semibold mb-2">3. User Accounts</h2>
+          <p className="mb-4">
+            You may need to create an account to access certain features. You
+            are responsible for maintaining the confidentiality of your account
+            credentials.
+          </p>
+
+          <h2 className="text-xl font-semibold mb-2">4. Acceptable Use</h2>
+          <p className="mb-4">
+            You agree to use Corporify in compliance with all applicable laws and
+            regulations. You will not use our services for any unlawful or
+            prohibited purpose.
+          </p>
+
+          <h2 className="text-xl font-semibold mb-2">5. Intellectual Property</h2>
+          <p className="mb-4">
+            All content and materials on Corporify are owned by us or our
+            licensors and are protected by copyright and other intellectual
+            property laws.
+          </p>
+
+          <h2 className="text-xl font-semibold mb-2">6. Disclaimer of Warranties</h2>
+          <p className="mb-4">
+            Corporify is provided "as is" without any warranties, express or
+            implied. We do not guarantee the accuracy or reliability of our
+            services.
+          </p>
+
+          <h2 className="text-xl font-semibold mb-2">7. Limitation of Liability</h2>
+          <p className="mb-4">
+            We are not liable for any damages arising out of your use of
+            Corporify, including but not limited to direct, indirect, incidental,
+            or consequential damages.
+          </p>
+
+          <h2 className="text-xl font-semibold mb-2">8. Changes to Terms</h2>
+          <p className="mb-4">
+            We may modify these Terms at any time. Your continued use of
+            Corporify after any changes constitutes acceptance of the new Terms.
+          </p>
+
+          <h2 className="text-xl font-semibold mb-2">9. Governing Law</h2>
+          <p className="mb-4">
+            These Terms are governed by the laws of the jurisdiction in which we
+            are located.
+          </p>
+
+          <h2 className="text-xl font-semibold mb-2">10. Contact Us</h2>
+          <p className="mb-4">
+            If you have any questions about these Terms, please contact us at{" "}
+            <a href="mailto:support@corporifyit.io">support@corporifyit.io</a>.
+          </p>
         </div>
-      </main>
-      <Footer />
-    </div>
+      </SupportPageLayout>
+    </>
   );
 };
 

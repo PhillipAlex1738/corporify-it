@@ -3,12 +3,12 @@
 User-agent: *
 Allow: /
 
-# Disallow certain areas
+# Disallow admin areas and settings
 Disallow: /app/settings/
 Disallow: /analytics/
 Disallow: /admin/
 
-# Allow specific search engine crawlers
+# Allow all major search engine crawlers
 User-agent: Googlebot
 Allow: /
 
@@ -21,7 +21,7 @@ Allow: /
 User-agent: DuckDuckBot
 Allow: /
 
-# Allow social media crawlers
+# Allow social media crawlers for better sharing
 User-agent: Twitterbot
 Allow: /
 
@@ -34,5 +34,12 @@ Allow: /
 # Sitemap location
 Sitemap: https://corporifyit.io/sitemap.xml
 
-# Crawl delay for bots to prevent server overload
+# Crawl-delay directive to prevent server overload
 Crawl-delay: 10
+
+# Additional helpful directives
+User-agent: AdsBot-Google
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -12,6 +11,20 @@ import { supabase } from '@/integrations/supabase/client';
 import { AlertTriangle } from 'lucide-react';
 
 const PremiumPage = () => {
+  // Add schema for the premium page
+  const premiumSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Corporify Premium",
+    "description": "Advanced features for professional communication. Corporify Premium gives you access to unlimited transformations, custom templates, and priority support.",
+    "offers": {
+      "@type": "Offer",
+      "price": "19.99",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock"
+    }
+  };
+
   const location = useLocation();
   const { toast } = useToast();
   const { user } = useAuth();
@@ -85,10 +98,12 @@ const PremiumPage = () => {
   return (
     <div className="min-h-screen flex flex-col bg-cream">
       <SEO
-        title="Corporify Premium - Upgrade Your Plan"
-        description="Upgrade to Corporify Premium for unlimited usage and advanced features."
+        title="Premium Features & Subscription Plans | Corporify"
+        description="Unlock advanced professional communication tools with Corporify Premium. Get unlimited transformations, custom templates, multi-language support, and priority assistance."
         path="/premium"
-        keywords="premium subscription, professional communication, corporate language, tone adjustment"
+        keywords="premium subscription, business communication tools, professional message features, corporate communication platform, email rewriting service"
+        ogType="product"
+        schema={premiumSchema}
       />
       
       <Header />
