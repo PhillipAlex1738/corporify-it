@@ -1,8 +1,12 @@
 
 # Corporify It robots.txt
-# Allow all web crawlers access to all content by default
 User-agent: *
 Allow: /
+
+# Disallow certain areas
+Disallow: /app/settings/
+Disallow: /analytics/
+Disallow: /admin/
 
 # Allow specific search engine crawlers
 User-agent: Googlebot
@@ -27,5 +31,8 @@ Allow: /
 User-agent: LinkedInBot
 Allow: /
 
-# Sitemap location (for when we implement it)
+# Sitemap location
 Sitemap: https://corporifyit.io/sitemap.xml
+
+# Crawl delay for bots to prevent server overload
+Crawl-delay: 10
