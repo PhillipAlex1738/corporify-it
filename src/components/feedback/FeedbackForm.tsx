@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -87,117 +88,129 @@ const FeedbackForm = ({ onSubmit }: FeedbackFormProps) => {
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="user_email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="your@email.com" {...field} />
-              </FormControl>
-              <FormDescription>
-                Your email address will help us follow up if needed.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <section aria-labelledby="feedback-form-heading">
+      <h2 id="feedback-form-heading" className="text-2xl font-bold mb-6">Share Your Feedback</h2>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+          <fieldset>
+            <legend className="sr-only">Your Contact Information</legend>
+            <FormField
+              control={form.control}
+              name="user_email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="your@email.com" {...field} aria-required="true" />
+                  </FormControl>
+                  <FormDescription>
+                    Your email address will help us follow up if needed.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </fieldset>
 
-        <FormField
-          control={form.control}
-          name="functionality_rating"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>How would you rate Corporify's functionality?</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  min={1}
-                  max={5}
-                  {...field}
-                  onChange={(e) => field.onChange(parseInt(e.target.value))}
-                />
-              </FormControl>
-              <FormDescription>
-                Rate from 1 (poor) to 5 (excellent)
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <fieldset>
+            <legend className="sr-only">Rating Questions</legend>
+            <FormField
+              control={form.control}
+              name="functionality_rating"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>How would you rate Corporify's functionality?</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={5}
+                      {...field}
+                      onChange={(e) => field.onChange(parseInt(e.target.value))}
+                      aria-required="true"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Rate from 1 (poor) to 5 (excellent)
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="ui_rating"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>How would you rate our user interface?</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  min={1}
-                  max={5}
-                  {...field}
-                  onChange={(e) => field.onChange(parseInt(e.target.value))}
-                />
-              </FormControl>
-              <FormDescription>
-                Rate from 1 (poor) to 5 (excellent)
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+            <FormField
+              control={form.control}
+              name="ui_rating"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>How would you rate our user interface?</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={5}
+                      {...field}
+                      onChange={(e) => field.onChange(parseInt(e.target.value))}
+                      aria-required="true"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Rate from 1 (poor) to 5 (excellent)
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="recommendation_rating"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>How likely are you to recommend Corporify?</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  min={1}
-                  max={5}
-                  {...field}
-                  onChange={(e) => field.onChange(parseInt(e.target.value))}
-                />
-              </FormControl>
-              <FormDescription>
-                Rate from 1 (unlikely) to 5 (very likely)
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+            <FormField
+              control={form.control}
+              name="recommendation_rating"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>How likely are you to recommend Corporify?</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={5}
+                      {...field}
+                      onChange={(e) => field.onChange(parseInt(e.target.value))}
+                      aria-required="true"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Rate from 1 (unlikely) to 5 (very likely)
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </fieldset>
 
-        <FormField
-          control={form.control}
-          name="additional_comments"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Additional Comments</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Share any additional thoughts or suggestions..."
-                  className="min-h-[100px]"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="additional_comments"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Additional Comments</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Share any additional thoughts or suggestions..."
+                    className="min-h-[100px]"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Submitting..." : "Submit Feedback"}
-        </Button>
-      </form>
-    </Form>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Submitting..." : "Submit Feedback"}
+          </Button>
+        </form>
+      </Form>
+    </section>
   );
 };
 

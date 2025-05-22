@@ -37,20 +37,21 @@ const AppPage = () => {
       
       <Header />
       
-      <main className="flex-1 py-12 px-4">
+      <main className="flex-1 py-12 px-4" id="main-content">
         <div className="container max-w-4xl mx-auto">
-          <div className="mb-8 text-center">
+          <header className="mb-8 text-center">
             <h1 className="text-3xl md:text-4xl font-bold text-corporate-800 mb-4">
               Corporify It Professional Communication Tool
             </h1>
             <p className="text-lg text-corporate-600 max-w-2xl mx-auto">
               Transform your casual messages into polished, professional communications with our AI-powered tool.
             </p>
-          </div>
+          </header>
           
-          <div className="bg-white p-6 md:p-8 rounded-xl shadow-md">
+          <section aria-labelledby="editor-section" className="bg-white p-6 md:p-8 rounded-xl shadow-md">
+            <h2 id="editor-section" className="sr-only">Message Editor</h2>
             <CorporifyForm />
-          </div>
+          </section>
         </div>
       </main>
       
