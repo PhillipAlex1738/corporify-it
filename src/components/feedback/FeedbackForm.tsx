@@ -28,7 +28,12 @@ const feedbackSchema = z.object({
 
 type FeedbackFormData = z.infer<typeof feedbackSchema>;
 
-const FeedbackForm = () => {
+// Add the onSubmit prop to the component interface
+interface FeedbackFormProps {
+  onSubmit?: () => void;
+}
+
+const FeedbackForm = ({ onSubmit }: FeedbackFormProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,7 +49,7 @@ const FeedbackForm = () => {
     },
   });
 
-  const onSubmit = async (data: FeedbackFormData) => {
+  const handleSubmit = async (data: FeedbackFormData) => {
     setIsSubmitting(true);
     try {
       const { error } = await supabase.from("feedback").insert([{
@@ -65,6 +70,9 @@ const FeedbackForm = () => {
         description: "Your response has been recorded successfully.",
       });
       
+      // Call the onSubmit callback if provided
+      if (onSubmit) onSubmit();
+      
       navigate("/");
     } catch (error: any) {
       console.error("Feedback submission error:", error);
@@ -80,7 +88,7 @@ const FeedbackForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="user_email"
