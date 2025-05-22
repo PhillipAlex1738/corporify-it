@@ -1,10 +1,10 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
+import CorporifiedExamples from '@/components/CorporifiedExamples';
 import { 
   ArrowRight, 
   Zap, 
@@ -26,38 +26,13 @@ import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const { user } = useAuth();
-  const [demoMessage, setDemoMessage] = useState("");
-  const [corporifiedMessage, setCorporifiedMessage] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
   
   useEffect(() => {
     console.log("Index page: User auth state:", user ? `Authenticated as ${user.email}` : "Not authenticated");
   }, [user]);
 
-  // Simulate message transformation for demo
-  const transformMessage = () => {
-    if (!demoMessage.trim()) return;
-    
-    setIsProcessing(true);
-    
-    // Simulate API call with timeout
-    setTimeout(() => {
-      const casualMessage = demoMessage;
-      let professionalMessage = "";
-      
-      // Simple transformation rules for demo purposes
-      if (casualMessage.toLowerCase().includes("meeting")) {
-        professionalMessage = `Dear Team,\n\nI would like to inform you about an upcoming meeting scheduled for this project.\n\nPlease review the attached documents prior to our discussion.\n\nBest regards,\n[Your Name]`;
-      } else if (casualMessage.toLowerCase().includes("deadline")) {
-        professionalMessage = `Dear Colleagues,\n\nThis is a friendly reminder about the approaching deadline for our current project.\n\nKindly ensure all deliverables are submitted by the specified date.\n\nThank you for your attention to this matter.\n\nBest regards,\n[Your Name]`;
-      } else {
-        professionalMessage = `Dear Recipient,\n\nThank you for your message. I appreciate your input on this matter.\n\nI will review the information provided and respond appropriately at my earliest convenience.\n\nKind regards,\n[Your Name]`;
-      }
-      
-      setCorporifiedMessage(professionalMessage);
-      setIsProcessing(false);
-    }, 1500);
-  };
+  // Direct Dropbox video URL - updated with raw=1 parameter
+  const dropboxVideoUrl = "https://dl.dropboxusercontent.com/scl/fi/vw6kr32j33nb479pt78z7/VQQRIMHUHP6F4C33.mp4?rlkey=lv9wpgb5xnfx2f30vmm2z64z2&raw=1";
 
   // Structured data for rich search results
   const structuredData = {
@@ -72,9 +47,6 @@ const Index = () => {
       "priceCurrency": "USD"
     }
   };
-
-  // Direct Dropbox video URL - updated with raw=1 parameter
-  const dropboxVideoUrl = "https://dl.dropboxusercontent.com/scl/fi/vw6kr32j33nb479pt78z7/VQQRIMHUHP6F4C33.mp4?rlkey=lv9wpgb5xnfx2f30vmm2z64z2&raw=1";
 
   return (
     <div className="min-h-screen flex flex-col bg-cream">
@@ -123,46 +95,8 @@ const Index = () => {
               </div>
             </div>
             
-            <div className="relative bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-              <h3 className="font-medium text-lg mb-4 text-corporate-800">Try it yourself:</h3>
-              
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="demo-input" className="block text-sm font-medium text-corporate-600 mb-1">
-                    Enter your casual message:
-                  </label>
-                  <textarea 
-                    id="demo-input"
-                    className="w-full border border-gray-200 rounded-md p-3 h-32 focus:ring-1 focus:ring-corporate-500 focus:border-corporate-500"
-                    placeholder="Example: Hey team! Just dropping a note about the upcoming meeting next week. Let me know if you can make it!"
-                    value={demoMessage}
-                    onChange={(e) => setDemoMessage(e.target.value)}
-                  />
-                </div>
-                
-                <div className="flex justify-center">
-                  <Button 
-                    onClick={transformMessage}
-                    disabled={isProcessing || !demoMessage.trim()}
-                    className="bg-corporate-600 hover:bg-corporate-700 text-white px-6 py-2"
-                  >
-                    {isProcessing ? "Transforming..." : "Corporify It"}
-                    {isProcessing ? <Clock className="ml-2 h-5 w-5 animate-spin" /> : <Zap className="ml-2 h-5 w-5" />}
-                  </Button>
-                </div>
-                
-                {corporifiedMessage && (
-                  <div className="mt-4">
-                    <label className="block text-sm font-medium text-corporate-600 mb-1">
-                      Professional version:
-                    </label>
-                    <div className="bg-corporate-50 border border-corporate-100 rounded-md p-3 whitespace-pre-line">
-                      {corporifiedMessage}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
+            {/* Replacing the "Try it yourself" section with CorporifiedExamples */}
+            <CorporifiedExamples />
           </div>
         </div>
       </section>
